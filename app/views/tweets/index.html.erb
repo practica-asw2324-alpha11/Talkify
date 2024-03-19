@@ -1,0 +1,45 @@
+<!-- Wall of Tweets main view -->
+
+<body class="wotbody">
+  <h1 class="wottitle">
+    Wall of Tweets @
+    <a href="http://fly.io/">Fly.io</a>
+  </h1>
+  <br>
+
+  <div class="walltweet">
+    <%= render 'form', tweet: @tweet %>
+  </div>
+
+
+  <% if notice %>
+  <br>
+  <div class="wotitem" id="notice">
+    <% if notice[0] == 'T' %>
+      <span style="color: green;"><%= notice %></span>
+    <% else %>
+      <span style="color: red;"><%= notice %></span>
+    <% end %>
+  </div>
+  <% end %>
+  <br>
+
+  <div id="tweets">
+    <% @actual_day = "" %>
+    <% @tweets.each do |tweet| %>
+      <% @tweet_day = tweet.created_at.strftime("%A, %B %d, %Y") %>
+        <% if @actual_day != @tweet_day %>
+        <h3 style="font-weight: normal;">
+          ......
+          <%= @actual_day = @tweet_day %>
+        </h3>
+      <% end %>
+      <%= render tweet %>
+      <% end %>
+  </div>
+
+</body>
+<hr>
+<footer>
+  <p style="text-align: center; font-size: small;">Created by: Sergi Navarra & Iván López</p>
+</footer>
