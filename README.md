@@ -1,9 +1,10 @@
-## Lab Session #04
+## Práctica ASW 23/24
 
-Students:
+Integrantes:
 
-* Navarra, Sergi
+- Sara Chillón
+- Miguel Goñi
+- Ferran Martínez
+- Iván López
 
-* López, Iván
-
-Your deployed webapp at Fly.io|Heroku|... (task #6): https://is-waslab04.fly.dev
+Grupo: alpha-11
