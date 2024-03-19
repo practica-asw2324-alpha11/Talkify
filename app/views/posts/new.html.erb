@@ -1,0 +1,38 @@
+<%= stylesheet_link_tag 'application', 'posts_styles' %>
+
+<div class="container">
+  <h1 class="text-white">Nuevo Post</h1>
+  <%= form_with(model: @post, url: posts_path, local: true, html: { class: "form-horizontal" }) do |form| %>
+    <% if @post.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@post.errors.count, "error") %> han ocurrido al crear el post:</h2>
+        <ul>
+        <% @post.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= form.label :title, "Título", class: "text-white" %><br/>
+      <%= form.text_field :title, class: 'form-control' %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :url, "URL", class: "text-white" %><br/>
+      <%= form.text_field :url, class: 'form-control' %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :body, "Cuerpo", class: "text-white" %><br/>
+      <%= form.text_area :body, class: 'form-control' %>
+    </div>
+
+    <div class="form-group">
+      <%= form.submit 'Crear Post', class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+
+  <%= link_to 'Volver', root_path, class: "btn btn-secondary" %>
+</div>

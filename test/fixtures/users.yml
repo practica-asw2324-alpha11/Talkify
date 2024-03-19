@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  email: MyString
+  password: MyString
+  joined_date: 2024-03-19
+  reputation_points: 1.5
+  moderated: 1
+
+two:
+  name: MyString
+  email: MyString
+  password: MyString
+  joined_date: 2024-03-19
+  reputation_points: 1.5
+  moderated: 1

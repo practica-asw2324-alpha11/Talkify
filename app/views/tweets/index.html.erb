@@ -11,7 +11,10 @@
     <%= render 'form', tweet: @tweet %>
   </div>
 
-
+  <%= link_to new_post_path, id: "create-post-button" do %>
+    Crear Nuevo Post
+  <% end %>
+  
   <% if notice %>
   <br>
   <div class="wotitem" id="notice">

@@ -1,0 +1,26 @@
+body {
+    background-color: #222; /* Fondo oscuro */
+    color: #fff; /* Texto blanco */
+}
+  
+.container {
+    max-width: 600px; /* Ancho máximo del contenedor */
+    margin: 0 auto; /* Centrar el contenedor */
+}
+  
+.form-group {
+    margin-bottom: 20px; /* Espacio entre los campos del formulario */
+}
+  
+.form-horizontal {
+    display: flex; /* Cambiar el diseño a horizontal */
+    flex-direction: column; /* Apilar elementos verticalmente */
+}
+  
+.form-horizontal .form-group {
+    flex: 1; /* Todos los elementos del formulario se expanden para llenar el espacio */
+}
+  
+  .text-white {
+    color: #fff; /* Color de texto blanco */
+}
