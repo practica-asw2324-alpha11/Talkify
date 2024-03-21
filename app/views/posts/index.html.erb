@@ -1,16 +1,12 @@
-<!-- Wall of Tweets main view -->
+<!-- Wall of Posts main view -->
 
 <body class="wotbody">
   <h1 class="wottitle">
-    Wall of Tweets @
-    <a href="http://fly.io/">Fly.io</a>
+    TALKIFY - Wall of Posts @
   </h1>
   <br>
 
-  <div class="walltweet">
-    <%= render 'form', tweet: @tweet %>
-  </div>
-
+ 
   <%= link_to new_post_path, id: "create-post-button" do %>
     Crear Nuevo Post
   <% end %>
@@ -29,16 +25,16 @@
 
   <div id="tweets">
     <% @actual_day = "" %>
-    <% @tweets.each do |tweet| %>
-      <% @tweet_day = tweet.created_at.strftime("%A, %B %d, %Y") %>
-        <% if @actual_day != @tweet_day %>
+    <% @posts.each do |post| %>
+      <% @post_day = post.created_at.strftime("%A, %B %d, %Y") %>
+      <% if @actual_day != @post_day %>
         <h3 style="font-weight: normal;">
           ......
-          <%= @actual_day = @tweet_day %>
+          <%= @actual_day = @post_day %>
         </h3>
       <% end %>
-      <%= render tweet %>
-      <% end %>
+      <%= render post %>
+    <% end %>
   </div>
 
 </body>

@@ -24,3 +24,49 @@ body {
   .text-white {
     color: #fff; /* Color de texto blanco */
 }
+.entry {
+    display: grid;
+    grid-template-areas: "vote image title" "vote image shortDesc" "vote image meta" "vote image footer" "body body body";
+    grid-template-columns: min-content min-content 1fr;
+    grid-template-rows: 1fr min-content;
+    padding: 0;
+    position: relative;
+    z-index: 2
+}
+
+
+.post-header {
+    display: flex;
+    align-items: center;
+  }
+  
+  .vote-buttons {
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+  }
+  
+  .post-vote-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    margin-bottom: 5px;
+  }
+  
+  .post-vote-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .post-vote-button:active {
+    background-color: #d0d0d0;
+  }
+  
+  .post-vote-button.upvote-button {
+    color: green;
+  }
+  
+  .post-vote-button.downvote-button {
+    color: red;
+  }

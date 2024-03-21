@@ -1,0 +1,18 @@
+<div class="wotitem">
+  <div class="post-header">
+    <div>
+      <!-- Botones de votación -->
+      <span class="vote-buttons">
+        <%= button_to 'Upvote'%>
+        <%= button_to 'Downvote' %>
+      </span>
+    </div>
+
+    <!-- Contenido del post -->
+    <div class="post-content">
+        <h2>Titulo:  <%= post.title %></h2>
+      <p><strong>URL:</strong> <%= post.url %></p>
+      <p><strong>Contenido:</strong> <%= post.body %></p>
+    </div>
+  </div>
+</div>

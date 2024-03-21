@@ -17,12 +17,12 @@
 .wotbody {
     font-family: Arial, Helvetica, sans-serif;
     color: #444;
-    background-color: #fef7f7;
+    background-color: #2a2929;
     font-size: 12pt;
 }
 
 .wottitle {
-    color: #600;
+    color: rgb(255, 255, 255);
     text-align: center;
 }
 
@@ -37,11 +37,11 @@
 }
 
 .wotitem {
-    border: 2px solid #dfcaca;
+    border: 2px solid #3d3c3d;
     margin: 20px auto;
     padding: 1em;
     width: 90%;
-    background-color: #fff;
+    background-color: #3d3c3d;
 }
 
 .likes {
@@ -72,7 +72,26 @@ p {
     margin-block-end: 1em;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
+    color: #ffffff;
+
 }
+h2 {
+    color: #ffffff;
+
+}
+
+
+ .post-header {
+    flex-grow: 1; /* Permite que la cabecera del post ocupe todo el espacio disponible */
+  }
+  
+.vote-buttons {
+    margin-right: 10px; /* Ajusta el margen entre los botones de votación y el contenido del post */
+  }
+  
+.post-content {
+    flex-grow: 1; /* Permite que el contenido del post ocupe todo el espacio disponible */
+  }
 
 #create-post-button {
     display: inline-block;

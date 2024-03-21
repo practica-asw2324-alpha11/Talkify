@@ -1,0 +1,23 @@
+<%= form_with(model: post) do |form| %>
+    <table border-style="0", cellpadding="2">
+      <tbody>
+        <tr>
+          <td>Tu nombre:</td>
+          <td>
+            <input size="70" type="text" name="post[author]" id="post_author">
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Tu post:</td>
+          <td>
+            <textarea rows="2" cols="70" name="post[content]" id="post_content"></textarea>
+          </td>
+          <td>
+            <input type="submit" name="commit" value="Publicar!" data-disable-with="Publicar!">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
+  
