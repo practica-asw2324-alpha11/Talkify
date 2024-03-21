@@ -82,6 +82,8 @@ h2 {
 
 
  .post-header {
+    display: flex;
+    align-items: center;
     flex-grow: 1; /* Permite que la cabecera del post ocupe todo el espacio disponible */
   }
   
