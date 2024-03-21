@@ -1,72 +1,40 @@
 body {
-    background-color: #222; /* Fondo oscuro */
-    color: #fff; /* Texto blanco */
+  color: #444;
+  background-color: #2a2929;
 }
   
-.container {
-    max-width: 600px; /* Ancho máximo del contenedor */
-    margin: 0 auto; /* Centrar el contenedor */
+.post-form {
+  width: 50%; /* Ancho del formulario */
+  margin: 0 auto; /* Centrado horizontal */
+  padding: 50%; /* Espacio interno */
+  background-color: #343a40; /* Color de fondo oscuro */
+  border-radius: 5px; /* Bordes redondeados */
 }
-  
+
 .form-group {
-    margin-bottom: 20px; /* Espacio entre los campos del formulario */
-}
-  
-.form-horizontal {
-    display: flex; /* Cambiar el diseño a horizontal */
-    flex-direction: column; /* Apilar elementos verticalmente */
-}
-  
-.form-horizontal .form-group {
-    flex: 1; /* Todos los elementos del formulario se expanden para llenar el espacio */
-}
-  
-  .text-white {
-    color: #fff; /* Color de texto blanco */
-}
-.entry {
-    display: grid;
-    grid-template-areas: "vote image title" "vote image shortDesc" "vote image meta" "vote image footer" "body body body";
-    grid-template-columns: min-content min-content 1fr;
-    grid-template-rows: 1fr min-content;
-    padding: 0;
-    position: relative;
-    z-index: 2
+  margin-bottom: 20px; /* Espacio entre grupos de campos */
 }
 
+.text-white {
+  color: #fff; /* Color del texto */
+}
 
-.post-header {
-    display: flex;
-    align-items: center;
-  }
-  
-  .vote-buttons {
-    display: flex;
-    flex-direction: column;
-    margin-right: 10px;
-  }
-  
-  .post-vote-button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #f1f1f1;
-    cursor: pointer;
-    margin-bottom: 5px;
-  }
-  
-  .post-vote-button:hover {
-    background-color: #e0e0e0;
-  }
-  
-  .post-vote-button:active {
-    background-color: #d0d0d0;
-  }
-  
-  .post-vote-button.upvote-button {
-    color: green;
-  }
-  
-  .post-vote-button.downvote-button {
-    color: red;
-  }
+.form-control {
+  width: 100%; /* Ancho completo */
+  padding: 10px; /* Espacio interno */
+  border: 1px solid #ccc; /* Borde */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+.btn {
+  padding: 10px 20px; /* Espacio interno */
+  background-color: #007bff; /* Color de fondo */
+  color: #fff; /* Color del texto */
+  border: none; /* Borde */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cambia el cursor al pasar el mouse */
+}
+
+.btn:hover {
+  background-color: #0056b3; /* Cambia el color de fondo al pasar el mouse */
+}

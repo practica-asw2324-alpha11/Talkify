@@ -3,9 +3,22 @@
     <div>
       <!-- Botones de votación -->
       <span class="vote-buttons">
-        <%= button_to 'Upvote'%>
-        <%= button_to 'Downvote' %>
+        <%= button_to 'upvote', {class: 'vote', style: "margin-bottom: 1em;"} do %>
+          <span> 0 &nbsp;</span>
+          <i class="fas fa-arrow-up"></i>
+        <% end %>
+        <%= button_to 'downvote', {class: 'vote'} do %>
+          <span> 0 &nbsp;</span>
+          <i class="fas fa-arrow-down"></i>
+        <% end %>
       </span>
+    </div>
+
+    <!-- Imagen -->
+    <div class="no-image">
+      <%= link_to post_path(post) do %>
+        <i class="fas fa-comment-alt"></i>
+      <% end %>
     </div>
 
     <!-- Contenido del post -->

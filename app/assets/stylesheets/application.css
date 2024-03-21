@@ -106,3 +106,168 @@ h2 {
   #create-post-button:hover {
     background-color: #0056b3;
   }
+
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar {
+    background-color: #343a40; /* Cambia el color de fondo de la barra de navegación */
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: left;
+    padding: 10px 20px;
+  }
+  
+  .navbar a {
+    color: #fff; /* Cambia el color del texto de los enlaces */
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .navbar a:hover {
+    background-color: #555; /* Cambia el color de fondo de los enlaces al pasar el mouse sobre ellos */
+  }
+
+  .head-nav__menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .head-nav__menu li {
+    margin-right: 10px;
+  }
+
+  .head-nav__menu li:last-child {
+    margin-right: 0;
+  }
+
+  .navbar-icons {
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-icons a {
+    color: #fff;
+    margin-right: 10px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .vote{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1c1c1c;
+    border: 0;
+    color: #b6b6b6;
+    cursor: pointer;
+    font-weight: 700;
+    height: 1.9rem;
+    margin: 0;
+    padding: 0;
+    width: 4rem;
+    }
+
+    .no-image {
+        grid-area: image;
+        justify-self: right;
+        margin: 10px 0 10px 10px;
+        overflow: hidden;
+        position: relative;
+        background: #1c1c1c;
+        font-size: 2.5rem;
+        width: 200px; /* Establece el ancho */
+        height: 110px; /* Establece la altura */
+        margin-right: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #b6b6b6;
+    }
+
+    .sub-navbar {
+        background-color: #222; /* Cambia el color de fondo de la sub-barra */
+        padding: 5px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 90%; /* Establece un ancho máximo */
+        margin: 0 auto; /* Centra horizontalmente */
+        border-radius: 5px; /* Agrega bordes redondeados */
+      }
+    
+      .sub-navbar a {
+        color: #fff; /* Cambia el color del texto de los enlaces */
+        text-decoration: none;
+        padding: 8px 12px;
+        transition: background-color 0.3s ease;
+      }
+    
+      .sub-navbar a:hover {
+        background-color: #444; /* Cambia el color de fondo de los enlaces al pasar el mouse sobre ellos */
+      }
+
+      .post-form {
+        width: 50%; /* Ancho del formulario */
+        margin: 0 auto; /* Centrado horizontal */
+        padding: 20px; /* Espacio interno */
+        background-color: #3d3c3d; /* Color de fondo oscuro */
+        border-radius: 5px; /* Bordes redondeados */
+      }
+
+      .form-label{
+        color: #cacece;
+      }
+      
+      .form-group {
+        margin-bottom: 20px; /* Espacio entre grupos de campos */
+      }
+      
+      .text-white {
+        color: #fff; /* Color del texto */
+      }
+      
+      .form-control {
+        width: 100%; /* Ancho completo */
+        padding: 10px; /* Espacio interno */
+        border: 1px solid #ccc; /* Borde */
+        border-radius: 5px; /* Bordes redondeados */
+        background-color: #1c1c1c;
+        border: 1px solid #373737;
+        color: #cacece;
+        font-size: .9rem;
+      }
+      
+      .btn {
+        padding: 10px 20px; /* Espacio interno */
+        background-color: #007bff; /* Color de fondo */
+        color: #fff; /* Color del texto */
+        border: none; /* Borde */
+        border-radius: 5px; /* Bordes redondeados */
+        cursor: pointer; /* Cambia el cursor al pasar el mouse */
+      }
+      
+      .btn:hover {
+        background-color: #0056b3; /* Cambia el color de fondo al pasar el mouse */
+      }
+
+      .btn-rectangular {
+        border-radius: 0; /* Sin esquinas redondeadas */
+        background-color: #2c2c2c; /* Color de fondo gris */
+        border: 1px solid #4a4a4a;
+        color: #fff; /* Color del texto blanco */
+        font-weight: 700; /* Texto en negrita */
+        padding: 10px 20px; /* Espaciado interno */
+      }
+      
+      .btn-rectangular:hover {
+        background-color: #666; /* Color de fondo gris oscuro al pasar el mouse */
+      }
