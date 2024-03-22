@@ -1,9 +1,11 @@
 <div class="container">
-  <h1><%= @post.title %></h1>
-  <p><strong>URL:</strong> <%= @post.url %></p>
+  
+  <h1>
+    <a href="<%= @post.url %>"> <%=@post.title%></a>
+  </h1>
   <p><strong>Cuerpo:</strong></p>
   <p><%= @post.body %></p>
 
-  <%= link_to 'Editar', edit_post_path(@post), class: 'btn btn-primary' %>
-  <%= link_to 'Eliminar', post_path(@post), method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger' %>
+  <%= link_to 'Editar', edit_post_path(@post), class: 'btn btn-primary btn-rectangular' %>
+  <%= link_to 'Eliminar', post_path(@post), method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger btn-rectangular' %>
 </div>
