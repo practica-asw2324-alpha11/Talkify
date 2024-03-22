@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     put 'like', on: :member
   end
 
-  root 'tweets#index'
+  root 'posts#index'
 
 
 end
