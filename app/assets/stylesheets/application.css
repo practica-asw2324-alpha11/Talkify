@@ -131,9 +131,9 @@ h2 {
     transition: background-color 0.3s ease;
   }
   
-  .navbar a:hover {
-    background-color: #555; /* Cambia el color de fondo de los enlaces al pasar el mouse sobre ellos */
-  }
+  /* .navbar a:hover {
+    /* background-color: #555; Cambia el color de fondo de los enlaces al pasar el mouse sobre ellos */
+  /* } */ 
 
   .head-nav__menu {
     list-style-type: none;
@@ -151,16 +151,55 @@ h2 {
     margin-right: 0;
   }
 
+  .head-nav__menu li a {
+    text-decoration: none;
+    color: #fff;
+    position: relative; /* Para posicionar la barra */
+  }
+  
+  .head-nav__menu li a::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 2px;
+    background-color: #fff; /* Color de la barra */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transition: width 0.3s ease; /* Transición suave */
+  }
+  
+  .head-nav__menu li a:hover::after {
+    width: 100%; /* Ancho de la barra al pasar el ratón */
+  }
+
   .navbar-icons {
     display: flex;
     align-items: center;
   }
 
-  .navbar-icons a {
+  .navbar-icons a, .navbar-icons button {
     color: #fff;
     margin-right: 10px;
     cursor: pointer;
     text-decoration: none;
+    position: relative;
+  }
+
+  .navbar-icons a::after, .navbar-icons button::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 2px;
+    background-color: #fff; /* Color de la barra */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transition: width 0.3s ease; /* Transición suave */
+  }
+  
+  .navbar-icons a:hover::after, .navbar-icons button:hover::after {
+    width: 100%; /* Ancho de la barra al pasar el ratón */
   }
 
   .vote{
@@ -213,8 +252,26 @@ h2 {
         transition: background-color 0.3s ease;
       }
     
-      .sub-navbar a:hover {
-        background-color: #444; /* Cambia el color de fondo de los enlaces al pasar el mouse sobre ellos */
+      .sub-navbar a, .sub-navbar .dropdown-btn {
+        text-decoration: none;
+        color: #fff;
+        position: relative; /* Para posicionar la barra */
+      }
+      
+      .sub-navbar a::after, .sub-navbar .dropdown-btn::after {
+        content: "";
+        display: block;
+        width: 0;
+        height: 2px;
+        background-color: #fff; /* Color de la barra */
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        transition: width 0.3s ease; /* Transición suave */
+      }
+      
+      .sub-navbar a:hover::after, .sub-navbar .dropdown-btn:hover::after {
+        width: 100%; /* Ancho de la barra al pasar el ratón */
       }
 
       .post-form {
@@ -273,3 +330,43 @@ h2 {
       .btn-rectangular:hover {
         background-color: #666; /* Color de fondo gris oscuro al pasar el mouse */
       }
+
+      /* Estilo del botón del menú desplegable */
+.dropdown-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* Estilo del contenido del menú desplegable */
+.dropdown-content, .dropdown-content.user {
+  display: none;
+  position: absolute;
+  background-color: #2c2c2c;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Estilo de los enlaces dentro del menú desplegable */
+.dropdown-content a {
+  color: #d9dde5;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Cambia el color del enlace cuando se pasa el ratón sobre él */
+.dropdown-content a:hover {
+  background-color: #1c1c1c;
+}
+
+/* Mostrar el menú desplegable cuando se hace hover sobre el botón */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Mostrar el menú desplegable cuando se hace foco en el botón */
+.dropdown:focus-within .dropdown-content {
+  display: block;
+}

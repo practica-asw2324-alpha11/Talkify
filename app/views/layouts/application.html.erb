@@ -15,39 +15,55 @@
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div>
           <a href="/posts">
-            <%= image_tag("Talkify_logo-transformed.png", alt: "Talkify", width: "150") %>
+            <%= image_tag("Talkify_logo-transformed.png", alt: "Talkify", width: "100") %>
           </a>
         </div>
         <menu class="head-nav__menu">
-          <li><a href="/">Hilos</a></li>
-          <li><a href="/microblog">Microblog</a></li>
-          <li><a href="/*">All Content</a></li>
-          <li><a href="/*">Gente</a></li>
-          <li><a href="/*">Revistas</a></li>
-          <li><a href="/*">Collections</a></li>
+          <li><a href="/">Threads</a></li>
+          <li><a href="/*">Magazines</a></li>
         </menu>
         <div class="navbar-icons">
           <a href="#"><i class="fas fa-search"></i></a>
-          <%=link_to new_post_path do %>
-            <i class="fas fa-plus"></i>
-          <% end %>
+          <div class="dropdown">
+            <a href="#" class="dropdown-btn"><i class="fas fa-plus" style="font-size: 18px; margin-left: -0.5rem; color: #fff;"></i></a>
+              <div class="dropdown-content" style="top: 4.42rem; right: 5rem;">
+                <a href="#">Add new link</a>
+                <a href="#">Add new thread</a>
+                <a href="#">Create new magazine</a>
+              </div>
+          </div>
           <a href="#"><i class="fas fa-bars"></i></a>
-          <a href="#"><i class="fas fa-user"></i></a>
+          <div class="dropdown">
+            <a href="#" class="dropdown-btn"><i class="fas fa-user" style="font-size: 18px; margin-left: -0.5rem; color: #fff;"></i></a>
+              <div class="dropdown-content" style="top: 4.42rem; right: 0.5rem;">
+                <% if false %>
+                  <a href="#">Profile</a>
+                  <a href="#">Logout</a>
+                <% else %>
+                  <a href="#">Login</a>
+                <% end %>
+              </div>
+          </div>
         </div>
       </nav>
 
       <div class="sub-navbar">
         <div>
-          <a href="#">Destacado</a>
-          <a href="#">Popular</a>
-          <a href="#">Más Reciente</a>
-          <a href="#">Activo</a>
-          <a href="#">Comentado</a>
+          <a href="#">Top</a>
+          <a href="#">Newest</a>
+          <a href="#">Commented</a>
         </div>
         <div class="navbar-icons">
           <a href="#"><i class="fas fa-eye"></i></a>
           <a href="#"><i class="fas fa-clock"></i></a>
-          <a href="#"><i class="fas fa-filter"></i></a>
+          <div class="dropdown">
+            <a href="#" class="dropdown-btn"><i class="fas fa-filter" style="color: #fff;"></i></a>
+              <div class="dropdown-content" style="top: 7.42rem; right: 5rem;">
+                <a href="#">All</a>
+                <a href="#">Links</a>
+                <a href="#">Threads</a>
+              </div>
+          </div>
         </div>
         </div>
     </div>

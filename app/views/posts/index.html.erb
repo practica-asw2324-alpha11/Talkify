@@ -14,9 +14,7 @@
   <br>
 
   <div id="tweets">
-    <% @actual_day = "" %>
     <% @posts.each do |post| %>
-      <% @post_day = post.created_at.strftime("%A, %B %d, %Y") %>
       <% if @actual_day != @post_day %>
         <h3 style="font-weight: normal;">
           ......
