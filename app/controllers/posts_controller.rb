@@ -26,7 +26,8 @@ class PostsController < ApplicationController
     end
 
     # GET /posts/1/edit
-    def edit
+    def show
+      @post = Post.find(params[:id])
     end
 
     # POST /posts or /posts.json
