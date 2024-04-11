@@ -370,3 +370,61 @@ h2 {
 .dropdown:focus-within .dropdown-content {
   display: block;
 }
+
+
+
+/* COMENTARIOS */
+
+.comment {
+  font-size: .9rem;
+  margin-bottom: 10px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.buttons {
+  display: flex;
+}
+
+.buttons button {
+  margin-right: 5px;
+}
+
+.actions {
+  margin-top: 10px;
+}
+
+.actions a {
+  margin-right: 10px;
+  color: #d9dde5;
+  margin-bottom: 10px;
+}
+
+a{
+  text-decoration: none;
+}
+
+.comment .top{
+  font-size: 0.8rem;
+  opacity: .75;
+}
+
+.comment .body{
+  margin-top: -10px;
+}
+
+.popover-content {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.popover-toggle:checked + .more + .popover-content {
+  display: block;
+}

@@ -1,4 +1,39 @@
-<div id="<%= dom_id comment %>">
-    <p><strong><%= comment.user.name %><strong><p>
-    <p><strong><%= comment.body %></strong></p>
+<div class="comment" id="<%= dom_id comment %>">
+    
+    <div class="top">
+    <p>
+        <strong>
+            <a style="color:#cecece;" href="<%= user_path(comment.user) %>">
+                <%= comment.user.name %>
+            </a>
+        </strong>, <%= comment.created_at.strftime('%B %d, %Y %H:%M') %>
+    </p>
+
+    <div class="buttons">
+        <%= link_to upvote_post_comment_path(@post, comment), method: :post, class: "vote", style: "margin-bottom: 1em;" do %>
+            <span> 0 &nbsp;</span>
+            <i class="fas fa-arrow-up"></i>
+        <% end %>
+
+        <%= link_to downvote_post_comment_path(@post, comment), method: :post, class: "vote" do %>
+            <span> 0 &nbsp;</span>
+            <i class="fas fa-arrow-down"></i>
+        <% end %>
+    </div>
+  </div>
+  <div class="body">
+    <p><%= comment.body %></p>
+  </div>
+  <div class="actions" style="display: flex;">
+    <a href="#" class="reply">reply</a>
+    <a href="#" class="boost">boost</a>
+    <div class="dropdown" style="position: relative;">
+        <a href="#" class="dropdown-btn">more</a>
+        <div class="dropdown-content" style="position: absolute; top: 1em; right: 1em;">
+            <a href="<%= edit_post_comment_path(@post, comment) %>">edit</a><br>
+            <%= button_to "delete", post_comment_path(@post, comment), method: :delete %>
+        </div>
+    </div>
+  </div>
+
 </div>

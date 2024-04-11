@@ -1,8 +1,30 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, only: [:edit, :update, :destroy]
+  before_action :set_comment, :set_post, only: [:edit, :update, :destroy]
 
   def edit
-    # Acción para mostrar el formulario de edición de comentario
+    
+  end
+
+  def upvote
+
+    @comment.upvote +=1
+    @comment.save
+
+    respond_to do |format|
+      format.html { redirect_to post_path(@post)}
+      format.json { head :no_content }
+    end
+  end
+
+  def downvote
+
+    @comment.downvote +=1
+    @comment.save
+
+    respond_to do |format|
+      format.html { redirect_to post_path(@post)}
+      format.json { head :no_content }
+    end
   end
 
   def update
@@ -30,9 +52,8 @@ class CommentsController < ApplicationController
   end
 
   def destroy
-    @post = @comment.post
     @comment.destroy
-    redirect_to @post, notice: 'Comentario eliminado correctamente.'
+    redirect_to post_path(@post), notice: 'Comentario eliminado correctamente.'
   end
 
   private
@@ -40,6 +61,11 @@ class CommentsController < ApplicationController
   def set_comment
     @comment = Comment.find(params[:id])
   end
+
+  def set_post
+    @post = Post.find(params[:post_id])
+  end
+
 
   def comment_params
     params.require(:comment).permit(:body)
