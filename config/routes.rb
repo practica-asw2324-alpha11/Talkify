@@ -1,9 +1,6 @@
 Rails.application.routes.draw do
-  resources :posts
-  resources :tweets do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-    put 'like', on: :member
+  resources :posts do
+    resources :comments
   end
 
   root 'posts#index'

@@ -31,3 +31,29 @@
   </div>
 </div>
 
+<%
+=begin%>
+ <% if flash[:notice] %>
+  <div class="notice"><%= flash[:notice] %></div>
+<% end %> 
+<%
+=end%>
+
+
+<div class="wotitem" name="new-comment">
+
+  <%= render "comments/form", post: @post, comment: @comment %>
+
+</div>
+
+<h2>Comments</h2>
+<div name="show-comments">
+  <% @post.comments.each do |comment| %>
+    <% if comment.id %>
+      <div>
+        <%= render "comments/comment", comment: comment %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
