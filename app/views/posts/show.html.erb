@@ -17,7 +17,7 @@
   
 
     <!-- Contenido del post -->
-    <div class="post-content">
+    <div style="margin-left:10px;" class="post-content">
         <h2>Titulo:  <%= @post.title %></h2>
       <p><strong>URL:</strong> <%= @post.url %></p>
       <p><strong>Contenido:</strong> <%= @post.body %></p>
@@ -25,7 +25,8 @@
 
     <!-- Enlaces para editar y eliminar el post -->
     <div class="post-actions">
-    <%= link_to 'Editar', edit_post_path(@post), class: 'btn btn-primary btn-rectangular' %>
+    <%= link_to 'Editar', edit_post_path(@post), class: 'btn btn-primary btn-rectangular'%>
+    <hr style="opacity: 0%;">
     <%= button_to 'Eliminar', @post, method: :delete, class: 'btn btn-danger btn-rectangular' %>
     </div>
   </div>
