@@ -32,6 +32,14 @@
   </div>
 </div>
 
+<div class="sub-navbar wotitem">
+  <div>
+    <%= link_to "Top", sort_comments_post_path(@post, sort_by: "top") %>
+    <%= link_to "Newest", sort_comments_post_path(@post, sort_by: "newest") %>
+    <%= link_to "Oldest", sort_comments_post_path(@post, sort_by: "oldest") %>
+  </div>
+</div>
+
 
 <div class="wotitem" name="new-comment">
 
@@ -40,7 +48,7 @@
 </div>
 
 <div name="show-comments" class="wotitem">
-  <% @post.comments.each do |comment| %>
+  <% @comments.each do |comment| %>
     <% if comment.id %>
       <div>
         <%= render "comments/comment", comment: comment %>

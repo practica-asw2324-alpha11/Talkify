@@ -1,8 +1,16 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, :set_post, only: [:edit, :update, :destroy]
+  before_action :set_comment, except: [:sort, :new, :create]
+  before_action :set_post, only: [:sort, :edit, :update, :destroy]
 
   def edit
     
+  end
+
+  def sort
+    @post = Post.find(params[:id])
+    @comments = @post.comments.order_by(params[:sort_by])
+    @comment = @post.comments.build
+    render 'posts/show'
   end
 
   def upvote
@@ -63,7 +71,7 @@ class CommentsController < ApplicationController
   end
 
   def set_post
-    @post = Post.find(params[:post_id])
+    @post = Post.find(params[:id])
   end
 
 
