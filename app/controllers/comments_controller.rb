@@ -1,9 +1,9 @@
 class CommentsController < ApplicationController
   before_action :set_comment, except: [:sort, :new, :create]
-  before_action :set_post, only: [:sort, :edit, :update, :destroy]
+  before_action :set_post, only: [:sort, :edit, :destroy]
 
   def edit
-    
+    @comment = Comment.find(params[:id])
   end
 
   def sort
@@ -36,8 +36,11 @@ class CommentsController < ApplicationController
   end
 
   def update
+    @post = Post.find(params[:post_id])
+    @comment = Comment.find(params[:id])
+
     if @comment.update(comment_params)
-      redirect_to @comment.post, notice: 'Comentario actualizado correctamente.'
+      redirect_to post_path(@post), notice: "Comentario actualizado correctamente."
     else
       render :edit
     end

@@ -438,3 +438,7 @@ a{
   text-decoration: none;
   cursor: pointer;
 }
+
+.edit-comment-area {
+  display: block;
+}

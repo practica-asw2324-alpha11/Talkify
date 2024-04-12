@@ -32,8 +32,8 @@
         <a href="#" class="reply">reply</a>
         <div class="dropdown" style="position: relative;">
             <a href="#" class="dropdown-btn">more</a>
-            <div class="dropdown-content" style="position: absolute; top: 1em; right: 1em;">
-                <a href="#" class="edit-comment-link">edit</a>
+            <div class="dropdown-content" style="position: absolute; top: 1em; right: -1.2em; margin-top: 10px;">
+                <a href="#" class="edit-comment-link" data-comment-id="<%= comment.id %>">edit</a>
                 <a style="margin-top:-20px;">
                     <%= button_to "delete", post_comment_path(@post, comment), method: :delete, class:"delete-button" %>
                 </a>
@@ -41,8 +41,8 @@
         </div>
     </div>
 
-    <div class="edit-comment-area" style="display: none;">
-        <%= render "comments/form", post: @comment.post, comment: comment %>
+    <div class="edit-comment-area">
+        <%= render "comments/edit_form", comment: comment %>
     </div>
 
 </div>
@@ -82,28 +82,36 @@ document.querySelectorAll(".comment-timestamp").forEach(function(element) {
 element.textContent = timeDifference(element.getAttribute('data-timestamp'));
 });
 
- document.addEventListener('DOMContentLoaded', function() {
-    var editLinks = document.querySelectorAll('.edit-comment-link');
-    editLinks.forEach(function(link) {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
+// document.addEventListener('DOMContentLoaded', function() {
+//   var editLinks = document.querySelectorAll('.edit-comment-link');
 
-        // Buscar el elemento del comentario
-        var comment = this.closest('.comment');
-        if (!comment) return; // Verificar si se encontró el comentario
+//     document.querySelector('.edit-comment.link').style.display = 
+    
+//   editLinks.forEach(function(link) {
+    
+//     link.addEventListener('click', function(e) {
+//       e.preventDefault();
+      
+//       // Obtener el ID del comentario
+//       var commentId = this.getAttribute('data-comment-id');
 
-        
-        // Mostrar el área de texto para la edición
-        var editArea = comment.querySelector('.edit-comment-area');
-        if (editArea) {
-          if (editArea.style.display === 'block') {
-            editArea.style.display = 'none';
-          } else {
-            editArea.style.display = 'block';
-          }
-        }
+//       // Buscar el área de edición correspondiente al comentario
+//       var editArea = this.closest('.comment').querySelector('.edit-comment-area');
+      
+//       // Verificar si el área de edición existe antes de acceder a su propiedad style
+//       if (editArea) {
+//         // Mostrar u ocultar el área de edición
+//         if (editArea.style.display === 'none') {
+//           editArea.style.display = 'block';
+//         } else {
+//           editArea.style.display = 'none';
+//         }
+//       } else {
+//         console.error('No se encontró el área de edición correspondiente al comentario con ID ' + commentId);
+//       }
+//     });
+//   });
+// });
 
-      });
-    });
-  });
+
 </script>
