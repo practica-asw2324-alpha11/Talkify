@@ -10,13 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_19_183420) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_12_101347) do
+  create_table "magazines", force: :cascade do |t|
+    t.string "name"
+    t.string "title"
+    t.string "description"
+    t.string "rules"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.string "url"
     t.string "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "magazine_id", null: false
+    t.index ["magazine_id"], name: "index_posts_on_magazine_id"
   end
 
   create_table "tweets", force: :cascade do |t|
@@ -38,4 +49,5 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_19_183420) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "posts", "magazines"
 end

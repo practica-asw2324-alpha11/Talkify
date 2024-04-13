@@ -1,0 +1,41 @@
+<body class="wotbody">
+
+  <% if notice %>
+  <br>
+  <div class="wotitem" id="notice">
+    <% if notice[0] == 'T' %>
+      <span style="color: green;"><%= notice %></span>
+    <% else %>
+      <span style="color: red;"><%= notice %></span>
+    <% end %>
+  </div>
+  <% end %>
+  <br>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th># Posts</th>
+        <th># Comentarios</th>
+        <th># Suscriptores</th>
+        <th>Suscríbete/Desuscríbete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @magazines.each do |magazine| %>
+        <tr>
+          <td><%= link_to magazine.name, magazine %></td>
+          <td><%= magazine.posts.count %></td>
+          <td>Not yet implemented</td>
+          <td>Not yet implemented</td>
+          <td>Not yet implemented</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+</body>
+<hr>
+<footer>
+</footer>
