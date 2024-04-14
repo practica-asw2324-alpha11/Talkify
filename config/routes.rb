@@ -4,9 +4,15 @@ Rails.application.routes.draw do
       get 'sort_comments', to: "comments#sort"
     end
     resources :comments do 
-      post 'upvote', on: :member
-      post 'downvote', on: :member
+      member do
+        post 'upvote'
+        post 'downvote'
+      end
+
+      # post 'upvote', on: :member
+      # post 'downvote', on: :member
       get 'edit', on: :member
+      #post 'create_reply', on: :member
     end
   end
 

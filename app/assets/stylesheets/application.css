@@ -440,5 +440,9 @@ a{
 }
 
 .edit-comment-area {
-  display: block;
+  display: none;
+}
+
+.comment-reply{
+  padding-left: 20px;
 }

@@ -1,11 +1,9 @@
 <div class="comment" id="<%= dom_id comment %>">
-    
     <div class="top">
         <p>
-            <strong>
-                <a style="color:#cecece;" href="<%= user_path(comment.user) %>">
-                    <%= comment.user.name %>
-                </a>
+            <a style="color:#cecece;" href="<%= user_path(comment.user) %>">
+                <%= comment.user.name %>
+            </a>
             </strong>,
             <span class="comment-timestamp" data-timestamp="<%= comment.created_at %>">
             </span>
@@ -29,11 +27,11 @@
     </div>
 
     <div class="actions" style="display: flex;">
-        <a href="#" class="reply">reply</a>
+        <%= link_to 'reply', '#', class:'reply-link', data: {comment_id: comment.id}%>
         <div class="dropdown" style="position: relative;">
             <a href="#" class="dropdown-btn">more</a>
             <div class="dropdown-content" style="position: absolute; top: 1em; right: -1.2em; margin-top: 10px;">
-                <a href="#" class="edit-comment-link" data-comment-id="<%= comment.id %>">edit</a>
+                <%= link_to 'edit', '#', class:'edit-comment-link', data: {comment_id: comment.id}%>
                 <a style="margin-top:-20px;">
                     <%= button_to "delete", post_comment_path(@post, comment), method: :delete, class:"delete-button" %>
                 </a>
@@ -41,9 +39,18 @@
         </div>
     </div>
 
-    <div class="edit-comment-area">
+    <div class="reply-comment-area" id="reply-comment-area-<%= comment.id %>" style="display: none;">
+        <%= render "comments/form", comment: comment, parent_comment: comment %>
+    </div>
+
+    <div class="edit-comment-area" id="edit-comment-area-<%= comment.id %>">
         <%= render "comments/edit_form", comment: comment %>
     </div>
+
+    <div class="comment-reply" id="replies-<%= comment.id %>">
+        <%= render comment.replies.order_by(@sort || 'newest') %>
+    </div>
+    <hr>
 
 </div>
 
@@ -82,36 +89,40 @@ document.querySelectorAll(".comment-timestamp").forEach(function(element) {
 element.textContent = timeDifference(element.getAttribute('data-timestamp'));
 });
 
-// document.addEventListener('DOMContentLoaded', function() {
-//   var editLinks = document.querySelectorAll('.edit-comment-link');
+document.addEventListener('DOMContentLoaded', function() {
+  var editLinks = document.querySelectorAll('.edit-comment-link');
 
-//     document.querySelector('.edit-comment.link').style.display = 
+  editLinks.forEach(function(link) {
     
-//   editLinks.forEach(function(link) {
-    
-//     link.addEventListener('click', function(e) {
-//       e.preventDefault();
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
       
-//       // Obtener el ID del comentario
-//       var commentId = this.getAttribute('data-comment-id');
+      // Obtener el ID del comentario
+      var commentId = this.dataset.commentId;
 
-//       // Buscar el área de edición correspondiente al comentario
-//       var editArea = this.closest('.comment').querySelector('.edit-comment-area');
+      var textArea = document.querySelector('#edit-comment-area-'+commentId);
+
+      textArea.style.display = 'block';
+
+    });
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  var replyLinks = document.querySelectorAll('.reply-link');
+
+  replyLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
       
-//       // Verificar si el área de edición existe antes de acceder a su propiedad style
-//       if (editArea) {
-//         // Mostrar u ocultar el área de edición
-//         if (editArea.style.display === 'none') {
-//           editArea.style.display = 'block';
-//         } else {
-//           editArea.style.display = 'none';
-//         }
-//       } else {
-//         console.error('No se encontró el área de edición correspondiente al comentario con ID ' + commentId);
-//       }
-//     });
-//   });
-// });
+      // Obtener el ID del comentario
+      var commentId = this.dataset.commentId;
 
+      var replyArea = document.querySelector('#reply-comment-area-' + commentId);
+
+      replyArea.style.display = 'block';
+    });
+  });
+});
 
 </script>
