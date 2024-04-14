@@ -20,6 +20,7 @@ class PostsController < ApplicationController
     def show
       @post = Post.find(params[:id])
       @comment = @post.comments.build
+      @comments = @post.comments
     end
 
 
@@ -29,7 +30,7 @@ class PostsController < ApplicationController
     end
 
     def edit
-    
+
     end
 
     # POST /posts or /posts.json
