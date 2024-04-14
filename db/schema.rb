@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_19_183420) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_12_111632) do
+  create_table "admins", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "full_name"
+    t.string "uid"
+    t.string "avatar_url"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["email"], name: "index_admins_on_email", unique: true
+  end
+
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.string "url"
@@ -29,13 +39,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_19_183420) do
 
   create_table "users", force: :cascade do |t|
     t.string "name"
-    t.string "email"
-    t.string "password"
-    t.date "joined_date"
-    t.float "reputation_points"
-    t.integer "moderated"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
+    t.string "avatar"
+    t.string "background_image"
   end
 
 end
