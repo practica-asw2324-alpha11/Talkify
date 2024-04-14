@@ -17,7 +17,7 @@
   
 
     <!-- Contenido del post -->
-    <div class="post-content">
+    <div style="margin-left:10px;" class="post-content">
         <h2>Titulo:  <%= @post.title %></h2>
       <p><strong>URL:</strong> <%= @post.url %></p>
       <p><strong>Contenido:</strong> <%= @post.body %></p>
@@ -25,9 +25,36 @@
 
     <!-- Enlaces para editar y eliminar el post -->
     <div class="post-actions">
-    <%= link_to 'Editar', edit_post_path(@post), class: 'btn btn-primary btn-rectangular' %>
+    <%= link_to 'Editar', edit_post_path(@post), class: 'btn btn-primary btn-rectangular'%>
+    <hr style="opacity: 0%;">
     <%= button_to 'Eliminar', @post, method: :delete, class: 'btn btn-danger btn-rectangular' %>
     </div>
   </div>
+</div>
+
+<div class="sub-navbar wotitem">
+  <div>
+    <%= link_to "Top", sort_comments_post_path(@post, sort_by: "top") %>
+    <%= link_to "Newest", sort_comments_post_path(@post, sort_by: "newest") %>
+    <%= link_to "Oldest", sort_comments_post_path(@post, sort_by: "oldest") %>
+  </div>
+</div>
+
+
+<div class="wotitem" name="new-comment">
+
+  <%= render "comments/form", post: @post, comment: @comment %>
+
+</div>
+
+<div name="show-comments" class="wotitem">
+  <% @comments.each do |comment| %>
+    <% if comment.id %>
+      <div>
+        <%= render "comments/comment", comment: comment %>
+      </div>
+      <hr>
+    <% end %>
+  <% end %>
 </div>
 

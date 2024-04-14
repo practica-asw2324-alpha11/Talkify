@@ -10,7 +10,6 @@
   </head>
   <body>
 
-
   <header>
     <div class="top-nav">
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -28,21 +27,29 @@
           <div class="dropdown">
             <a href="#" class="dropdown-btn"><i class="fas fa-plus" style="font-size: 18px; margin-left: -0.5rem; color: #fff;"></i></a>
               <div class="dropdown-content" style="top: 4.42rem; right: 5rem;">
-                <a href="#">Add new link</a>
-                <a href="#">Add new thread</a>
+                <a href="/posts/new_link">Add new link</a>
+                <a href="/posts/new_thread">Add new thread</a>
                 <a href="#">Create new magazine</a>
               </div>
           </div>
           <a href="#"><i class="fas fa-bars"></i></a>
           <div class="dropdown">
-            <%= render 'shared/user_dropdown' %>
+            <a href="#" class="dropdown-btn"><i class="fas fa-user" style="font-size: 18px; margin-left: -0.5rem; color: #fff;"></i></a>
+              <div class="dropdown-content" style="top: 4.42rem; right: 0.5rem;">
+                <% if false %>
+                  <a href="#">Profile</a>
+                  <a href="#">Logout</a>
+                <% else %>
+                  <a href="#">Login</a>
+                <% end %>
+              </div>
           </div>
         </div>
       </nav>
     </div>
   </header>
 
-  <%= yield %>
 
+    <%= yield %>
   </body>
 </html>

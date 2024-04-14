@@ -18,21 +18,25 @@ class PostsController < ApplicationController
 
     # GET /posts/1 or /posts/1.json
     def show
+      @post = Post.find(params[:id])
+      @comment = @post.comments.build
+      @comments = @post.comments
     end
+
 
     # GET /posts/new
     def new
       @post = Post.new
     end
 
-    # GET /posts/1/edit
-    def show
-      @post = Post.find(params[:id])
+    def edit
+
     end
 
     # POST /posts or /posts.json
     def create
       @post = Post.new(post_params)
+      @post.user_id = 1
 
       respond_to do |format|
         if @post.save

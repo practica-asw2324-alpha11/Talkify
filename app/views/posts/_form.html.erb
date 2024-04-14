@@ -30,4 +30,6 @@
   <div class="form-group text-right">
     <%= form.submit "Añadir un nuevo enlace!", class: "btn btn-primary btn-rectangular" %>
   </div>
+
+  <%= form.hidden_field :user_id, value: 1 %>
 <% end %>
