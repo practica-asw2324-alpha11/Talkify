@@ -1,40 +1,60 @@
+<div class="wotitem">
+  <div class="post-header">
+    <!-- Contenido del post -->
+    <div class="post-content" style ="color: white;">
+      <% if @post.link == false %>
+        <h1>Edit Thread</h1>
+      <% else %>
+        <h1>Edit Link</h1>
+      <% end %>
 
-<%= form_with(model: @post, url: post_path(@post), local: true, html: { class: "post-form", method: "patch" }) do |form| %>
+      <%= form_with(model: @post, url: post_path(@post), method: :patch, local: true, html: { class: "post-form" }) do |form| %>
 
-    <% if @post.errors.any? %>
-       <div id="error_explanation">
-         <h2><%= pluralize(@post.errors.count, "error") %> han ocurrido al crear el post:</h2>
-         <ul>
-         <% @post.errors.full_messages.each do |message| %>
-           <li><%= message %></li>
-         <% end %>
-         </ul>
-       </div>
-     <% end %>
-    
-      <div class="form-group">
-        <%= form.label :title, "Título:", class:"form-label" %>
-        <%= form.text_field :title, class: "form-control" %>
-      </div>
-    
-      <div class="form-group">
-        <%= form.label :url, "URL:", class:"form-label" %>
-        <%= form.text_field :url, class: "form-control" %>
-      </div>
-    
-      <div class="form-group">
-        <%= form.label :body, "Cuerpo:" , class:"form-label" %>
-        <%= form.text_area :body, rows: 2, class: "form-control" %>
-      </div>
+      <% if @post.errors.any? %>
+         <div id="error_explanation">
+           <h2><%= pluralize(@post.errors.count, "error") %> han ocurrido al editar el post:</h2>
+           <ul>
+           <% @post.errors.full_messages.each do |message| %>
+             <li><%= message %></li>
+           <% end %>
+           </ul>
+         </div>
+       <% end %>
 
+        <div class="form-group">
+          <%= form.label :title, "Title:", class:"form-label" %>
+          <%= form.text_field :title, class: "form-control" %>
+        </div>
 
-      <div class="form-group">
-      <%= form.label :category, "Categoría:", class:"form-label" %>
-      <%= form.select :category, ['photography', 'Disneyland', 'animals', 'news', 'art', 'fediverse', 'music', 'tech', 'climate', 'ai', 'linux', 'NFL', 'Israel', 'mastodon', 'books', 'gaming', 'UFO', 'aitools', 'porn', 'Palestine', 'gamedev', 'apple', 'DonaldTrump', 'internet', 'nature', 'history', 'Cats', 'science', 'retrogaming', 'food', 'Russia', 'twitter', 'opensource', 'Japan', 'space', 'Florida', 'politics', 'Cosmology', 'movies', 'tisseksplayspace', 'python', 'Canada', 'aliens', 'google', 'Cat', 'writing'], {}, class: "form-control" %>
+        <% if @post.link %>
+          <div class="form-group">
+            <%= form.label :url, "URL:", class:"form-label" %>
+            <%= form.text_field :url, class: "form-control" %>
+          </div>
+        <% end %>
+
+        <div class="form-group">
+          <%= form.label :body, "Body:" , class:"form-label" %>
+          <%= form.text_area :body, rows: 2, class: "form-control" %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :category, "Community:", class:"form-label" %>
+          <%= form.select :category, ['photography', 'Disneyland', 'animals', 'news', 'art', 'fediverse', 'music', 'tech', 'climate', 'ai', 'linux', 'NFL', 'Israel', 'mastodon', 'books', 'gaming', 'UFO', 'aitools', 'porn', 'Palestine', 'gamedev', 'apple', 'DonaldTrump', 'internet', 'nature', 'history', 'Cats', 'science', 'retrogaming', 'food', 'Russia', 'twitter', 'opensource', 'Japan', 'space', 'Florida', 'politics', 'Cosmology', 'movies', 'tisseksplayspace', 'python', 'Canada', 'aliens', 'google', 'Cat', 'writing'], {}, class: "form-control" %>
+        </div>
+
+        <div class="form-group text-right">
+          <%= form.submit "Edit", class: "btn btn-primary btn-rectangular" %>
+        </div>
+
+        <%= form.hidden_field :user_id, value: 1 %>
+      <% end %>
+
+      <div class="post-actions" style="text-align: center;">
+        <%= link_to post_path(@post), class: 'btn btn-primary btn-rectangular' do %>
+          Back
+        <% end %>
       </div>
-  
-    
-      <div class="form-group text-right">
-        <%= form.submit "Edit", class: "btn btn-primary btn-rectangular" %>
-      </div>
-    <% end %>
+    </div>
+  </div>
+</div>

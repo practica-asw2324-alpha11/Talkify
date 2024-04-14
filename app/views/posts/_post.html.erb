@@ -28,4 +28,9 @@
       <p><strong>Contenido:</strong> <%= post.body %></p>
     </div>
   </div>
+<!-- Mostrar el número de comentarios como un enlace al post -->
+<div class="comments-count" style="color: white; margin-left: 80px">
+  <%= link_to pluralize(post.comments_count, 'comment'), post_path(post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
+</div>
+
 </div>

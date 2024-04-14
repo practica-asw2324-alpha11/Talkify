@@ -3,10 +3,14 @@ Rails.application.routes.draw do
     member do
       get 'sort_comments', to: "comments#sort"
     end
-    resources :comments do 
+    resources :comments do
       post 'upvote', on: :member
       post 'downvote', on: :member
       get 'edit', on: :member
+    end
+    collection do
+    get 'new_link'
+    get 'new_thread'
     end
   end
 

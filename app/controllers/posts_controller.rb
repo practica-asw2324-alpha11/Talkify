@@ -24,11 +24,17 @@ class PostsController < ApplicationController
     end
 
 
-    # GET /posts/new
-    def new
-      @post = Post.new
+  def new
+    @post = Post.new(link: params[:link] == 'true')
+  end
+
+    def new_link
+      @post = Post.new(link: true)
     end
 
+    def new_thread
+      @post = Post.new(link: false)
+    end
     def edit
 
     end
@@ -56,8 +62,10 @@ class PostsController < ApplicationController
           format.html { redirect_to post_url(@post), notice: "Post was successfully updated." }
           format.json { render :show, status: :ok, location: @post }
         else
+          flash.now[:alert] = 'URL cannot be blank for a link post.' if @post.errors[:url].include?("can't be blank")
           format.html { render :edit, status: :unprocessable_entity }
           format.json { render json: @post.errors, status: :unprocessable_entity }
+
         end
       end
     end
@@ -79,6 +87,6 @@ class PostsController < ApplicationController
 
       # Only allow a list of trusted parameters through.
       def post_params
-        params.require(:post).permit(:title, :url, :body)
+        params.require(:post).permit(:title, :url, :body, :link)
       end
   end
