@@ -10,15 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_14_174046) do
+
+ActiveRecord::Schema[7.0].define(version: 2024_04_12_111632) do
+  create_table "admins", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "full_name"
+    t.string "uid"
+    t.string "avatar_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_admins_on_email", unique: true
+  end
+
   create_table "comments", force: :cascade do |t|
+    t.text "content"
+    t.integer "user_id", null: false
+    t.integer "post_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.text "body"
     t.integer "upvote", default: 0
     t.integer "downvote", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "post_id", null: false
-    t.integer "user_id", null: false
     t.index ["post_id"], name: "index_comments_on_post_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
@@ -26,7 +38,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_14_174046) do
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.string "url"
-    t.string "body"
+    t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
@@ -42,17 +54,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_14_174046) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "likes", default: 0
+    t.index ["author"], name: "index_tweets_on_author"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "password"
-    t.date "joined_date"
-    t.float "reputation_points"
-    t.integer "moderated"
+    t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
+    t.string "avatar"
+    t.string "background_image"
   end
 
   create_table "votes", force: :cascade do |t|
