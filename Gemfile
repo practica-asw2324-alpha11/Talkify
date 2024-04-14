@@ -15,6 +15,7 @@ gem "bootsnap",        "1.12.0", require: false
 gem 'devise'
 gem 'omniauth'
 gem 'omniauth-google-oauth2'
+gem 'omniauth-rails_csrf_protection'
 
 group :development, :test do
   gem "sqlite3", "1.4.2"
