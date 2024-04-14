@@ -34,16 +34,8 @@
           </div>
           <a href="#"><i class="fas fa-bars"></i></a>
           <div class="dropdown">
-            <a href="#" class="dropdown-btn"><i class="fas fa-user" style="font-size: 18px; margin-left: -0.5rem; color: #fff;"></i></a>
-              <div class="dropdown-content" style="top: 4.42rem; right: 0.5rem;">
-                <% if false %>
-                  <a href="#">Profile</a>
-                  <a href="#">Logout</a>
-                <% else %>
-                  <a href="#">Login</a>
-                <% end %>
-              </div>
-          </div>
+            <a href="#"><i class="fas fa-bars"></i></a>
+        <%= render 'shared/user_dropdown' %>
         </div>
       </nav>
     </div>

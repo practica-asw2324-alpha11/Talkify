@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 
   resources :tweets do
     put 'like', on: :member
+  end
+
   resources :posts do
     member do
       get 'sort_comments', to: "comments#sort"
@@ -16,8 +18,6 @@ Rails.application.routes.draw do
       get 'edit', on: :member
     end
   end
-
-  resources :user
 
   root 'posts#index'
 
