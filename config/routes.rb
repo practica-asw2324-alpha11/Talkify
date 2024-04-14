@@ -17,6 +17,10 @@ Rails.application.routes.draw do
       post 'downvote', on: :member
       get 'edit', on: :member
     end
+    collection do
+    get 'new_link'
+    get 'new_thread'
+    end
   end
 
   root 'posts#index'

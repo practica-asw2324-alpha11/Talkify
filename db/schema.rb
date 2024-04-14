@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema[7.0].define(version: 2024_04_12_111632) do
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
@@ -27,6 +28,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_12_111632) do
     t.integer "post_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "body"
+    t.integer "upvote", default: 0
+    t.integer "downvote", default: 0
     t.index ["post_id"], name: "index_comments_on_post_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
@@ -38,6 +42,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_12_111632) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.integer "boost"
+    t.integer "unboost"
+    t.boolean "link"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
@@ -59,7 +66,19 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_12_111632) do
     t.string "background_image"
   end
 
+  create_table "votes", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "post_id", null: false
+    t.string "vote_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_votes_on_post_id"
+    t.index ["user_id"], name: "index_votes_on_user_id"
+  end
+
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
   add_foreign_key "posts", "users"
+  add_foreign_key "votes", "posts"
+  add_foreign_key "votes", "users"
 end
