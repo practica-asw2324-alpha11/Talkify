@@ -1,4 +1,4 @@
-<div class="comment" id="<%= dom_id comment %>">
+<div class="comment wotitem" id="<%= dom_id comment %>">
     <div class="top">
         <p>
             <a style="color:#cecece;" href="<%= user_path(comment.user) %>">
@@ -46,12 +46,10 @@
     <div class="edit-comment-area" id="edit-comment-area-<%= comment.id %>">
         <%= render "comments/edit_form", comment: comment %>
     </div>
+</div>
 
-    <div class="comment-reply" id="replies-<%= comment.id %>">
-        <%= render comment.replies.order_by(@sort || 'newest') %>
-    </div>
-    <hr>
-
+<div class="comment-reply" id="replies-<%= comment.id %>">
+    <%= render comment.replies.order_by(@sort || 'newest') %>
 </div>
 
 <script>
