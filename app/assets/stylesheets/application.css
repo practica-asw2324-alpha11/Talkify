@@ -86,11 +86,11 @@ h2 {
     align-items: center;
     flex-grow: 1; /* Permite que la cabecera del post ocupe todo el espacio disponible */
   }
-  
+
 .vote-buttons {
     margin-right: 10px; /* Ajusta el margen entre los botones de votación y el contenido del post */
   }
-  
+
 .post-content {
     flex-grow: 1; /* Permite que el contenido del post ocupe todo el espacio disponible */
   }
@@ -104,7 +104,7 @@ h2 {
     border-radius: 5px;
     transition: background-color 0.3s ease;
   }
-  
+
   #create-post-button:hover {
     background-color: #0056b3;
   }
@@ -114,7 +114,7 @@ h2 {
     margin: 0;
     padding: 0;
   }
-  
+
   .navbar {
     background-color: #343a40; /* Cambia el color de fondo de la barra de navegación */
     overflow: hidden;
@@ -123,7 +123,7 @@ h2 {
     align-items: left;
     padding: 10px 20px;
   }
-  
+
   .navbar a {
     color: #fff; /* Cambia el color del texto de los enlaces */
     text-decoration: none;
@@ -244,7 +244,7 @@ h2 {
         margin: 0 auto; /* Centra horizontalmente */
         border-radius: 5px; /* Agrega bordes redondeados */
       }
-    
+
       .sub-navbar a {
         color: #fff; /* Cambia el color del texto de los enlaces */
         text-decoration: none;
@@ -285,15 +285,15 @@ h2 {
       .form-label{
         color: #cacece;
       }
-      
+
       .form-group {
         margin-bottom: 20px; /* Espacio entre grupos de campos */
       }
-      
+
       .text-white {
         color: #fff; /* Color del texto */
       }
-      
+
       .form-control {
         width: 100%; /* Ancho completo */
         padding: 10px; /* Espacio interno */
@@ -304,7 +304,7 @@ h2 {
         color: #cacece;
         font-size: .9rem;
       }
-      
+
       .btn {
         padding: 10px 20px; /* Espacio interno */
         background-color: #007bff; /* Color de fondo */
@@ -313,7 +313,7 @@ h2 {
         border-radius: 5px; /* Bordes redondeados */
         cursor: pointer; /* Cambia el cursor al pasar el mouse */
       }
-      
+
       .btn:hover {
         background-color: #0056b3; /* Cambia el color de fondo al pasar el mouse */
       }
@@ -326,7 +326,7 @@ h2 {
         font-weight: 700; /* Texto en negrita */
         padding: 10px 20px; /* Espaciado interno */
       }
-      
+
       .btn-rectangular:hover {
         background-color: #666; /* Color de fondo gris oscuro al pasar el mouse */
       }

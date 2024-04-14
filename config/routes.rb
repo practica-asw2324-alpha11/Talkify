@@ -14,6 +14,8 @@ Rails.application.routes.draw do
 
   root 'posts#index'
 
+  get '/magazines', to: 'magazines#index'
+
 
 end
 
