@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
-    before_action :set_post, only: %i[ show edit update destroy like]
+before_action :set_post, only: [:show, :edit, :update, :destroy, :upvote, :downvote]
+before_action :set_post, only: [:show, :edit, :update, :destroy,  :upvote, :downvote], except: [:search]
 
     def like
       @post.likes += 1
@@ -11,10 +12,39 @@ class PostsController < ApplicationController
       end
     end
 
-    # GET /posts or /posts.json
-    def index
-      @posts = Post.all.order(created_at: :desc)
-    end
+def upvote
+  @post.votes.create(user: current_user, vote_type: 'upvote')
+  redirect_to @post, notice: 'Upvoted!'
+end
+
+def downvote
+  @post.votes.create(user: current_user, vote_type: 'downvote')
+  redirect_to @post, notice: 'Downvoted!'
+end
+
+
+
+
+ def sort
+  @posts = Post.order_by(params[:sort_by])
+  render 'index'
+end
+
+def search
+  @query = params[:query]
+  @posts = Post.where("title LIKE ?", "%#{@query}%")
+end
+
+   def index
+  case params[:filter]
+  when "links"
+    @posts = Post.where(link: true).order(created_at: :desc)
+  when "threads"
+    @posts = Post.where(link: false).order(created_at: :desc)
+  else
+    @posts = Post.order(created_at: :desc)
+  end
+end
 
     # GET /posts/1 or /posts/1.json
     def show
@@ -80,9 +110,8 @@ class PostsController < ApplicationController
     end
 
     private
-      # Use callbacks to share common setup or constraints between actions.
-      def set_post
-        @post = Post.find(params[:id])
+     def set_post
+       @post = Post.find(params[:id])
       end
 
       # Only allow a list of trusted parameters through.
