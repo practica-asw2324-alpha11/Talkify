@@ -1,4 +1,0 @@
-<%= form_with(model: [comment, comment.replies.build]) do |form| %>
-  <%= form.text_area :body, placeholder: "Escribe tu respuesta aquí..." %>
-  <%= form.submit "Enviar respuesta" %>
-<% end %>
