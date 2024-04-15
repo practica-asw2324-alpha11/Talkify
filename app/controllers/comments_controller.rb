@@ -1,4 +1,5 @@
 class CommentsController < ApplicationController
+  before_action :authenticate_admin!, only: [:create]
   before_action :set_comment, except: [:sort, :new, :create]
   before_action :set_post, only: [:sort, :edit, :update, :destroy]
 

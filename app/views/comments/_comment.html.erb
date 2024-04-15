@@ -4,9 +4,9 @@
         <p>
             <strong>
                 <a style="color:#cecece;" href="<%= admin_path(comment.admin) %>">
-                    <%= comment.admin.name %>
+                    <%= comment.admin.full_name %>
                 </a>
-            </strong>,
+            </strong>
             <span class="comment-timestamp" data-timestamp="<%= comment.created_at %>">
             </span>
         </p>

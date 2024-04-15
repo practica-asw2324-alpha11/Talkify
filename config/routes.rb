@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     sessions: 'admins/sessions'
   }
 
+
   resources :tweets do
     put 'like', on: :member
   end
@@ -29,6 +30,7 @@ Rails.application.routes.draw do
     get 'admins/sign_in', to: 'admins/sessions#new', as: :new_admin_session
     post 'admins/sign_in', to: 'admins/sessions#create', as: :admin_session
     get 'admins/sign_out', to: 'admins/sessions#destroy', as: :destroy_admin_session
+    get 'admins/:id', to: 'admins/admins#show', as: :admin
   end
 
   # Añadir la ruta para el perfil del admin

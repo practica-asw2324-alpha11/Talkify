@@ -4,6 +4,9 @@ class Comment < ApplicationRecord
 
     after_initialize :set_default_values
 
+    validates :body, presence: true, length: { minimum: 1 }
+
+
     def self.order_by(sort_by)
         case sort_by
         when "top"

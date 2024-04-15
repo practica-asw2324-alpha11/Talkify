@@ -32,10 +32,8 @@
                 <a href="<%= admin_signed_in? ? "#" : new_admin_session_path %>">Create new magazine</a>
               </div>
           </div>
-          <a href="#"><i class="fas fa-bars"></i></a>
           <div class="dropdown">
-            <a href="#"><i class="fas fa-bars"></i></a>
-        <%= render 'shared/user_dropdown' %>
+          <%= render 'shared/user_dropdown' %>
         </div>
       </nav>
     </div>
