@@ -26,6 +26,14 @@
     text-align: center;
 }
 
+.wottitleLeft {
+    color: rgb(255, 255, 255);
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px auto;
+    width: 90%;
+}
+
 .walltweet {
     color: #4d5e9b;
     margin: auto;
@@ -42,6 +50,19 @@
     padding: 1em;
     width: 90%;
     background-color: #3d3c3d;
+    border-color: #4a4a4a;
+}
+
+.wotitemLogin {
+    border: 2px solid #3d3c3d;
+    margin: 20px auto;
+    padding: 1em;
+    width: 90%;
+    background-color: #3d3c3d;
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    height: 100%; /* O un valor específico según tu diseño */
 }
 
 .likes {
@@ -60,8 +81,9 @@
 .smallfont {
     font-size: 9pt;
 }
-.item {
-    border-left: 2px solid #dfcaca;
+
+.item {;
+    border-left: 2px solid #dfcaca
     margin-left: 115px;
     padding-left: 1.1em;
 }
@@ -130,10 +152,10 @@ h2 {
     padding: 10px 15px;
     transition: background-color 0.3s ease;
   }
-  
-  /* .navbar a:hover {
-    /* background-color: #555; Cambia el color de fondo de los enlaces al pasar el mouse sobre ellos */
-  /* } */ 
+  .navbar a:hover {
+    background-color: #555; /* Cambia el color de fondo de los enlaces al pasar el mouse sobre ellos */
+  }
+
 
   .head-nav__menu {
     list-style-type: none;
@@ -156,7 +178,7 @@ h2 {
     color: #fff;
     position: relative; /* Para posicionar la barra */
   }
-  
+
   .head-nav__menu li a::after {
     content: "";
     display: block;
@@ -168,7 +190,7 @@ h2 {
     left: 0;
     transition: width 0.3s ease; /* Transición suave */
   }
-  
+
   .head-nav__menu li a:hover::after {
     width: 100%; /* Ancho de la barra al pasar el ratón */
   }
@@ -197,7 +219,7 @@ h2 {
     left: 0;
     transition: width 0.3s ease; /* Transición suave */
   }
-  
+
   .navbar-icons a:hover::after, .navbar-icons button:hover::after {
     width: 100%; /* Ancho de la barra al pasar el ratón */
   }
@@ -211,7 +233,7 @@ h2 {
     color: #b6b6b6;
     cursor: pointer;
     font-weight: 700;
-    height: 1.9rem;
+    height: 1.2rem;
     margin: 0;
     padding: 0;
     width: 4rem;
@@ -251,13 +273,14 @@ h2 {
         padding: 8px 12px;
         transition: background-color 0.3s ease;
       }
-    
+
+
       .sub-navbar a, .sub-navbar .dropdown-btn {
         text-decoration: none;
         color: #fff;
         position: relative; /* Para posicionar la barra */
       }
-      
+
       .sub-navbar a::after, .sub-navbar .dropdown-btn::after {
         content: "";
         display: block;
@@ -269,7 +292,7 @@ h2 {
         left: 0;
         transition: width 0.3s ease; /* Transición suave */
       }
-      
+
       .sub-navbar a:hover::after, .sub-navbar .dropdown-btn:hover::after {
         width: 100%; /* Ancho de la barra al pasar el ratón */
       }
@@ -330,6 +353,26 @@ h2 {
       .btn-rectangular:hover {
         background-color: #666; /* Color de fondo gris oscuro al pasar el mouse */
       }
+
+      .btn-google {
+        display: inline-block;
+        background-color: #4285F4; /* Google blue */
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none; /* Remueve subrayado del texto de enlaces */
+        font-weight: bold;
+        transition: background-color 0.3s; /* Suave transición para hover */
+      }
+
+      .btn-google:hover {
+        background-color: #357ae8; /* Color más oscuro al pasar el mouse */
+      }
+
+
 
       /* Estilo del botón del menú desplegable */
 .dropdown-btn {
@@ -408,9 +451,16 @@ a{
   text-decoration: none;
 }
 
+.comment {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+
 .comment .top{
   font-size: 0.8rem;
   opacity: .75;
+  margin-top: -10px;
 }
 
 .comment .body{
@@ -437,4 +487,12 @@ a{
   color: #d9dde5; /* Cambia el color según tu preferencia */
   text-decoration: none;
   cursor: pointer;
+}
+
+.edit-comment-area {
+  display: none;
+}
+
+.comment-reply{
+  padding-left: 20px;
 }
