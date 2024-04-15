@@ -3,7 +3,15 @@ class MagazinesController < ApplicationController
 
     # GET /magazines or /magazines.json
     def index
-      @magazines = Magazine.all.order(created_at: :desc)
+
+      @magazines = Magazine.all
+
+      case params[:order_by]
+        when "posts"
+          @magazines = @magazines.order(posts_count: :desc)
+        else
+          @magazines = @magazines.order(created_at: :desc)
+      end
     end
 
     # GET /magazines/1 or /magazines/1.json

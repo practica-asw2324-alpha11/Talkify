@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_11_183959) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_14_110219) do
   create_table "comments", force: :cascade do |t|
     t.text "body"
     t.integer "upvote", default: 0
@@ -23,6 +23,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_11_183959) do
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
+  create_table "magazines", force: :cascade do |t|
+    t.string "name"
+    t.string "title"
+    t.string "description"
+    t.string "rules"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.string "url"
@@ -30,6 +39,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_11_183959) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.integer "magazine_id", null: false
+    t.index ["magazine_id"], name: "index_posts_on_magazine_id"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
@@ -54,5 +65,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_11_183959) do
 
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
+  add_foreign_key "posts", "magazines"
   add_foreign_key "posts", "users"
 end
