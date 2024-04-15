@@ -36,7 +36,10 @@
         <% end %></span>
     </div>
 
-    <p> <strong><%= post.user_id %>, </strong> <%= time_ago_in_words(post.created_at) %> ago to magazine</p>
+    <p> <strong><a style="color:#cecece;" href="<%= admin_path(post.admin) %>">
+                    <%= post.admin.full_name %>
+            </a>
+            </strong> <%= time_ago_in_words(post.created_at) %> ago to magazine</p>
     </div>
   </div>
 <!-- Mostrar el número de comentarios como un enlace al post -->

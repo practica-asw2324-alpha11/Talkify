@@ -32,7 +32,7 @@ end
 
 def search
   @query = params[:query]
-  @posts = Post.where("title LIKE ?", "%#{@query}%")
+  @posts = Post.where("title LIKE :query OR body LIKE :query", query: "%#{@query}%")
 end
 
    def index
@@ -51,8 +51,8 @@ end
       @post = Post.find(params[:id])
       @comment = @post.comments.build
       @comments = @post.comments.includes(:replies)
-      
-      
+
+
     end
 
 

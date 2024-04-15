@@ -1,10 +1,10 @@
 <div class="comment wotitem" id="<%= dom_id comment %>">
     <div class="top">
         <p>
-          <a style="color:#cecece;" href="<%= admin_path(comment.admin) %>">
-                    <%= comment.admin.full_name %>
+          <a style="color:#cecece;" href="<%= admin_path(comment.admin.id) %>">
+                    <%= comment.admin.full_name %>,
             </a>
-            </strong>,
+            </strong>
             <span class="comment-timestamp">
                 <%= time_ago_in_words(comment.created_at) %> ago
             </span>

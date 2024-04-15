@@ -42,5 +42,5 @@ Rails.application.routes.draw do
   end
 
   # Añadir la ruta para el perfil del admin
-  get 'profile', to: 'admins/admins#show', as: 'profile'
+  #get 'profile', to: 'admins/admins#show', as: 'profile'
 end
