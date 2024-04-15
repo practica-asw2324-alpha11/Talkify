@@ -42,7 +42,7 @@ class PostsController < ApplicationController
     # POST /posts or /posts.json
     def create
       @post = Post.new(post_params)
-      @post.user_id = 1
+      @post.admin_id = current_admin.id
 
       respond_to do |format|
         if @post.save

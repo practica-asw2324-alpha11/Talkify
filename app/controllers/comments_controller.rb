@@ -3,7 +3,7 @@ class CommentsController < ApplicationController
   before_action :set_post, only: [:sort, :edit, :update, :destroy]
 
   def edit
-    
+
   end
 
   def sort
@@ -50,7 +50,8 @@ class CommentsController < ApplicationController
   def create
     @post = Post.find(params[:post_id])
     @comment = @post.comments.build(comment_params)
-    @comment.user_id = 1
+    @comment.admin_id = current_admin.id
+
 
     if @comment.save
       redirect_to post_path(@post)

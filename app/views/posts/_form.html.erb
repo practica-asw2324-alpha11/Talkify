@@ -35,6 +35,6 @@
     <%= form.submit "Add new link!", class: "btn btn-primary btn-rectangular" %>
   </div>
 
- <%= form.hidden_field :user_id, value: 1 %>
+ <%= form.hidden_field :admin_id, value: current_admin.id %>
 <%= form.hidden_field :link %>
 <% end %>
