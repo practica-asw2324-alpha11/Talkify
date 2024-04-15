@@ -32,7 +32,7 @@
               <div class="dropdown-content" style="top: 4.42rem; right: 5rem;">
                 <a href="<%= admin_signed_in? ? "/posts/new_link" : new_admin_session_path %>">Add new link</a>
                 <a href="<%= admin_signed_in? ? "/posts/new_thread" : new_admin_session_path %>">Add new thread</a>
-                <a href="<%= admin_signed_in? ? "#" : new_admin_session_path %>">Create new magazine</a>
+                <a href="<%= admin_signed_in? ? "/magazines/new" : new_admin_session_path %>">Create new magazine</a>
               </div>
           </div>
           <div class="dropdown">

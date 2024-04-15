@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema[7.0].define(version: 2024_04_15_154512) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_15_171920) do
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
     t.string "full_name"
@@ -38,6 +37,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_15_154512) do
     t.index ["post_id"], name: "index_comments_on_post_id"
   end
 
+  create_table "magazines", force: :cascade do |t|
+    t.string "name"
+    t.string "title"
+    t.string "description"
+    t.string "rules"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.string "url"
@@ -46,7 +54,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_15_154512) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "admin_id", null: false
+    t.integer "magazine_id", null: false
     t.index ["admin_id"], name: "index_posts_on_admin_id"
+    t.index ["magazine_id"], name: "index_posts_on_magazine_id"
   end
 
   create_table "votes", force: :cascade do |t|
@@ -62,6 +72,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_15_154512) do
   add_foreign_key "comments", "admins"
   add_foreign_key "comments", "posts"
   add_foreign_key "posts", "admins"
+  add_foreign_key "posts", "magazines"
   add_foreign_key "votes", "admins"
   add_foreign_key "votes", "posts"
 end

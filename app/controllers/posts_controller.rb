@@ -58,14 +58,20 @@ end
 
   def new
     @post = Post.new(link: params[:link] == 'true')
+    @magazines = Magazine.all.order(:name)  # Asumiendo que cada revista tiene un atributo 'name'
+
   end
 
     def new_link
       @post = Post.new(link: true)
+      @magazines = Magazine.all.order(:name)  # Asumiendo que cada revista tiene un atributo 'name'
+
     end
 
     def new_thread
       @post = Post.new(link: false)
+      @magazines = Magazine.all.order(:name)  # Asumiendo que cada revista tiene un atributo 'name'
+
     end
     def edit
 
