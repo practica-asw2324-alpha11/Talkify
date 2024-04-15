@@ -70,4 +70,9 @@ Rails.application.configure do
 
   # Allow connections to local server on cloud IDE.
   config.hosts.clear
+
+  ENV['GOOGLE_OAUTH_CLIENT_ID'] = '668591252695-rjoqh88kog8ueushtj2jp2615qrmgvbu.apps.googleusercontent.com'
+  ENV['GOOGLE_OAUTH_CLIENT_SECRET'] = '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'
+
+
 end

@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_14_174046) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_15_154512) do
+  create_table "admins", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "full_name"
+    t.string "uid"
+    t.string "avatar_url"
+    t.string "background_image"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_admins_on_email", unique: true
+  end
+
   create_table "comments", force: :cascade do |t|
     t.text "body"
     t.integer "upvote", default: 0
@@ -18,56 +30,37 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_14_174046) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "post_id", null: false
-    t.integer "user_id", null: false
+    t.integer "admin_id", null: false
+    t.integer "parent_comment_id"
+    t.index ["admin_id"], name: "index_comments_on_admin_id"
+    t.index ["parent_comment_id"], name: "index_comments_on_parent_comment_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
-    t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.string "url"
     t.string "body"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.integer "boost"
-    t.integer "unboost"
     t.boolean "link"
-    t.index ["user_id"], name: "index_posts_on_user_id"
-  end
-
-  create_table "tweets", force: :cascade do |t|
-    t.string "author"
-    t.text "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "likes", default: 0
-  end
-
-  create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "password"
-    t.date "joined_date"
-    t.float "reputation_points"
-    t.integer "moderated"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer "admin_id", null: false
+    t.index ["admin_id"], name: "index_posts_on_admin_id"
   end
 
   create_table "votes", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.integer "admin_id", null: false
     t.integer "post_id", null: false
     t.string "vote_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_votes_on_admin_id"
     t.index ["post_id"], name: "index_votes_on_post_id"
-    t.index ["user_id"], name: "index_votes_on_user_id"
   end
 
+  add_foreign_key "comments", "admins"
   add_foreign_key "comments", "posts"
-  add_foreign_key "comments", "users"
-  add_foreign_key "posts", "users"
+  add_foreign_key "posts", "admins"
+  add_foreign_key "votes", "admins"
   add_foreign_key "votes", "posts"
-  add_foreign_key "votes", "users"
 end

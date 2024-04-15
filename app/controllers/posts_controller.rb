@@ -50,7 +50,9 @@ end
     def show
       @post = Post.find(params[:id])
       @comment = @post.comments.build
-      @comments = @post.comments
+      @comments = @post.comments.includes(:replies)
+      
+      
     end
 
 
@@ -72,7 +74,7 @@ end
     # POST /posts or /posts.json
     def create
       @post = Post.new(post_params)
-      @post.user_id = 1
+      @post.admin_id = current_admin.id
 
       respond_to do |format|
         if @post.save

@@ -49,18 +49,12 @@
 
 <div class="wotitem" name="new-comment">
 
-  <%= render "comments/form", post: @post, comment: @comment %>
+  <%= render "comments/form", post: @post, comment: @comment, parent_comment: nil %>
+
 
 </div>
 
-<div name="show-comments" class="wotitem">
-  <% @comments.each do |comment| %>
-    <% if comment.id %>
-      <div>
-        <%= render "comments/comment", comment: comment %>
-      </div>
-      <hr>
-    <% end %>
-  <% end %>
+<div name="show-comments">
+  <%= render @comments.where(parent_comment_id: nil) %>
 </div>
 
