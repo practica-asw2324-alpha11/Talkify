@@ -1,9 +1,14 @@
 Rails.application.routes.draw do
+
+  
+  
   devise_for :admins, controllers: {
     omniauth_callbacks: 'admins/omniauth_callbacks',
     sessions: 'admins/sessions'
   }
 
+  resources :magazines
+  
   resources :posts do
 
       post 'upvote', on: :member
@@ -33,6 +38,8 @@ Rails.application.routes.draw do
   end
 
   root 'posts#index'
+
+  get '/magazines', to: 'magazines#index'
 
   devise_scope :admin do
     get 'admins/sign_in', to: 'admins/sessions#new', as: :new_admin_session

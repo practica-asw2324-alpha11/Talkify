@@ -1,0 +1,37 @@
+<%= form_with(model: @magazine, url: magazines_path, local: true, html: { class: "magazine-form" }) do |form| %>
+
+<% if @magazine.errors.any? %>
+   <div id="error_explanation">
+     <h2><%= pluralize(@magazine.errors.count, "error") %> han ocurrido al crear la revista:</h2>
+     <ul>
+     <% @magazine.errors.full_messages.each do |message| %>
+       <li><%= message %></li>
+     <% end %>
+     </ul>
+   </div>
+ <% end %>
+
+  <div class="form-group">
+    <%= form.label :name, "Nombre:", class:"form-label" %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :title, "Título:", class:"form-label" %>
+    <%= form.text_field :title, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :description, "Descripción:", class:"form-label" %>
+    <%= form.text_area :description, rows: 3, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :rules, "Reglas:" , class:"form-label" %>
+    <%= form.text_area :rules, rows: 3, class: "form-control" %>
+  </div>
+
+  <div class="form-group text-right">
+    <%= form.submit "Añadir una nueva revista!", class: "btn btn-primary btn-rectangular" %>
+  </div>
+<% end %>

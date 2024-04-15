@@ -1,0 +1,17 @@
+.magazine-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #dbdee2;
+}
+
+.magazine-th {
+  padding: 5px;
+  border: 1px solid #ddd;
+  background-color: #2b2d31
+}
+
+.magazine-td {
+  text-align: center;
+  padding: 5px;
+  border: 1px solid #ddd;
+}
