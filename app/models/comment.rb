@@ -1,5 +1,5 @@
 class Comment < ApplicationRecord
-    belongs_to :user
+    belongs_to :admin
     belongs_to :post
 
     after_initialize :set_default_values

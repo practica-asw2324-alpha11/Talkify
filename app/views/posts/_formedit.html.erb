@@ -47,7 +47,7 @@
           <%= form.submit "Edit", class: "btn btn-primary btn-rectangular" %>
         </div>
 
-        <%= form.hidden_field :user_id, value: 1 %>
+        <%= form.hidden_field :admin_id, value: current_admin.id %>
       <% end %>
 
       <div class="post-actions" style="text-align: center;">

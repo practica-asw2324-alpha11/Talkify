@@ -1,10 +1,10 @@
 <div class="comment" id="<%= dom_id comment %>">
-    
+
     <div class="top">
         <p>
             <strong>
-                <a style="color:#cecece;" href="<%= user_path(comment.user) %>">
-                    <%= comment.user.name %>
+                <a style="color:#cecece;" href="<%= admin_path(comment.admin) %>">
+                    <%= comment.admin.name %>
                 </a>
             </strong>,
             <span class="comment-timestamp" data-timestamp="<%= comment.created_at %>">
@@ -92,7 +92,7 @@ element.textContent = timeDifference(element.getAttribute('data-timestamp'));
         var comment = this.closest('.comment');
         if (!comment) return; // Verificar si se encontró el comentario
 
-        
+
         // Mostrar el área de texto para la edición
         var editArea = comment.querySelector('.edit-comment-area');
         if (editArea) {
