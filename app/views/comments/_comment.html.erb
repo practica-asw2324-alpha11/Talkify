@@ -1,8 +1,8 @@
 <div class="comment wotitem" id="<%= dom_id comment %>">
     <div class="top">
         <p>
-            <a style="color:#cecece;" href="<%= user_path(comment.user) %>">
-                <%= comment.user.name %>
+          <a style="color:#cecece;" href="<%= admin_path(comment.admin) %>">
+                    <%= comment.admin.full_name %>
             </a>
             </strong>,
             <span class="comment-timestamp" data-timestamp="<%= comment.created_at %>">
@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var textArea = document.querySelector('#edit-comment-area-'+commentId);
 
       textArea.style.display = 'block';
+
 
     });
   });

@@ -26,6 +26,14 @@
     text-align: center;
 }
 
+.wottitleLeft {
+    color: rgb(255, 255, 255);
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px auto;
+    width: 90%;
+}
+
 .walltweet {
     color: #4d5e9b;
     margin: auto;
@@ -45,6 +53,18 @@
     border-color: #4a4a4a;
 }
 
+.wotitemLogin {
+    border: 2px solid #3d3c3d;
+    margin: 20px auto;
+    padding: 1em;
+    width: 90%;
+    background-color: #3d3c3d;
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    height: 100%; /* O un valor específico según tu diseño */
+}
+
 .likes {
     float: left;
     width: 95px;
@@ -61,8 +81,9 @@
 .smallfont {
     font-size: 9pt;
 }
-.item {
-    border-left: 2px solid #dfcaca;
+
+.item {;
+    border-left: 2px solid #dfcaca
     margin-left: 115px;
     padding-left: 1.1em;
 }
@@ -87,11 +108,11 @@ h2 {
     align-items: center;
     flex-grow: 1; /* Permite que la cabecera del post ocupe todo el espacio disponible */
   }
-  
+
 .vote-buttons {
     margin-right: 10px; /* Ajusta el margen entre los botones de votación y el contenido del post */
   }
-  
+
 .post-content {
     flex-grow: 1; /* Permite que el contenido del post ocupe todo el espacio disponible */
   }
@@ -105,7 +126,7 @@ h2 {
     border-radius: 5px;
     transition: background-color 0.3s ease;
   }
-  
+
   #create-post-button:hover {
     background-color: #0056b3;
   }
@@ -115,7 +136,7 @@ h2 {
     margin: 0;
     padding: 0;
   }
-  
+
   .navbar {
     background-color: #343a40; /* Cambia el color de fondo de la barra de navegación */
     overflow: hidden;
@@ -124,17 +145,17 @@ h2 {
     align-items: left;
     padding: 10px 20px;
   }
-  
+
   .navbar a {
     color: #fff; /* Cambia el color del texto de los enlaces */
     text-decoration: none;
     padding: 10px 15px;
     transition: background-color 0.3s ease;
   }
-  
+
   /* .navbar a:hover {
     /* background-color: #555; Cambia el color de fondo de los enlaces al pasar el mouse sobre ellos */
-  /* } */ 
+  /* } */
 
   .head-nav__menu {
     list-style-type: none;
@@ -157,7 +178,7 @@ h2 {
     color: #fff;
     position: relative; /* Para posicionar la barra */
   }
-  
+
   .head-nav__menu li a::after {
     content: "";
     display: block;
@@ -169,7 +190,7 @@ h2 {
     left: 0;
     transition: width 0.3s ease; /* Transición suave */
   }
-  
+
   .head-nav__menu li a:hover::after {
     width: 100%; /* Ancho de la barra al pasar el ratón */
   }
@@ -198,7 +219,7 @@ h2 {
     left: 0;
     transition: width 0.3s ease; /* Transición suave */
   }
-  
+
   .navbar-icons a:hover::after, .navbar-icons button:hover::after {
     width: 100%; /* Ancho de la barra al pasar el ratón */
   }
@@ -245,20 +266,20 @@ h2 {
         margin: 0 auto; /* Centra horizontalmente */
         border-radius: 5px; /* Agrega bordes redondeados */
       }
-    
+
       .sub-navbar a {
         color: #fff; /* Cambia el color del texto de los enlaces */
         text-decoration: none;
         padding: 8px 12px;
         transition: background-color 0.3s ease;
       }
-    
+
       .sub-navbar a, .sub-navbar .dropdown-btn {
         text-decoration: none;
         color: #fff;
         position: relative; /* Para posicionar la barra */
       }
-      
+
       .sub-navbar a::after, .sub-navbar .dropdown-btn::after {
         content: "";
         display: block;
@@ -270,7 +291,7 @@ h2 {
         left: 0;
         transition: width 0.3s ease; /* Transición suave */
       }
-      
+
       .sub-navbar a:hover::after, .sub-navbar .dropdown-btn:hover::after {
         width: 100%; /* Ancho de la barra al pasar el ratón */
       }
@@ -286,15 +307,15 @@ h2 {
       .form-label{
         color: #cacece;
       }
-      
+
       .form-group {
         margin-bottom: 20px; /* Espacio entre grupos de campos */
       }
-      
+
       .text-white {
         color: #fff; /* Color del texto */
       }
-      
+
       .form-control {
         width: 100%; /* Ancho completo */
         padding: 10px; /* Espacio interno */
@@ -305,7 +326,7 @@ h2 {
         color: #cacece;
         font-size: .9rem;
       }
-      
+
       .btn {
         padding: 10px 20px; /* Espacio interno */
         background-color: #007bff; /* Color de fondo */
@@ -314,7 +335,7 @@ h2 {
         border-radius: 5px; /* Bordes redondeados */
         cursor: pointer; /* Cambia el cursor al pasar el mouse */
       }
-      
+
       .btn:hover {
         background-color: #0056b3; /* Cambia el color de fondo al pasar el mouse */
       }
@@ -327,10 +348,30 @@ h2 {
         font-weight: 700; /* Texto en negrita */
         padding: 10px 20px; /* Espaciado interno */
       }
-      
+
       .btn-rectangular:hover {
         background-color: #666; /* Color de fondo gris oscuro al pasar el mouse */
       }
+
+      .btn {
+        display: inline-block;
+        background-color: #4285F4; /* Google blue */
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none; /* Remueve subrayado del texto de enlaces */
+        font-weight: bold;
+        transition: background-color 0.3s; /* Suave transición para hover */
+      }
+
+      .btn:hover {
+        background-color: #357ae8; /* Color más oscuro al pasar el mouse */
+      }
+
+
 
       /* Estilo del botón del menú desplegable */
 .dropdown-btn {

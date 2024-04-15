@@ -1,4 +1,5 @@
 class CommentsController < ApplicationController
+  before_action :authenticate_admin!, only: [:create]
   before_action :set_comment, except: [:sort, :new, :create]
   before_action :set_post, only: [:sort, :edit]
 
@@ -59,7 +60,8 @@ class CommentsController < ApplicationController
   def create
     @post = Post.find(params[:post_id])
     @comment = @post.comments.build(comment_params)
-    @comment.user_id = 1
+    @comment.admin_id = current_admin.id
+
 
     if @comment.save
       redirect_to post_path(@post)

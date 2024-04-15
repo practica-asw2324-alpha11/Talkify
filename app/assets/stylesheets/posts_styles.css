@@ -2,7 +2,7 @@ body {
   color: #444;
   background-color: #2a2929;
 }
-  
+
 .post-form {
   width: 50%; /* Ancho del formulario */
   margin: 0 auto; /* Centrado horizontal */
@@ -43,4 +43,13 @@ body {
 
 .btn:hover {
   background-color: #0056b3; /* Cambia el color de fondo al pasar el mouse */
+}
+
+
+.navbar-title {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 20px;
+  font-size: 1.2rem;
+  color: #fff;
 }

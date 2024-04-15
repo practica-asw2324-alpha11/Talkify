@@ -1,0 +1,11 @@
+<main id="main"
+  data-controller="lightbox timeago"
+  class="view-compact">
+  <h1 class="wottitleLeft">Iniciar sesión</h1>
+
+  <div class="wotitemLogin">
+    <div class="btn-google">
+      <%= button_to "Sign in with Google", admin_google_oauth2_omniauth_authorize_path, method: :post, class: "btn-google" %>
+    </div>
+  </div>
+</main>
