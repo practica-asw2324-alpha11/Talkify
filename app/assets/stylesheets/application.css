@@ -50,6 +50,7 @@
     padding: 1em;
     width: 90%;
     background-color: #3d3c3d;
+    border-color: #4a4a4a;
 }
 
 .wotitemLogin {
@@ -232,7 +233,7 @@ h2 {
     color: #b6b6b6;
     cursor: pointer;
     font-weight: 700;
-    height: 1.9rem;
+    height: 1.2rem;
     margin: 0;
     padding: 0;
     width: 4rem;
@@ -449,9 +450,16 @@ a{
   text-decoration: none;
 }
 
+.comment {
+  margin-top: 0;
+  margin-bottom: 0; 
+}
+
+
 .comment .top{
   font-size: 0.8rem;
   opacity: .75;
+  margin-top: -10px;
 }
 
 .comment .body{
@@ -478,4 +486,12 @@ a{
   color: #d9dde5; /* Cambia el color según tu preferencia */
   text-decoration: none;
   cursor: pointer;
+}
+
+.edit-comment-area {
+  display: none;
+}
+
+.comment-reply{
+  padding-left: 20px;
 }
