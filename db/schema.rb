@@ -10,32 +10,55 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_19_183420) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_15_094406) do
+  create_table "admins", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "full_name"
+    t.string "uid"
+    t.string "avatar_url"
+    t.string "background_image"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_admins_on_email", unique: true
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.text "body"
+    t.integer "upvote", default: 0
+    t.integer "downvote", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "post_id", null: false
+    t.integer "admin_id", null: false
+    t.index ["admin_id"], name: "index_comments_on_admin_id"
+    t.index ["post_id"], name: "index_comments_on_post_id"
+  end
+
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.string "url"
     t.string "body"
+    t.boolean "link"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "admin_id", null: false
+    t.index ["admin_id"], name: "index_posts_on_admin_id"
   end
 
-  create_table "tweets", force: :cascade do |t|
-    t.string "author"
-    t.text "content"
+  create_table "votes", force: :cascade do |t|
+    t.integer "admin_id", null: false
+    t.integer "post_id", null: false
+    t.string "vote_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "likes", default: 0
+    t.index ["admin_id"], name: "index_votes_on_admin_id"
+    t.index ["post_id"], name: "index_votes_on_post_id"
   end
 
-  create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "password"
-    t.date "joined_date"
-    t.float "reputation_points"
-    t.integer "moderated"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
+  add_foreign_key "comments", "admins"
+  add_foreign_key "comments", "posts"
+  add_foreign_key "posts", "admins"
+  add_foreign_key "votes", "admins"
+  add_foreign_key "votes", "posts"
 end

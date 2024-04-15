@@ -1,0 +1,20 @@
+<%= form_with(model: [@post, @comment], url: post_comments_path(@post), method:"post") do |form| %>
+
+  <% if @comment.errors.any? %>
+  <div id="error-explanation">
+    <% @comment.errors.full_messages.each do |message| %>
+      <p><%= message %></p>
+    <% end %>
+  </div>
+  <% end %>
+
+  <div class="form-group">
+      <%= form.text_area :body, class:"form-control resizable", rows: 5, cols: 50 %>
+      <%= form.hidden_field :admin_id, value: current_admin.id %>
+  </div>
+
+  <div class="form-group" style="display:flex; justify-content: right; margin-right: 10px;">
+    <%= form.submit "Add Comment", class: "btn btn-primary btn-rectangular" %>
+  </div>
+
+<% end %>

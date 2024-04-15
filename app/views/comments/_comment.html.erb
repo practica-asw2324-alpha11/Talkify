@@ -1,0 +1,109 @@
+<div class="comment" id="<%= dom_id comment %>">
+
+    <div class="top">
+        <p>
+            <strong>
+                <a style="color:#cecece;" href="<%= admin_path(comment.admin) %>">
+                    <%= comment.admin.name %>
+                </a>
+            </strong>,
+            <span class="comment-timestamp" data-timestamp="<%= comment.created_at %>">
+            </span>
+        </p>
+
+        <div class="buttons">
+            <%= link_to upvote_post_comment_path(@post, comment), method: :post, class: "vote", style: "margin-bottom: 1em;" do %>
+                <span> 0 &nbsp;</span>
+                <i class="fas fa-arrow-up"></i>
+            <% end %>
+
+            <%= link_to downvote_post_comment_path(@post, comment), method: :post, class: "vote", style: "margin-left: 10px;" do %>
+                <span> 0 &nbsp;</span>
+                <i class="fas fa-arrow-down"></i>
+            <% end %>
+        </div>
+    </div>
+
+    <div class="body">
+        <p><%= comment.body %></p>
+    </div>
+
+    <div class="actions" style="display: flex;">
+        <a href="#" class="reply">reply</a>
+        <div class="dropdown" style="position: relative;">
+            <a href="#" class="dropdown-btn">more</a>
+            <div class="dropdown-content" style="position: absolute; top: 1em; right: 1em;">
+                <a href="#" class="edit-comment-link">edit</a>
+                <a style="margin-top:-20px;">
+                    <%= button_to "delete", post_comment_path(@post, comment), method: :delete, class:"delete-button" %>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="edit-comment-area" style="display: none;">
+        <%= render "comments/form", post: @comment.post, comment: comment %>
+    </div>
+
+</div>
+
+<script>
+
+  function timeDifference(current) {
+    var time = new Date();
+    var dateCreated = new Date(current);
+
+    var diff = time - dateCreated;
+
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(months / 12);
+
+    if (years > 0) {
+        return years + " years ago";
+    } else if (months > 0) {
+        return months + " months ago";
+    } else if (days > 0) {
+        return days + " days ago";
+    } else if (hours > 0) {
+        return hours + " hours ago";
+    } else if (minutes > 0) {
+        return minutes + " minutes ago";
+    } else {
+        return seconds + " seconds ago";
+    }
+}
+
+
+document.querySelectorAll(".comment-timestamp").forEach(function(element) {
+element.textContent = timeDifference(element.getAttribute('data-timestamp'));
+});
+
+ document.addEventListener('DOMContentLoaded', function() {
+    var editLinks = document.querySelectorAll('.edit-comment-link');
+    editLinks.forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        // Buscar el elemento del comentario
+        var comment = this.closest('.comment');
+        if (!comment) return; // Verificar si se encontró el comentario
+
+
+        // Mostrar el área de texto para la edición
+        var editArea = comment.querySelector('.edit-comment-area');
+        if (editArea) {
+          if (editArea.style.display === 'block') {
+            editArea.style.display = 'none';
+          } else {
+            editArea.style.display = 'block';
+          }
+        }
+
+      });
+    });
+  });
+</script>
