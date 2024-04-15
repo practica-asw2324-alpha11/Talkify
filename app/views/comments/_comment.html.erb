@@ -5,7 +5,8 @@
                     <%= comment.admin.full_name %>
             </a>
             </strong>,
-            <span class="comment-timestamp" data-timestamp="<%= comment.created_at %>">
+            <span class="comment-timestamp">
+                <%= time_ago_in_words(comment.created_at) %> ago
             </span>
         </p>
 
@@ -53,48 +54,14 @@
 </div>
 
 <script>
-
-  function timeDifference(current) {
-    var time = new Date();
-    var dateCreated = new Date(current);
-
-    var diff = time - dateCreated;
-
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    const months = Math.floor(days / 30);
-    const years = Math.floor(months / 12);
-
-    if (years > 0) {
-        return years + " years ago";
-    } else if (months > 0) {
-        return months + " months ago";
-    } else if (days > 0) {
-        return days + " days ago";
-    } else if (hours > 0) {
-        return hours + " hours ago";
-    } else if (minutes > 0) {
-        return minutes + " minutes ago";
-    } else {
-        return seconds + " seconds ago";
-    }
-}
-
-
-document.querySelectorAll(".comment-timestamp").forEach(function(element) {
-element.textContent = timeDifference(element.getAttribute('data-timestamp'));
-});
-
 document.addEventListener('DOMContentLoaded', function() {
   var editLinks = document.querySelectorAll('.edit-comment-link');
 
   editLinks.forEach(function(link) {
-    
+
     link.addEventListener('click', function(e) {
       e.preventDefault();
-      
+
       // Obtener el ID del comentario
       var commentId = this.dataset.commentId;
 
@@ -113,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
   replyLinks.forEach(function(link) {
     link.addEventListener('click', function(e) {
       e.preventDefault();
-      
+
       // Obtener el ID del comentario
       var commentId = this.dataset.commentId;
 

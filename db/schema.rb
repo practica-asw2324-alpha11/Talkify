@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema[7.0].define(version: 2024_04_15_094406) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_15_154512) do
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
     t.string "full_name"
@@ -32,7 +31,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_15_094406) do
     t.datetime "updated_at", null: false
     t.integer "post_id", null: false
     t.integer "admin_id", null: false
+    t.integer "parent_comment_id"
     t.index ["admin_id"], name: "index_comments_on_admin_id"
+    t.index ["parent_comment_id"], name: "index_comments_on_parent_comment_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
   end
 
