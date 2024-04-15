@@ -1,0 +1,27 @@
+<!-- Search Results -->
+<div class="search-results-container">
+  <h1 class="text-center text-white" style= "margin-left: 80px">Search Results</h1>
+
+  <!-- Search Form -->
+  <div class="search-form text-center">
+    <%= form_with url: search_posts_path, method: :get, class: "form-inline justify-content-center" do |f| %>
+      <div class="form-group" style= "margin-left: 80px;margin-right: 90px;">
+        <%= f.text_field :query, value: params[:query], placeholder: "Search by title", class: "form-control mr-sm-2" %>
+        <%= f.submit "Search", class: "btn btn-primary btn-rectangular",style: "margin-top: 10px;" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Search Results -->
+  <div class="wotbody">
+    <% if @posts.present? %>
+      <% @posts.each do |post| %>
+        <div class="pst">
+          <%= render post %>
+        </div>
+      <% end %>
+    <% else %>
+      <p>No posts found.</p>
+    <% end %>
+  </div>
+</div>

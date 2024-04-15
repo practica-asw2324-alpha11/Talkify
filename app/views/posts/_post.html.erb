@@ -1,31 +1,45 @@
 <div class="wotitem">
   <div class="post-header">
-    <div>
-      <!-- Botones de votación -->
-      <span class="vote-buttons">
-        <%= button_to 'upvote', {class: 'vote', style: "margin-bottom: 1em;"} do %>
-          <span> 0 &nbsp;</span>
-          <i class="fas fa-arrow-up"></i>
-        <% end %>
-        <%= button_to 'downvote', {class: 'vote'} do %>
-          <span> 0 &nbsp;</span>
-          <i class="fas fa-arrow-down"></i>
-        <% end %>
-      </span>
-    </div>
+ <!-- Botones de votación -->
+<span class="vote-buttons">
+  <%= form_tag upvote_post_path(post), method: :post, class: 'vote', style: "margin-bottom: 1em;" do %>
+    <%= button_tag(type: 'submit') do %>
+      <span> <%= post.upvotes_count %> &nbsp;</span>
+      <i class="fas fa-arrow-up"></i>
+    <% end %>
+  <% end %>
+
+  <%= form_tag downvote_post_path(post), method: :post, class: 'vote' do %>
+    <%= button_tag(type: 'submit') do %>
+      <span> <%= post.downvotes_count %> &nbsp;</span>
+      <i class="fas fa-arrow-down"></i>
+    <% end %>
+  <% end %>
+</span>
 
     <!-- Imagen -->
-    <div class="no-image">
+    <!-- <div class="no-image">
       <%= link_to post_path(post) do %>
         <i class="fas fa-comment-alt"></i>
       <% end %>
-    </div>
+    </div>-->
 
     <!-- Contenido del post -->
-    <div class="post-content">
-        <h2>Titulo:  <%= post.title %></h2>
-      <p><strong>URL:</strong> <%= post.url %></p>
-      <p><strong>Contenido:</strong> <%= post.body %></p>
+    <div class="post-content" style = "margin-left: 20px;">
+
+    <div class="text-container">
+        <span class="first-part">  <h2><%= link_to post.title, post_path(post), style: "color: white;" %></h2></span>
+        <span class="second-part" ><% if post.link? %>
+        <p>
+            (<%= link_to post.url, post.url, target: "_blank", style: "color: white;" %>)
+        </p>
+        <% end %></span>
+    </div>
+
+    <p> <strong><a style="color:#cecece;" href="<%= admin_path(post.admin) %>">
+                    <%= post.admin.full_name %>
+            </a>
+            </strong> <%= time_ago_in_words(post.created_at) %> ago to magazine</p>
     </div>
   </div>
 <!-- Mostrar el número de comentarios como un enlace al post -->
