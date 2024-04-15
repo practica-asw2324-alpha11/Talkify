@@ -20,18 +20,6 @@
 </div>
 <body class="wotbody">
 
-  <% if notice %>
-  <br>
-  <div class="wotitem" id="notice">
-    <% if notice[0] == 'T' %>
-      <span style="color: green;"><%= notice %></span>
-    <% else %>
-      <span style="color: red;"><%= notice %></span>
-    <% end %>
-  </div>
-  <% end %>
-  <br>
-
   <div id="tweets">
     <% @posts.each do |post| %>
       <% if @actual_day != @post_day %>

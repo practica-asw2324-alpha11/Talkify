@@ -4,16 +4,11 @@ Rails.application.routes.draw do
     sessions: 'admins/sessions'
   }
 
-
-  resources :tweets do
-    put 'like', on: :member
-  end
-
   resources :posts do
     member do
       get 'sort_comments', to: "comments#sort"
     end
-    resources :comments do 
+    resources :comments do
       member do
         post 'upvote'
         post 'downvote'
