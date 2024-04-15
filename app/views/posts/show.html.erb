@@ -1,11 +1,60 @@
-<div class="container">
-  
-  <h1>
-    <a href="<%= @post.url %>"> <%=@post.title%></a>
-  </h1>
-  <p><strong>Cuerpo:</strong></p>
-  <p><%= @post.body %></p>
+<div class="wotitem">
+  <div class="post-header">
+    <div>
+      <!-- Botones de votación -->
+      <span class="vote-buttons">
+        <%= button_to 'upvote', {class: 'vote', style: "margin-bottom: 1em;"} do %>
+          <span> 0 &nbsp;</span>
+          <i class="fas fa-arrow-up"></i>
+        <% end %>
+        <%= button_to 'downvote', {class: 'vote'} do %>
+          <span> 0 &nbsp;</span>
+          <i class="fas fa-arrow-down"></i>
+        <% end %>
+      </span>
+    </div>
 
-  <%= link_to 'Editar', edit_post_path(@post), class: 'btn btn-primary btn-rectangular' %>
-  <%= link_to 'Eliminar', post_path(@post), method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger btn-rectangular' %>
+
+
+    <!-- Contenido del post -->
+    <div style="margin-left:10px;" class="post-content">
+        <div class="text-container">
+        <span class="first-part"><h2><%= @post.title %></h2></span>
+        <span class="second-part" ><% if @post.link? %>
+        <p>
+            (<%= link_to @post.url, @post.url, target: "_blank", style: "color: white;" %>)
+        </p>
+        <% end %></span>
+    </div>
+      <p><strong>Body:</strong> <%= @post.body %></p>
+    </div>
+
+    <!-- Enlaces para editar y eliminar el post -->
+    <div class="post-actions">
+    <%= link_to 'Editar', edit_post_path(@post), class: 'btn btn-primary btn-rectangular'%>
+    <hr style="opacity: 0%;">
+    <%= button_to 'Eliminar', @post, method: :delete, class: 'btn btn-danger btn-rectangular' %>
+    </div>
+  </div>
 </div>
+
+<div class="sub-navbar wotitem">
+  <div>
+    <%= link_to "Top", sort_comments_post_path(@post, sort_by: "top") %>
+    <%= link_to "Newest", sort_comments_post_path(@post, sort_by: "newest") %>
+    <%= link_to "Oldest", sort_comments_post_path(@post, sort_by: "oldest") %>
+  </div>
+</div>
+
+
+<div class="wotitem" name="new-comment">
+
+  <%= render "comments/form", post: @post, comment: @comment, parent_comment: nil %>
+
+
+</div>
+
+<div name="show-comments">
+  <%= render @comments.where(parent_comment_id: nil) %>
+</div>
+

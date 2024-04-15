@@ -1,0 +1,37 @@
+<%= form_with(model: @post, url: posts_path, local: true, html: { class: "post-form" }) do |form| %>
+
+<% if @post.errors.any? %>
+   <div id="error_explanation">
+     <h2><%= pluralize(@post.errors.count, "error") %> han ocurrido al crear el post:</h2>
+     <ul>
+     <% @post.errors.full_messages.each do |message| %>
+       <li><%= message %></li>
+     <% end %>
+     </ul>
+   </div>
+ <% end %>
+
+  <div class="form-group">
+    <%= form.label :title, "Title:", class:"form-label" %>
+    <%= form.text_field :title, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :body, "Body:" , class:"form-label" %>
+    <%= form.text_area :body, rows: 2, class: "form-control" %>
+  </div>
+
+   <div class="form-group">
+      <%= form.label :category, "Community:", class:"form-label" %>
+      <%= form.select :category, ['photography', 'Disneyland', 'animals', 'news', 'art', 'fediverse', 'music', 'tech', 'climate', 'ai', 'linux', 'NFL', 'Israel', 'mastodon', 'books', 'gaming', 'UFO', 'aitools', 'porn', 'Palestine', 'gamedev', 'apple', 'DonaldTrump', 'internet', 'nature', 'history', 'Cats', 'science', 'retrogaming', 'food', 'Russia', 'twitter', 'opensource', 'Japan', 'space', 'Florida', 'politics', 'Cosmology', 'movies', 'tisseksplayspace', 'python', 'Canada', 'aliens', 'google', 'Cat', 'writing'], {}, class: "form-control" %>
+    </div>
+
+  <div class="form-group text-right">
+    <%= form.submit "Add new link!", class: "btn btn-primary btn-rectangular" %>
+  </div>
+
+  <%= form.hidden_field :admin_id, value: current_admin.id %>
+<%= form.hidden_field :link %>
+<%= form.hidden_field :url, value: " " %>
+
+<% end %>

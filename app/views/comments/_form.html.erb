@@ -1,0 +1,24 @@
+<%= form_with(model: [@post, @comment], url: post_comments_path(@post), method:"post") do |form| %>
+
+  <% if @comment.errors.any? %>
+  <div id="error-explanation">
+    <% @comment.errors.full_messages.each do |message| %>
+      <p><%= message %></p>
+    <% end %>
+  </div>
+  <% end %>
+
+
+  <% if !parent_comment.nil? %>
+    <%= form.hidden_field :parent_comment_id, value: parent_comment.id %>
+  <% end %>
+
+  <div class="form-group">
+      <%= form.text_area :body, class:"form-control resizable", rows: 5, cols: 50 %>
+  </div>
+
+  <div class="form-group" style="display:flex; justify-content: right; margin-right: 10px;">
+    <%= form.submit "Add Comment", class: "btn btn-primary btn-rectangular" %>
+  </div>
+
+<% end %>

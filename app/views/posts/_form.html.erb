@@ -1,4 +1,3 @@
-
 <%= form_with(model: @post, url: posts_path, local: true, html: { class: "post-form" }) do |form| %>
 
 <% if @post.errors.any? %>
@@ -13,7 +12,7 @@
  <% end %>
 
   <div class="form-group">
-    <%= form.label :title, "Título:", class:"form-label" %>
+    <%= form.label :title, "Title:", class:"form-label" %>
     <%= form.text_field :title, class: "form-control" %>
   </div>
 
@@ -23,7 +22,7 @@
   </div>
 
   <div class="form-group">
-    <%= form.label :body, "Cuerpo:" , class:"form-label" %>
+    <%= form.label :body, "Body:" , class:"form-label" %>
     <%= form.text_area :body, rows: 2, class: "form-control" %>
   </div>
 
@@ -32,7 +31,11 @@
     <%= form.text_field :magazine_id, class: "form-control" %>
   </div>
 
+
   <div class="form-group text-right">
-    <%= form.submit "Añadir un nuevo enlace!", class: "btn btn-primary btn-rectangular" %>
+    <%= form.submit "Add new link!", class: "btn btn-primary btn-rectangular" %>
   </div>
+
+ <%= form.hidden_field :admin_id, value: current_admin.id %>
+<%= form.hidden_field :link %>
 <% end %>

@@ -1,0 +1,10 @@
+<%= form_with(model: comment, url: post_comment_path(comment.post, comment), method: "patch") do |form| %>
+  <!-- Campos de edición del comentario -->
+  <div class="form-group">
+      <%= form.text_area :body, class:"form-control resizable", rows: 5, cols: 50 %>
+  </div>
+
+  <div class="form-group" style="display:flex; justify-content: right; margin-right: 10px;">
+    <%= form.submit "Edit!", class: "btn btn-primary btn-rectangular" %>
+  </div>
+<% end %>

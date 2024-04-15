@@ -1,0 +1,94 @@
+<div class="comment wotitem" id="<%= dom_id comment %>">
+    <div class="top">
+        <p>
+          <a style="color:#cecece;" href="<%= admin_path(comment.admin.id) %>">
+                    <%= comment.admin.full_name %>,
+            </a>
+            </strong>
+            <span class="comment-timestamp">
+                <%= time_ago_in_words(comment.created_at) %> ago
+            </span>
+        </p>
+
+        <div class="buttons">
+            <%= link_to upvote_post_comment_path(@post, comment), method: :post, class: "vote", style: "margin-bottom: 1em;" do %>
+                <span> 0 &nbsp;</span>
+                <i class="fas fa-arrow-up"></i>
+            <% end %>
+
+            <%= link_to downvote_post_comment_path(@post, comment), method: :post, class: "vote", style: "margin-left: 10px;" do %>
+                <span> 0 &nbsp;</span>
+                <i class="fas fa-arrow-down"></i>
+            <% end %>
+        </div>
+    </div>
+
+    <div class="body">
+        <p><%= comment.body %></p>
+    </div>
+
+    <div class="actions" style="display: flex;">
+        <%= link_to 'reply', '#', class:'reply-link', data: {comment_id: comment.id}%>
+        <div class="dropdown" style="position: relative;">
+            <a href="#" class="dropdown-btn">more</a>
+            <div class="dropdown-content" style="position: absolute; top: 1em; right: -1.2em; margin-top: 10px;">
+                <%= link_to 'edit', '#', class:'edit-comment-link', data: {comment_id: comment.id}%>
+                <a style="margin-top:-20px;">
+                    <%= button_to "delete", post_comment_path(@post, comment), method: :delete, class:"delete-button" %>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="reply-comment-area" id="reply-comment-area-<%= comment.id %>" style="display: none;">
+        <%= render "comments/form", comment: comment, parent_comment: comment %>
+    </div>
+
+    <div class="edit-comment-area" id="edit-comment-area-<%= comment.id %>">
+        <%= render "comments/edit_form", comment: comment %>
+    </div>
+</div>
+
+<div class="comment-reply" id="replies-<%= comment.id %>">
+    <%= render comment.replies.order_by(@sort || 'newest') %>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var editLinks = document.querySelectorAll('.edit-comment-link');
+
+  editLinks.forEach(function(link) {
+
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      // Obtener el ID del comentario
+      var commentId = this.dataset.commentId;
+
+      var textArea = document.querySelector('#edit-comment-area-'+commentId);
+
+      textArea.style.display = 'block';
+
+
+    });
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  var replyLinks = document.querySelectorAll('.reply-link');
+
+  replyLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      // Obtener el ID del comentario
+      var commentId = this.dataset.commentId;
+
+      var replyArea = document.querySelector('#reply-comment-area-' + commentId);
+
+      replyArea.style.display = 'block';
+    });
+  });
+});
+
+</script>

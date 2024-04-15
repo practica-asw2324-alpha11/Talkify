@@ -1,0 +1,48 @@
+<div class="wotitem">
+  <div class="post-header">
+    <div>
+      <!-- Botones de votación -->
+      <span class="vote-buttons">
+        <%= button_to 'upvote', {class: 'vote', style: "margin-bottom: 1em;"} do %>
+          <span> 0 &nbsp;</span>
+          <i class="fas fa-arrow-up"></i>
+        <% end %>
+        <%= button_to 'downvote', {class: 'vote'} do %>
+          <span> 0 &nbsp;</span>
+          <i class="fas fa-arrow-down"></i>
+        <% end %>
+      </span>
+    </div>
+
+
+
+    <!-- Contenido del post -->
+    <div style="margin-left:10px;" class="post-content">
+        <div class="text-container">
+        <span class="first-part"><h2><%= @post.title %></h2></span>
+        <span class="second-part" ><% if @post.link? %>
+        <p>
+            (<%= link_to @post.url, @post.url, target: "_blank", style: "color: white;" %>)
+        </p>
+        <% end %></span>
+    </div>
+      <p><strong>Body:</strong> <%= @post.body %></p>
+    </div>
+
+    <!-- Enlaces para editar y eliminar el post -->
+    <div class="post-actions">
+    <%= link_to 'Editar', edit_post_path(@post), class: 'btn btn-primary btn-rectangular'%>
+    <hr style="opacity: 0%;">
+    <%= button_to 'Eliminar', @post, method: :delete, class: 'btn btn-danger btn-rectangular' %>
+    </div>
+  </div>
+</div>
+
+<div class="wotitem">
+  <div class="post-header">
+    <!-- Contenido del post -->
+    <div class="post-content" style ="color: white;">
+        <%= render 'formedit' %>
+    </div>
+    </div>
+  </div>
