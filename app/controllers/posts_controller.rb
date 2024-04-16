@@ -99,18 +99,8 @@ def downvote
 
 
 
- def sort
+def sort
   @posts = Post.order_by(params[:sort_by])
-  #case params[:from]
-  #when "admin_show"
-   # if params[:admin_id].present?
-    #  @admin = Admin.find(params[:admin_id])
-     # render 'admins/admins/show'
-    #end
-  #else
-  #  render 'posts/index'
-  #end
-
   respond_to do |format|
     format.html { redirect_back(fallback_location: root_path) }
     format.json { head :no_content }

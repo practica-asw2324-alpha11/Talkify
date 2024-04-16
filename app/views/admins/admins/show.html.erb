@@ -12,7 +12,7 @@
     <div>
       <%= link_to "Threads", admin_path(@admin, view: 'threads') %>
       <%= link_to "Comments", admin_path(@admin, view: 'comments') %>
-      <%= link_to "Boosts", "#" %>
+      <%= link_to "Boosts", admin_path(@admin, view: 'boost') %>
     </div>
   </div>
 </div>
@@ -43,6 +43,14 @@
           </div>
       <% end %>
     </div>
+  <% elsif params[:view] == 'boost' %>
+  <div id="boosts">
+    <% @boosted_posts.each do |post| %>
+      <div>
+        <%= render 'posts/post', post: post %>
+      </div>
+      <% end %>
+  </div>
   <% end %>
 
 

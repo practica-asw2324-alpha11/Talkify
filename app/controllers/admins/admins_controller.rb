@@ -1,6 +1,7 @@
 # app/controllers/admins/admins_controller.rb
 class Admins::AdminsController < ApplicationController
   before_action :authenticate_admin!
+  before_action :set_votes_hash
 
   def show
     @admin = Admin.find(params[:id])
@@ -13,10 +14,21 @@ class Admins::AdminsController < ApplicationController
   def set_votes_hash
     if admin_signed_in?
       @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+      @boosted_posts_ids = current_admin.boosts.pluck(:post_id)
+      @boosted_posts = Post.where(id: @boosted_posts_ids)
+
     else
       @votes_hash = {}
+      @boosted_posts = {}
+
     end
   end
+
+
+  def boosted_posts
+    @boosted_posts = Boost.where(admin: current_admin).includes(:post).map(&:post)
+  end
+
 
   def sort
     @posts = Post.order_by(params[:sort_by])
