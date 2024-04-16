@@ -1,10 +1,18 @@
 <div class="container">
-    <h1><%= @magazine.name %></h1>
-    <h2><%= @magazine.title %></h2>
-    <strong><p>Descripción:</p></strong>
-    <p><%= @magazine.description %></p>
-    <strong><p>Reglas:</p></strong>
-    <p><%= @magazine.rules %></p>
+    <div class="wotitem">
+      <h2><%= @magazine.name %></h2>
+      <strong><p>Description:</p></strong>
+      <p><%= @magazine.description %></p>
+      <strong><p>Rules:</p></strong>
+      <p><%= @magazine.rules %></p>
+    </div>
+
+    <div class="wotitem">
+      <p><strong>Created: </strong><%= time_ago_in_words(@magazine.created_at) %> ago</p>
+      <p><strong>Subscribers: </strong><%= @magazine.admins.count %></p>
+      <p><strong>Threads: </strong><%= @magazine.posts.count %></p>
+      <p><strong>Comments: </strong><%= @magazine.comments.count %></p>
+    </div>
 
     <div id="posts">
     <% @magazine.posts.each do |post| %>
