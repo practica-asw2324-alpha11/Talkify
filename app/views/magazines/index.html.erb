@@ -1,8 +1,8 @@
 <div class="sub-navbar">
   <div>
     <a href="/magazines?order_by=posts">Most Threads</a>
-    <a href="#">Most Comments</a>
-    <a href="#">Most Subscribers</a>
+    <a href="/magazines?order_by=comments">Most Comments</a>
+    <a href="/magazines?order_by=subscribers">Most Subscribers</a>
   </div>
 </div>
 
@@ -21,10 +21,10 @@
     <tbody>
       <% @magazines.each do |magazine| %>
         <tr>
-          <td class="magazine-td"><%= link_to magazine.name, magazine %></td>
+          <td class="magazine-td"><strong><%= link_to magazine.name, magazine, style: "color: white;" %></strong></td>
           <td class="magazine-td"><%= magazine.posts.count %></td>
-          <td class="magazine-td">Not yet implemented</td>
-          <td class="magazine-td">Not yet implemented</td>
+          <td class="magazine-td"><%= magazine.comments.count %></td>
+          <td class="magazine-td"><%= magazine.admins.size %></td>
           <td class="magazine-td">Not yet implemented</td>
         </tr>
       <% end %>

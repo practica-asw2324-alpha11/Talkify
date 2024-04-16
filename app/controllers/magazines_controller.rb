@@ -9,6 +9,10 @@ class MagazinesController < ApplicationController
       case params[:order_by]
         when "posts"
           @magazines = @magazines.order(posts_count: :desc)
+        when "comments"
+          @magazines = @magazines.order(comments_count: :desc)
+        when "subscribers"
+          @magazines = @magazines.order(admins_count: :desc)
         else
           @magazines = @magazines.order(created_at: :desc)
       end
