@@ -1,18 +1,19 @@
 Rails.application.routes.draw do
 
-  
-  
+
+
   devise_for :admins, controllers: {
     omniauth_callbacks: 'admins/omniauth_callbacks',
     sessions: 'admins/sessions'
   }
 
   resources :magazines
-  
+
   resources :posts do
 
-      post 'upvote', on: :member
-      post 'downvote', on: :member
+
+    put 'upvote', on: :member
+    put 'downvote', on: :member
 
     member do
       get 'sort_comments', to: "comments#sort"

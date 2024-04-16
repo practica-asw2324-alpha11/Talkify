@@ -13,19 +13,71 @@ before_action :set_post, only: [:show, :edit, :update, :destroy,  :upvote, :down
     end
 
 def upvote
-  @post.votes.create(user: current_user, vote_type: 'upvote')
-  redirect_to @post, notice: 'Upvoted!'
+  @vote = @post.votes.find_or_initialize_by(admin: current_admin)
+
+  if  @vote.vote_type == 'downvote'
+    @vote.destroy
+  end
+  @vote.update!(vote_type: 'upvote')
+  @vote.save
+
+
+   respond_to do |format|
+        format.html { redirect_to root_path }
+        format.json { head :no_content }
+      end
+end
+
+def upvote
+  ActiveRecord::Base.transaction do
+    @vote = @post.votes.find_or_initialize_by(admin: current_admin)
+
+    if @vote.new_record?
+      @vote.vote_type = 'upvote'
+      @vote.save!
+    elsif @vote.vote_type == 'downvote'
+      @vote.destroy!
+      @post.votes.create!(admin: current_admin, vote_type: 'upvote')
+    end
+  end
+
+
+  respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { head :no_content }
+  end
 end
 
 def downvote
-  @post.votes.create(user: current_user, vote_type: 'downvote')
-  redirect_to @post, notice: 'Downvoted!'
-end
+  ActiveRecord::Base.transaction do
+    @vote = @post.votes.find_or_initialize_by(admin: current_admin)
+
+    if @vote.new_record?
+      @vote.vote_type = 'downvote'
+      @vote.save!
+    elsif @vote.vote_type == 'upvote'
+      @vote.destroy!
+      @post.votes.create!(admin: current_admin, vote_type: 'downvote')
+    end
+  end
+
+ respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { head :no_content }
+  end
+  end
 
 
 
 
  def sort
+
+  if admin_signed_in?
+    @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+  else
+    @votes_hash = {}
+  end
+
   @posts = Post.order_by(params[:sort_by])
   render 'index'
 end
@@ -44,6 +96,12 @@ end
   else
     @posts = Post.order(created_at: :desc)
   end
+    if admin_signed_in?
+          @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+    else
+          @votes_hash = {}
+    end
+
 end
 
     # GET /posts/1 or /posts/1.json
@@ -52,7 +110,11 @@ end
       @comment = @post.comments.build
       @comments = @post.comments.includes(:replies)
 
-
+       if admin_signed_in?
+            @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+       else
+            @votes_hash = {}
+       end
     end
 
 
@@ -73,7 +135,13 @@ end
       @magazines = Magazine.all.order(:name)  # Asumiendo que cada revista tiene un atributo 'name'
 
     end
+
     def edit
+         if admin_signed_in?
+             @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+          else
+             @votes_hash = {}
+        end
 
     end
 

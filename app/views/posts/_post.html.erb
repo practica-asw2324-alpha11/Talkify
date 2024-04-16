@@ -1,21 +1,20 @@
 <div class="wotitem">
   <div class="post-header">
- <!-- Botones de votación -->
-<span class="vote-buttons">
-  <%= form_tag upvote_post_path(post), method: :post, class: 'vote', style: "margin-bottom: 1em;" do %>
-    <%= button_tag(type: 'submit') do %>
-      <span> <%= post.upvotes_count %> &nbsp;</span>
-      <i class="fas fa-arrow-up"></i>
-    <% end %>
+
+
+<div class="vote-buttons">
+  <%= button_to upvote_post_path(post), method: :put, class: "vote", style: "margin-bottom: 1em; color: #{'green' if @votes_hash[post.id] == 'upvote'}" do %>
+    <span> <%= post.upvotes_count %> &nbsp;</span>
+    <i class="fas fa-arrow-up" style="color: #{'green' if @votes_hash[post.id] == 'upvote'}"></i>
   <% end %>
 
-  <%= form_tag downvote_post_path(post), method: :post, class: 'vote' do %>
-    <%= button_tag(type: 'submit') do %>
-      <span> <%= post.downvotes_count %> &nbsp;</span>
-      <i class="fas fa-arrow-down"></i>
-    <% end %>
+  <%= button_to downvote_post_path(post), method: :put, class: "vote", style: "color: #{'red' if @votes_hash[post.id] == 'downvote'}" do %>
+    <span> <%= post.downvotes_count %> &nbsp;</span>
+    <i class="fas fa-arrow-down" style="color: #{'red' if @votes_hash[post.id] == 'downvote'}"></i>
   <% end %>
-</span>
+</div>
+
+
 
     <!-- Imagen -->
     <!-- <div class="no-image">
@@ -39,7 +38,7 @@
     <p> <strong><a style="color:#cecece;" href="<%= admin_path(post.admin) %>">
                     <%= post.admin.full_name %>
             </a>
-            </strong> <%= time_ago_in_words(post.created_at) %> ago to magazine</p>
+            </strong> <%= time_ago_in_words(post.created_at) %> ago to <strong><a style="color:#cecece;" href="<%= magazine_path(post.magazine) %>"><%= post.magazine.name %> </a></p></strong>
     </div>
   </div>
 <!-- Mostrar el número de comentarios como un enlace al post -->
