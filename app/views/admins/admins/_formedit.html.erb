@@ -1,0 +1,36 @@
+<div class="wotitem">
+  <div class="post-header">
+    <!-- Contenido del post -->
+    <div class="post-content" style="color: white;">
+      <%= form_with(model: @admin, method: :patch, local: true, html: { class: "post-form" }) do |form| %>
+        <% if @admin.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@admin.errors.count, "error") %> han ocurrido al editar el usuario:</h2>
+            <ul>
+              <% @admin.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="form-group">
+
+          <%= form.text_area :description, rows: 3, class: "form-control" %>
+        </div>
+
+
+        <div class="form-group">
+          <%= form.label :full_name, "Nombre del usuario", class: "form-label" %>
+          <%= form.text_field :full_name, class: "form-control" %>
+        </div>
+
+
+        <div class="form-group text-left">
+          <%= form.submit "Guardar", class: "btn btn-primary btn-google" %>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>
