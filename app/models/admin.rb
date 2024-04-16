@@ -3,6 +3,8 @@ class Admin < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :posts, dependent: :destroy
   has_many :votes, dependent: :destroy
+  has_many :boosts, dependent: :destroy
+
 
    def self.from_google(email:, full_name:, uid:, avatar_url:)
     return nil unless email =~ /@estudiantat.upc.edu\z/

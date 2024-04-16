@@ -4,14 +4,25 @@
 
 <div class="vote-buttons">
   <%= button_to upvote_post_path(post), method: :put, class: "vote", style: "margin-bottom: 1em; color: #{'green' if @votes_hash[post.id] == 'upvote'}" do %>
-    <span> <%= post.upvotes_count %> &nbsp;</span>
-    <i class="fas fa-arrow-up" style="color: #{'green' if @votes_hash[post.id] == 'upvote'}"></i>
-  <% end %>
+  <span> <%= post.upvotes_count %> &nbsp;</span>
+  <i class="fas fa-arrow-up" style="color: #{'green' if @votes_hash[post.id] == 'upvote'}"></i>
+<% end %>
 
-  <%= button_to downvote_post_path(post), method: :put, class: "vote", style: "color: #{'red' if @votes_hash[post.id] == 'downvote'}" do %>
-    <span> <%= post.downvotes_count %> &nbsp;</span>
-    <i class="fas fa-arrow-down" style="color: #{'red' if @votes_hash[post.id] == 'downvote'}"></i>
-  <% end %>
+<%= button_to downvote_post_path(post), method: :put, class: "vote", style: "color: #{'red' if @votes_hash[post.id] == 'downvote'}" do %>
+  <span> <%= post.downvotes_count %> &nbsp;</span>
+  <i class="fas fa-arrow-down" style="color: #{'red' if @votes_hash[post.id] == 'downvote'}"></i>
+<% end %>
+
+<% unless admin_signed_in? %>
+  <script>
+    document.querySelectorAll('.vote').forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '<%= new_admin_session_path %>';
+      });
+    });
+  </script>
+<% end %>
 </div>
 
 
@@ -41,15 +52,45 @@
 
       </div>
 
-    <p> <strong><a style = "color:#cecece; font-size: 14px;"<%= admin_path(post.admin) %>> <%= post.admin.full_name %></a>
-    </strong> <%= time_ago_in_words(post.created_at) %> ago to <strong><a style="color:#cecece; font-size: 14px;"<%= magazine_path(post.magazine) %>><%= post.magazine.name %> </a></p></strong>
+  <div class="text-container" style="color:#cecece; font-size: 14px;">
+         <p> <strong><a style="color:#cecece; font-size: 14px;" href="<%= admin_path(post.admin) %>"> <%= post.admin.full_name %> </a></strong>
+         <span> <%= time_ago_in_words(post.created_at) %> ago <%= link_to post.magazine.name, magazine_path(post.magazine), style: "color:#cecece; font-weight: bold;" %> </span></p>
 
-    <div class="comments-count" style="color: white;font-size: 14px;">
-      <%= link_to pluralize(post.comments_count, 'comment'), post_path(post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
-    </div>
-    </div>
+
   </div>
-<!-- Mostrar el número de comentarios como un enlace al post -->
+
+
+
+<div class="comments-count" style="color: white;font-size: 14px;">
+      <%= link_to pluralize(post.comments_count, 'comment'), post_path(post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
+         <% if @boosted_posts.include?(post.id) %>
+    <span class="boost-link" style="text-decoration: underline; color: white;" onclick="boostPost(<%= post.id %>);">boost(1)</span>
+  <% else %>
+    <span class="boost-link" style="text-decoration: underline; color: white;" onclick="boostPost(<%= post.id %>);">boost</span>
+  <% end %>
+
+  <%= form_with model: @post, url: boost_post_path(post), method: :post, id: "boost_form#{post.id}", style: "display: none;" do |form| %>
+  <% end %>
+
+  <% unless admin_signed_in? %>
+    <script>
+      document.querySelectorAll('.boost-link').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = '<%= new_admin_session_path %>';
+        });
+      });
+    </script>
+  <% end %>
+    </div>
+    </div>
+</div>
+
+<script>
+  function boostPost(postId) {
+    document.getElementById('boost_form' + postId).submit();
+  }
+</script>
 
 
 </div>

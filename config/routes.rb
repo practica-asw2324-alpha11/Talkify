@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
     put 'upvote', on: :member
     put 'downvote', on: :member
+    post 'boost', on: :member
 
     member do
       get 'sort_comments', to: "comments#sort"
