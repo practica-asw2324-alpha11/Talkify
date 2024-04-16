@@ -28,7 +28,8 @@
     </div>
 
     <div class="actions" style="display: flex;">
-        <%= link_to 'reply', '#', class:'reply-link', data: {comment_id: comment.id}%>
+    <%= link_to 'reply', '#', class:'reply-link', data: {comment_id: comment.id}%>
+        <% if admin_signed_in? && current_admin == comment.admin %>
         <div class="dropdown" style="position: relative;">
             <a href="#" class="dropdown-btn">more</a>
             <div class="dropdown-content" style="position: absolute; top: 1em; right: -1.2em; margin-top: 10px;">
@@ -37,7 +38,8 @@
                     <%= button_to "delete", post_comment_path(@post, comment), method: :delete, class:"delete-button" %>
                 </a>
             </div>
-        </div>
+            </div>
+        <% end %>
     </div>
 
     <div class="reply-comment-area" id="reply-comment-area-<%= comment.id %>" style="display: none;">
