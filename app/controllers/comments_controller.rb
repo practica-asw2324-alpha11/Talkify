@@ -3,6 +3,7 @@ class CommentsController < ApplicationController
   before_action :set_comment, except: [:sort, :new, :create]
   before_action :set_post, only: [:sort, :edit]
 
+
   def edit
     @comment = Comment.find(params[:id])
   end
@@ -16,7 +17,7 @@ class CommentsController < ApplicationController
   end
 
   def upvote
-    
+
     @comment.upvote +=1
     @comment.save
 
@@ -101,5 +102,5 @@ class CommentsController < ApplicationController
   def comment_params
     params.require(:comment).permit(:parent_comment_id, :body)
   end
-  
+
 end
