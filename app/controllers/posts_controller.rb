@@ -109,7 +109,7 @@ def search
   @posts = Post.where("title LIKE :query OR body LIKE :query", query: "%#{@query}%")
 end
 
-   def index
+def index
   case params[:filter]
   when "links"
     @posts = Post.where(link: true).order(created_at: :desc)

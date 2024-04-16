@@ -2,8 +2,9 @@
 <a href="#" class="dropdown-btn"><i class="fas fa-user" style="font-size: 18px; margin-left: -0.5rem; color: #fff;"></i></a>
 <div class="dropdown-content" style="top: 4.42rem; right: 0.5rem;">
   <% if admin_signed_in? %>
-    <a href="<%= admin_path(current_admin) %>">Profile</a> <!-- Asumiendo que tienes una ruta llamada 'profile_path' -->
+    <a href="<%= admin_path(current_admin) %>">Profile</a>
     <%= link_to "Logout", destroy_admin_session_path, method: :delete %>
+    <a href="<%= edit_admin_path(current_admin) %>">Configuration</a>
   <% else %>
     <%= link_to "Login", new_admin_session_path %>
 
