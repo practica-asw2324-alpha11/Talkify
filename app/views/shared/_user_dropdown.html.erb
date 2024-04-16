@@ -1,10 +1,13 @@
 
 <a href="#" class="dropdown-btn">
   <% if admin_signed_in? %>
-    <i style="font-size: 18px; margin-left: -0.5rem; color: #fff;"></i><%= current_admin.full_name %></a>
+    <a href="#" class="dropdown-btn">
+      <i style="font-size: 18px; margin-left: -0.5rem; color: #fff;"></i><%= current_admin.full_name %>
+    </a>
   <% else %>
-    <%= link_to "Login", new_admin_session_path %>
+    <%= link_to "Login", new_admin_session_path, class: "dropdown-btn" %>
   <% end %>
+
 
 <div class="dropdown-content" style="top: 4.42rem; right: 0.5rem;">
   <% if admin_signed_in? %>
