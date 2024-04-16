@@ -7,7 +7,16 @@ class Admins::AdminsController < ApplicationController
     params[:view] ||= 'threads'
     @posts = @admin.posts.order(created_at: :desc)
     @comments = @admin.comments.includes(:post).order(created_at: :desc)
+    set_votes_hash
 
+  end
+
+  def set_votes_hash
+    if admin_signed_in?
+      @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+    else
+      @votes_hash = {}
+    end
   end
 
   def edit
