@@ -8,7 +8,6 @@ class Admins::AdminsController < ApplicationController
     @posts = @admin.posts.order(created_at: :desc)
     @comments = @admin.comments.includes(:post).order(created_at: :desc)
     set_votes_hash
-
   end
 
   def set_votes_hash
@@ -16,6 +15,20 @@ class Admins::AdminsController < ApplicationController
       @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
     else
       @votes_hash = {}
+    end
+  end
+
+  def sort
+    @posts = Post.order_by(params[:sort_by])
+
+    case params[:from]
+    when "admin_show"
+      # Asegúrate de definir todas las variables necesarias para esta vista.
+      @admin = Admin.find(params[:admin_id]) # Asegúrate de pasar el admin_id de alguna manera.
+      @comments = @admin.comments.includes(:post).order(created_at: :desc)
+      render 'admins/admins/show'
+    else
+      render 'index'
     end
   end
 
