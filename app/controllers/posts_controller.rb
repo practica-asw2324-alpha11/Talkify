@@ -5,7 +5,7 @@ before_action :set_post, only: [:show, :edit, :update, :destroy,  :upvote, :down
 
 
 
-    def set_votes_hash
+  def set_votes_hash
     if admin_signed_in?
       @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
       @boosted_posts = current_admin.boosts.pluck(:post_id)
@@ -101,7 +101,20 @@ def downvote
 
  def sort
   @posts = Post.order_by(params[:sort_by])
-  render 'index'
+  #case params[:from]
+  #when "admin_show"
+   # if params[:admin_id].present?
+    #  @admin = Admin.find(params[:admin_id])
+     # render 'admins/admins/show'
+    #end
+  #else
+  #  render 'posts/index'
+  #end
+
+  respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { head :no_content }
+  end
 end
 
 def search
