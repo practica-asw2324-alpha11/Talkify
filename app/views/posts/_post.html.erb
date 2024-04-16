@@ -1,21 +1,20 @@
 <div class="wotitem">
   <div class="post-header">
- <!-- Botones de votación -->
-<span class="vote-buttons">
-  <%= form_tag upvote_post_path(post), method: :post, class: 'vote', style: "margin-bottom: 1em;" do %>
-    <%= button_tag(type: 'submit') do %>
-      <span> <%= post.upvotes_count %> &nbsp;</span>
-      <i class="fas fa-arrow-up"></i>
-    <% end %>
+
+
+<div class="vote-buttons">
+  <%= button_to upvote_post_path(post), method: :put, class: "vote", style: "margin-bottom: 1em; color: #{'green' if @votes_hash[post.id] == 'upvote'}" do %>
+    <span> <%= post.upvotes_count %> &nbsp;</span>
+    <i class="fas fa-arrow-up" style="color: #{'green' if @votes_hash[post.id] == 'upvote'}"></i>
   <% end %>
 
-  <%= form_tag downvote_post_path(post), method: :post, class: 'vote' do %>
-    <%= button_tag(type: 'submit') do %>
-      <span> <%= post.downvotes_count %> &nbsp;</span>
-      <i class="fas fa-arrow-down"></i>
-    <% end %>
+  <%= button_to downvote_post_path(post), method: :put, class: "vote", style: "color: #{'red' if @votes_hash[post.id] == 'downvote'}" do %>
+    <span> <%= post.downvotes_count %> &nbsp;</span>
+    <i class="fas fa-arrow-down" style="color: #{'red' if @votes_hash[post.id] == 'downvote'}"></i>
   <% end %>
-</span>
+</div>
+
+
 
     <!-- Imagen -->
     <!-- <div class="no-image">
@@ -28,23 +27,29 @@
     <div class="post-content" style = "margin-left: 20px;">
 
     <div class="text-container">
-        <span class="first-part">  <h2><%= link_to post.title, post_path(post), style: "color: white;" %></h2></span>
-        <span class="second-part" ><% if post.link? %>
-        <p>
-            (<%= link_to post.url, post.url, target: "_blank", style: "color: white;" %>)
-        </p>
-        <% end %></span>
-    </div>
+       <span class="first-part">
+        <h2>
+          <%= link_to post.title, post_path(post), style: "color: white;" %>
+          <% if post.link? %>
+            <span style="font-size: 14px;">
+              (<%= link_to post.url, post.url, target: "_blank", style: "color: white;" %>)
+            </span>
+          <% end %>
+        </h2>
 
-    <p> <strong><a style="color:#cecece;" href="<%= admin_path(post.admin) %>">
-                    <%= post.admin.full_name %>
-            </a>
-            </strong> <%= time_ago_in_words(post.created_at) %> ago to magazine</p>
+        </span>
+
+      </div>
+
+    <p> <strong><a style = "color:#cecece; font-size: 14px;"<%= admin_path(post.admin) %>> <%= post.admin.full_name %></a>
+    </strong> <%= time_ago_in_words(post.created_at) %> ago to <strong><a style="color:#cecece; font-size: 14px;"<%= magazine_path(post.magazine) %>><%= post.magazine.name %> </a></p></strong>
+
+    <div class="comments-count" style="color: white;font-size: 14px;">
+      <%= link_to pluralize(post.comments_count, 'comment'), post_path(post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
+    </div>
     </div>
   </div>
 <!-- Mostrar el número de comentarios como un enlace al post -->
-<div class="comments-count" style="color: white; margin-left: 80px">
-  <%= link_to pluralize(post.comments_count, 'comment'), post_path(post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
-</div>
+
 
 </div>

@@ -1,5 +1,15 @@
 class MagazinesController < ApplicationController
+    before_action :set_votes_hash
     before_action :set_magazine, only: %i[ show edit update destroy]
+
+
+    def set_votes_hash
+    if admin_signed_in?
+      @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+    else
+      @votes_hash = {}
+    end
+  end
 
     # GET /magazines or /magazines.json
     def index
