@@ -27,23 +27,29 @@
     <div class="post-content" style = "margin-left: 20px;">
 
     <div class="text-container">
-        <span class="first-part">  <h2><%= link_to post.title, post_path(post), style: "color: white;" %></h2></span>
-        <span class="second-part" ><% if post.link? %>
-        <p>
-            (<%= link_to post.url, post.url, target: "_blank", style: "color: white;" %>)
-        </p>
-        <% end %></span>
-    </div>
+       <span class="first-part">
+        <h2>
+          <%= link_to post.title, post_path(post), style: "color: white;" %>
+          <% if post.link? %>
+            <span style="font-size: 14px;">
+              (<%= link_to post.url, post.url, target: "_blank", style: "color: white;" %>)
+            </span>
+          <% end %>
+        </h2>
 
-    <p> <strong><a style="color:#cecece;" href="<%= admin_path(post.admin) %>">
-                    <%= post.admin.full_name %>
-            </a>
-            </strong> <%= time_ago_in_words(post.created_at) %> ago to <strong><a style="color:#cecece;" href="<%= magazine_path(post.magazine) %>"><%= post.magazine.name %> </a></p></strong>
+        </span>
+
+      </div>
+
+    <p> <strong><a style = "color:#cecece; font-size: 14px;"<%= admin_path(post.admin) %>> <%= post.admin.full_name %></a>
+    </strong> <%= time_ago_in_words(post.created_at) %> ago to <strong><a style="color:#cecece; font-size: 14px;"<%= magazine_path(post.magazine) %>><%= post.magazine.name %> </a></p></strong>
+
+    <div class="comments-count" style="color: white;font-size: 14px;">
+      <%= link_to pluralize(post.comments_count, 'comment'), post_path(post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
+    </div>
     </div>
   </div>
 <!-- Mostrar el número de comentarios como un enlace al post -->
-<div class="comments-count" style="color: white; margin-left: 80px">
-  <%= link_to pluralize(post.comments_count, 'comment'), post_path(post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
-</div>
+
 
 </div>

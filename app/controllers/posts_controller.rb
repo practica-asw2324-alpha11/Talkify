@@ -1,6 +1,20 @@
 class PostsController < ApplicationController
-before_action :set_post, only: [:show, :edit, :update, :destroy, :upvote, :downvote]
+before_action :set_votes_hash
 before_action :set_post, only: [:show, :edit, :update, :destroy,  :upvote, :downvote], except: [:search]
+
+
+
+
+    def set_votes_hash
+    if admin_signed_in?
+      @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+    else
+      @votes_hash = {}
+    end
+  end
+
+
+
 
     def like
       @post.likes += 1
@@ -12,21 +26,6 @@ before_action :set_post, only: [:show, :edit, :update, :destroy,  :upvote, :down
       end
     end
 
-def upvote
-  @vote = @post.votes.find_or_initialize_by(admin: current_admin)
-
-  if  @vote.vote_type == 'downvote'
-    @vote.destroy
-  end
-  @vote.update!(vote_type: 'upvote')
-  @vote.save
-
-
-   respond_to do |format|
-        format.html { redirect_to root_path }
-        format.json { head :no_content }
-      end
-end
 
 def upvote
   ActiveRecord::Base.transaction do
@@ -71,13 +70,6 @@ def downvote
 
 
  def sort
-
-  if admin_signed_in?
-    @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
-  else
-    @votes_hash = {}
-  end
-
   @posts = Post.order_by(params[:sort_by])
   render 'index'
 end
@@ -96,11 +88,6 @@ end
   else
     @posts = Post.order(created_at: :desc)
   end
-    if admin_signed_in?
-          @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
-    else
-          @votes_hash = {}
-    end
 
 end
 
@@ -109,12 +96,6 @@ end
       @post = Post.find(params[:id])
       @comment = @post.comments.build
       @comments = @post.comments.includes(:replies)
-
-       if admin_signed_in?
-            @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
-       else
-            @votes_hash = {}
-       end
     end
 
 
@@ -137,12 +118,6 @@ end
     end
 
     def edit
-         if admin_signed_in?
-             @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
-          else
-             @votes_hash = {}
-        end
-
     end
 
     # POST /posts or /posts.json

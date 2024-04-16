@@ -19,18 +19,17 @@
     <!-- Contenido del post -->
     <div style="margin-left:10px;" class="post-content">
         <div class="text-container">
-        <span class="first-part"><h2><%= @post.title %></h2></span>
-        <span class="second-part" ><% if @post.link? %>
-        <p>
-            (<%= link_to @post.url, @post.url, target: "_blank", style: "color: white;" %>)
-        </p>
-        <% end %></span>
-         <p> <strong><a style="color:#cecece;" href="<%= admin_path(@post.admin) %>">
+        <span class="first-part"><h2><%= link_to @post.title,@post.url , target: "_blank", style: "color: white;" %></h2></span>
+         <p> <strong><a style="color:#cecece; font-size: 14px;" href="<%= admin_path(@post.admin) %>">
                     <%= @post.admin.full_name %>
             </a>
             </strong> <%= time_ago_in_words(@post.created_at) %> ago  </strong></p>
     </div>
+      <div class="comments-count" style="color: white;">
+        <%= link_to pluralize(@post.comments_count, 'comment'), post_path(@post), class: 'comment-link', style: "text-decoration: underline; color: white;font-size: 14px;" %>
+      </div>
       <p> <%= @post.body %></p>
+
     </div>
 
 
@@ -45,9 +44,7 @@
     <% end %>
   </div>
 
-   <div class="comments-count" style="color: white; margin-left: 80px">
-  <%= link_to pluralize(@post.comments_count, 'comment'), post_path(@post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
-</div>
+
 
 
 
