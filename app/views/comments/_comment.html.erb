@@ -28,7 +28,7 @@
     </div>
 
     <div class="actions" style="display: flex;">
-    <%= link_to 'reply', '#', class:'reply-link', data: {comment_id: comment.id}%>
+    <%= link_to 'reply', admin_signed_in? ? '#' : new_admin_session_path, class:"#{admin_signed_in? ? 'reply-link' : 'reply-link-logged-out'}", data: {comment_id: comment.id}%>
         <% if admin_signed_in? && current_admin == comment.admin %>
         <div class="dropdown" style="position: relative;">
             <a href="#" class="dropdown-btn">more</a>
