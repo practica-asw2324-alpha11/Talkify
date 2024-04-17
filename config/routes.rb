@@ -21,13 +21,10 @@ Rails.application.routes.draw do
 
     end
     resources :comments do
-      member do
-        post 'upvote'
-        post 'downvote'
-      end
-
+      put 'upvote', on: :member
+      put 'downvote', on: :member
       get 'edit', on: :member
-      #post 'create_reply', on: :member
+      
     end
     collection do
     get 'new_link'

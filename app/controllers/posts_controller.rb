@@ -3,13 +3,13 @@ before_action :set_votes_hash
 before_action :set_post, only: [:show, :edit, :update, :destroy,  :upvote, :downvote], except: [:search]
 
 
-
-
     def set_votes_hash
     if admin_signed_in?
+      @comment_votes_hash = current_admin.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
       @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
     else
       @votes_hash = {}
+      @comment_votes_hash = {}
     end
   end
 

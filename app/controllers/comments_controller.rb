@@ -1,7 +1,61 @@
 class CommentsController < ApplicationController
+  before_action :set_votes_hash
   before_action :authenticate_admin!, only: [:create]
   before_action :set_comment, except: [:sort, :new, :create]
   before_action :set_post, only: [:sort, :edit]
+
+  def set_votes_hash
+    if admin_signed_in?
+      @comment_votes_hash = current_admin.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
+      @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+    else
+      @votes_hash = {}
+      @comment_votes_hash = {}
+    end
+  end
+
+def upvote
+  ActiveRecord::Base.transaction do
+    @comment_vote = @comment.comment_votes.find_or_initialize_by(admin: current_admin)
+
+    if @comment_vote.new_record?
+      @comment_vote.vote_type = 'upvote'
+      @comment_vote.save!
+    elsif @comment_vote.vote_type == 'downvote'
+      @comment_vote.destroy!
+      @comment.comment_votes.create!(admin: current_admin, vote_type: 'upvote')
+    elsif @comment_vote.vote_type == 'upvote'
+      @comment_vote.destroy!
+    end
+  end
+
+
+  respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { head :no_content }
+  end
+end
+
+def downvote
+  ActiveRecord::Base.transaction do
+    @comment_vote = @comment.comment_votes.find_or_initialize_by(admin: current_admin)
+
+    if @comment_vote.new_record?
+      @comment_vote.vote_type = 'downvote'
+      @comment_vote.save!
+    elsif @comment_vote.vote_type == 'upvote'
+      @comment_vote.destroy!
+      @comment.comment_votes.create!(admin: current_admin, vote_type: 'downvote')
+    elsif @comment_vote.vote_type == 'downvote'
+      @comment_vote.destroy!
+    end
+  end
+
+ respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { head :no_content }
+  end
+  end
 
   def edit
     @comment = Comment.find(params[:id])
@@ -9,37 +63,20 @@ class CommentsController < ApplicationController
 
   def sort
     @post = Post.find(params[:id])
-    @comments = @post.comments.order_by(params[:sort_by])
+
+    if params[:sort_by] == "top"
+      @comments = @post.comments.left_joins(:comment_votes).group(:id).order('COUNT(comment_votes.id) DESC')
+    else
+      @comments = @post.comments.order_by(params[:sort_by])
+    end
     @comment = @post.comments.build
     @sort = params[:sort_by]
     render 'posts/show'
   end
 
-  def upvote
-    
-    @comment.upvote +=1
-    @comment.save
-
-    respond_to do |format|
-      format.html { redirect_to post_path(@post)}
-      format.json { head :no_content }
-    end
-  end
-
   def show
     @post = Post.find(params[:post_id])
     @coment = Comment.find(params[:id])
-  end
-
-  def downvote
-
-    @comment.downvote +=1
-    @comment.save
-
-    respond_to do |format|
-      format.html { redirect_to post_path(@post)}
-      format.json { head :no_content }
-    end
   end
 
   def update

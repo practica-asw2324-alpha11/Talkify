@@ -11,13 +11,13 @@
         </p>
 
         <div class="buttons">
-            <%= link_to upvote_post_comment_path(@post, comment), method: :post, class: "vote", style: "margin-bottom: 1em;" do %>
-                <span> 0 &nbsp;</span>
+            <%= button_to upvote_post_comment_path(@post, comment), method: :put, class: "vote", style: "margin-bottom: 1em; color: #{'green' if @comment_votes_hash[comment.id] == 'upvote'}" do %>
+                <span> <%= comment.upvotes_count %> &nbsp;</span>
                 <i class="fas fa-arrow-up"></i>
             <% end %>
 
-            <%= link_to downvote_post_comment_path(@post, comment), method: :post, class: "vote", style: "margin-left: 10px;" do %>
-                <span> 0 &nbsp;</span>
+            <%= button_to downvote_post_comment_path(@post, comment), method: :put, class: "vote", style: "margin-left: 10px; color: #{'red' if @comment_votes_hash[comment.id] == 'downvote'}" do %>
+                <span> <%= comment.downvotes_count %> &nbsp;</span>
                 <i class="fas fa-arrow-down"></i>
             <% end %>
         </div>
