@@ -15,19 +15,24 @@ class CommentsController < ApplicationController
   end
 
 def upvote
-  ActiveRecord::Base.transaction do
-    @comment_vote = @comment.comment_votes.find_or_initialize_by(admin: current_admin)
+  if admin_signed_in?
+    ActiveRecord::Base.transaction do
+      @comment_vote = @comment.comment_votes.find_or_initialize_by(admin: current_admin)
 
-    if @comment_vote.new_record?
-      @comment_vote.vote_type = 'upvote'
-      @comment_vote.save!
-    elsif @comment_vote.vote_type == 'downvote'
-      @comment_vote.destroy!
-      @comment.comment_votes.create!(admin: current_admin, vote_type: 'upvote')
-    elsif @comment_vote.vote_type == 'upvote'
-      @comment_vote.destroy!
+      if @comment_vote.new_record?
+        @comment_vote.vote_type = 'upvote'
+        @comment_vote.save!
+      elsif @comment_vote.vote_type == 'downvote'
+        @comment_vote.destroy!
+        @comment.comment_votes.create!(admin: current_admin, vote_type: 'upvote')
+      elsif @comment_vote.vote_type == 'upvote'
+        @comment_vote.destroy!
+      end
     end
-  end
+    else
+      redirect_to new_admin_session_path
+      return
+    end
 
 
   respond_to do |format|
@@ -37,24 +42,29 @@ def upvote
 end
 
 def downvote
-  ActiveRecord::Base.transaction do
-    @comment_vote = @comment.comment_votes.find_or_initialize_by(admin: current_admin)
+  if admin_signed_in?
+    ActiveRecord::Base.transaction do
+      @comment_vote = @comment.comment_votes.find_or_initialize_by(admin: current_admin)
 
-    if @comment_vote.new_record?
-      @comment_vote.vote_type = 'downvote'
-      @comment_vote.save!
-    elsif @comment_vote.vote_type == 'upvote'
-      @comment_vote.destroy!
-      @comment.comment_votes.create!(admin: current_admin, vote_type: 'downvote')
-    elsif @comment_vote.vote_type == 'downvote'
-      @comment_vote.destroy!
+      if @comment_vote.new_record?
+        @comment_vote.vote_type = 'downvote'
+        @comment_vote.save!
+      elsif @comment_vote.vote_type == 'upvote'
+        @comment_vote.destroy!
+        @comment.comment_votes.create!(admin: current_admin, vote_type: 'downvote')
+      elsif @comment_vote.vote_type == 'downvote'
+        @comment_vote.destroy!
+      end
     end
+  else
+    redirect_to new_admin_session_path
+    return
   end
 
- respond_to do |format|
-    format.html { redirect_back(fallback_location: root_path) }
-    format.json { head :no_content }
-  end
+    respond_to do |format|
+      format.html { redirect_back(fallback_location: root_path) }
+      format.json { head :no_content }
+    end
   end
 
   def edit
