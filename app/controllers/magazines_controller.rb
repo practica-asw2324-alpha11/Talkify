@@ -15,13 +15,16 @@ class MagazinesController < ApplicationController
 
     # GET /magazines or /magazines.json
     def index
-    end
-
-    def sort
-      @magazines = Magazine.order_by(params[:sort_by])
-      respond_to do |format|
-        format.html { redirect_back(fallback_location: root_path) }
-        format.json { head :no_content }
+      sort_by = params[:sort_by]
+      case sort_by
+      when "threads"
+        @magazines = Magazine.left_joins(:posts).group(:id).order('COUNT(posts.id) DESC')
+      when "comments"
+        @magazines = Magazine.left_joins(:comments).group(:id).order('COUNT(comments.id) DESC')
+      when "subscribers" 
+        @magazines = Magazine.left_joins(:admins).group(:id).order('COUNT(admins.id) DESC')
+      else
+        @magazines = Magazine.order(:desc)
       end
     end
 

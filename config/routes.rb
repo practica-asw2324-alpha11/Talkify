@@ -8,7 +8,6 @@ Rails.application.routes.draw do
   }
 
   resources :magazines do
-    get 'sort_magazines', to: "magazines#sort"
   end
 
   resources :posts do
