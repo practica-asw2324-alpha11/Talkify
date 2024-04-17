@@ -1,6 +1,7 @@
 <div class="container">
     <div class="wotitem">
       <h2><%= @magazine.name %></h2>
+      <strong><p>@<%= @magazine.title %>@talkify</p></strong>
       <strong><p>Description:</p></strong>
       <p><%= @magazine.description %></p>
       <strong><p>Rules:</p></strong>
@@ -12,6 +13,14 @@
       <p><strong>Subscribers: </strong><%= @magazine.admins.count %></p>
       <p><strong>Threads: </strong><%= @magazine.posts.count %></p>
       <p><strong>Comments: </strong><%= @magazine.comments.count %></p>
+    </div>
+
+    <div class="sub-navbar wotitem">
+      <div>
+        <%= link_to "Top", sort_posts_path(sort_by: "top") %>
+        <%= link_to "Newest", sort_posts_path(sort_by: "newest") %>
+        <%= link_to "Commented", sort_posts_path(sort_by: "commented") %>
+      </div>
     </div>
 
     <div id="posts">

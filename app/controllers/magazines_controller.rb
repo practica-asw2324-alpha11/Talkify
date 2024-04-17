@@ -4,32 +4,32 @@ class MagazinesController < ApplicationController
 
 
     def set_votes_hash
-    if admin_signed_in?
-      @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
-    else
-      @votes_hash = {}
+      if admin_signed_in?
+        @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+        @boosted_posts = current_admin.boosts.pluck(:post_id)
+      else
+        @votes_hash = {}
+        @boosted_posts = {}
+      end
     end
-  end
 
     # GET /magazines or /magazines.json
     def index
+    end
 
-      @magazines = Magazine.all
-
-      case params[:order_by]
-        when "posts"
-          @magazines = @magazines.order(posts_count: :desc)
-        when "comments"
-          @magazines = @magazines.order(comments_count: :desc)
-        when "subscribers"
-          @magazines = @magazines.order(admins_count: :desc)
-        else
-          @magazines = @magazines.order(created_at: :desc)
+    def sort
+      @magazines = Magazine.order_by(params[:sort_by])
+      respond_to do |format|
+        format.html { redirect_back(fallback_location: root_path) }
+        format.json { head :no_content }
       end
     end
 
     # GET /magazines/1 or /magazines/1.json
     def show
+
+      @posts = @magazine.posts
+
     end
 
     # GET /magazines/new
