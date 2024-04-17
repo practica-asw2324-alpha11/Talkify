@@ -1,5 +1,20 @@
-<h1>Nueva Revista</h1>
+<div class="sub-navbar"  style ="height: 35px";>
+  <div>
+    <span class="navbar-title">ADD NEW</span>
+    <a href="/posts/new_link" class="navbar-item">link</a>
+    <a href="/posts/new_thread" class="navbar-item">thread</a>
+    <a href="/magazines/new" class="navbar-item">magazine</a>
+  </div>
+</div>
 
 <div class="wotitem">
-  <%= render 'form' %>
+  <div class="post-header">
+    <!-- Contenido de la revista -->
+    <div class="post-content" style="color: white;">
+      <%= render 'form' %>
+      <div class="post-actions" style="text-align: center;">
+        <%= link_to 'Back', magazines_path, class: 'btn btn-primary btn-rectangular' %>
+      </div>
+    </div>
+  </div>
 </div>

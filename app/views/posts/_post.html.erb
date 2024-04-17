@@ -57,6 +57,12 @@
          <span> <%= time_ago_in_words(post.created_at) %> ago <%= link_to post.magazine.name, magazine_path(post.magazine), style: "color:#cecece; font-weight: bold;" %> </span></p>
 
 
+    <p> <strong><a style="color:#cecece;" href="<%= admin_path(post.admin) %>">
+                    <%= post.admin.full_name %>
+            </a>
+            </strong> <%= time_ago_in_words(post.created_at) %> ago to magazine <strong><%= link_to post.magazine.name, magazine_path(post.magazine), style: "color: white;" %></strong></p>
+    </div>
+
   </div>
 
 
