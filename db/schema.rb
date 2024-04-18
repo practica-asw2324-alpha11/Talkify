@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_16_151412) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
     t.string "full_name"
@@ -23,7 +23,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_151412) do
     t.index ["email"], name: "index_admins_on_email", unique: true
   end
 
-  create_table "admins_magazines", id: false, force: :cascade do |t|
+  create_table "comment_votes", force: :cascade do |t|
+    t.integer "admin_id", null: false
+    t.integer "comment_id", null: false
+    t.string "vote_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_comment_votes_on_admin_id"
+    t.index ["comment_id"], name: "index_comment_votes_on_comment_id"
+
+    create_table "admins_magazines", id: false, force: :cascade do |t|
     t.integer "magazine_id", null: false
     t.integer "admin_id", null: false
   end
@@ -83,6 +92,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_151412) do
     t.index ["post_id"], name: "index_votes_on_post_id"
   end
 
+  add_foreign_key "comment_votes", "admins"
+  add_foreign_key "comment_votes", "comments"
   add_foreign_key "boosts", "admins"
   add_foreign_key "boosts", "posts"
   add_foreign_key "comments", "admins"

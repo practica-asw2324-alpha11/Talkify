@@ -1,5 +1,4 @@
 
-<a href="#" class="dropdown-btn">
   <% if admin_signed_in? %>
     <a href="#" class="dropdown-btn">
       <i style="font-size: 18px; margin-left: -0.5rem; color: #fff;"></i><%= current_admin.full_name %>
@@ -9,7 +8,7 @@
   <% end %>
 
 
-<div class="dropdown-content" style="top: 4.42rem; right: 0.5rem;">
+<div class="dropdown-content" style="top: 3.7rem; right: 0.5rem;">
   <% if admin_signed_in? %>
     <a href="<%= admin_path(current_admin) %>">Profile</a>
     <%= link_to "Logout", destroy_admin_session_path, method: :delete %>

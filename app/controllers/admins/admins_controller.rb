@@ -8,7 +8,7 @@ class Admins::AdminsController < ApplicationController
     @admin = Admin.find(params[:id])
     params[:view] ||= 'threads'
     @posts = @admin.posts.order(created_at: :desc)
-    @comments = @admin.comments.includes(:post).order(created_at: :desc)
+    @comments = @admin.comments.order(created_at: :desc)
     set_votes_hash
   end
 
@@ -17,10 +17,12 @@ class Admins::AdminsController < ApplicationController
       @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
       @boosted_posts_ids = current_admin.boosts.pluck(:post_id)
       @boosted_posts = Post.where(id: @boosted_posts_ids)
+      @comment_votes_hash = current_admin.comment_votes.index_by(&:comment_id).transform_values(&:vote_type) 
 
     else
       @votes_hash = {}
       @boosted_posts = {}
+      @comment_votes_hash = {}
 
     end
   end
