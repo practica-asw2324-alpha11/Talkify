@@ -1,6 +1,6 @@
 <div class="wotitem">
   <div class="post-header">
-    <!-- Contenido del post -->
+
     <div class="post-content" style="color: white;">
       <%= form_with(model: @admin, method: :patch, local: true, html: { class: "post-form" }) do |form| %>
         <% if @admin.errors.any? %>
@@ -37,7 +37,7 @@
         <p> </p>
 
         <div class="form-group text-left">
-          <%= form.submit "Guardar", class: "btn btn-primary btn-google" %>
+          <%= form.submit "Guardar", class: "btn btn-primary btn-rectangular" %>
         </div>
       <% end %>
 
