@@ -25,7 +25,17 @@
           <td class="magazine-td"><%= magazine.posts.count %></td>
           <td class="magazine-td"><%= magazine.comments.count %></td>
           <td class="magazine-td"><%= magazine.admins.size %></td>
-          <td class="magazine-td">Not yet implemented</td>
+          <td class="magazine-td">
+            <% if admin_signed_in? %>
+              <% if current_admin.magazines.include?(magazine) %>
+                <%= button_to "Unsubscribe", unsubscribe_magazine_path(magazine), method: :delete, class: 'btn btn-primary btn-rectangular' %>
+              <% else %>
+                <%= button_to "Subscribe", subscribe_magazine_path(magazine), method: :post, class: 'btn btn-primary btn-rectangular' %>
+              <% end %>
+            <% else %>
+              <%= button_to "Subscribe", new_admin_session_path, method: :get, class: 'btn btn-primary btn-rectangular' %>
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </tbody>

@@ -2,6 +2,21 @@ class MagazinesController < ApplicationController
     before_action :set_votes_hash
     before_action :set_magazine, only: %i[ show edit update destroy]
 
+    def subscribe
+      if admin_signed_in?
+        @magazine = Magazine.find(params[:id])
+        current_admin.magazines << @magazine unless current_admin.magazines.include?(@magazine)
+        redirect_to @magazine
+      end
+    end
+
+    def unsubscribe
+      if admin_signed_in?
+        @magazine = Magazine.find(params[:id])
+        current_admin.magazines.delete(@magazine)
+        redirect_to magazines_path
+      end
+    end
 
     def set_votes_hash
       if admin_signed_in?
@@ -21,7 +36,7 @@ class MagazinesController < ApplicationController
         @magazines = Magazine.left_joins(:posts).group(:id).order('COUNT(posts.id) DESC')
       when "comments"
         @magazines = Magazine.left_joins(:comments).group(:id).order('COUNT(comments.id) DESC')
-      when "subscribers" 
+      when "subscribers"
         @magazines = Magazine.left_joins(:admins).group(:id).order('COUNT(admins.id) DESC')
       else
         @magazines = Magazine.order(:desc)

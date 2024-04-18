@@ -8,6 +8,10 @@ Rails.application.routes.draw do
   }
 
   resources :magazines do
+    member do
+      post 'subscribe'
+      delete 'unsubscribe'
+    end
   end
 
   resources :posts do
