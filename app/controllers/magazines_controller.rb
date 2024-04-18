@@ -45,9 +45,15 @@ class MagazinesController < ApplicationController
 
     # GET /magazines/1 or /magazines/1.json
     def show
-
-      @posts = @magazine.posts
-
+      sort_by = params[:sort_by]
+      case sort_by
+      when "top"
+        @posts = @magazine.posts.left_joins(:votes).where(votes: { vote_type: 'upvote' }).group('posts.id').order('COUNT(votes.id) DESC, posts.created_at DESC')
+      when "commented"
+        @posts = @magazine.posts.left_joins(:comments).group('posts.id').order('COUNT(comments.id) DESC, posts.created_at DESC')
+      else
+        @posts = @magazine.posts.order(created_at: :desc)
+      end
     end
 
     # GET /magazines/new

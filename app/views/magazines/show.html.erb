@@ -26,14 +26,14 @@
 
     <div class="sub-navbar wotitem">
       <div>
-        <%= link_to "Top", sort_posts_path(sort_by: "top") %>
-        <%= link_to "Newest", sort_posts_path(sort_by: "newest") %>
-        <%= link_to "Commented", sort_posts_path(sort_by: "commented") %>
+        <%= link_to "Top", magazine_path(@magazine, sort_by: "top") %>
+        <%= link_to "Newest", @magazine %>
+        <%= link_to "Commented", magazine_path(@magazine, sort_by: "commented") %>
       </div>
     </div>
 
     <div id="posts">
-    <% @magazine.posts.each do |post| %>
+    <% @posts.each do |post| %>
       <% if post.id %>
         <%= render post %>
       <% end %>
