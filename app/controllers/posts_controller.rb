@@ -98,13 +98,9 @@ def downvote
 
 
 
-
 def sort
   @posts = Post.order_by(params[:sort_by])
-  respond_to do |format|
-    format.html { redirect_back(fallback_location: root_path) }
-    format.json { head :no_content }
-  end
+  render :index
 end
 
 def search
