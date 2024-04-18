@@ -1,14 +1,6 @@
 <div class="wotitem">
-  <div class="post-header">
-    <!-- Contenido del post -->
-    <div style="margin-left:10px;" class="post-content">
-      <div class="text-container">
-        <%= render 'admin' %>
-      </div>
-    </div>
-  </div>
+  <%= render 'admins/admins/admin' %>
 </div>
-
 <div class="sub-navbar wotitem">
   <div>
     <%= link_to "Profile", edit_admin_path(@admin) %>
