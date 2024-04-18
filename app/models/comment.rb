@@ -3,6 +3,7 @@ class Comment < ApplicationRecord
     belongs_to :post
     belongs_to :parent_comment, class_name: "Comment", optional: true
     has_many :replies, class_name: "Comment", foreign_key: :parent_comment_id, dependent: :destroy
+    has_many :comment_votes, dependent: :destroy
 
     after_initialize :set_default_values
 
@@ -20,6 +21,14 @@ class Comment < ApplicationRecord
         else
           order(created_at: :desc) # Ordenar por defecto por fecha de creación
         end
+    end
+
+    def upvotes_count
+      comment_votes.where(vote_type: 'upvote').count
+    end
+  
+    def downvotes_count
+      comment_votes.where(vote_type: 'downvote').count
     end
 
     private
