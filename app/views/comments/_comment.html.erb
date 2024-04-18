@@ -1,57 +1,66 @@
-<div class="comment wotitem" id="<%= dom_id comment %>">
-    <div class="top">
-        <p>
-          <a style="color:#cecece; font-weight: bold;" href="<%= admin_path(comment.admin.id) %>">
-                    <%= comment.admin.full_name %>,
-            </a>
-            </strong>
-            <span class="comment-timestamp">
-                <%= time_ago_in_words(comment.created_at) %> ago
-            </span>
-            <% if params[:view].present? %>
-            <a>
-                to
-                <% if comment.parent_comment.nil? %>
-                    <%= link_to "#{post.admin.full_name}", admin_path(post.admin), style:"color:#cecece; font-weight: bold;"%>
-                <% else %>
-                    <%= link_to "#{comment.parent_comment.admin.full_name}", admin_path(comment.parent_comment.admin), style:"color:#cecece; font-weight: bold;"%>
+<div class="comment wotitem" id="<%= dom_id comment %>" style="display: flex;">
+
+    <div class="comment-avatar" style="flex: 0 0 auto; margin-right: 10px">
+        <% if comment.admin.avatar.attached? %>
+            <%= image_tag comment.admin.avatar.variant(resize_to_limit: [40, 40]), class: "avatar" %>
+        <% end %>
+    </div>
+
+    <div class="comment-content" style="flex: 1 1 auto;">
+        <div class="top">
+            <p>
+            <a style="color:#cecece; font-weight: bold;" href="<%= admin_path(comment.admin.id) %>">
+                        <%= comment.admin.full_name %>,
+                </a>
+                </strong>
+                <span class="comment-timestamp">
+                    <%= time_ago_in_words(comment.created_at) %> ago
+                </span>
+                <% if params[:view].present? %>
+                <a>
+                    to
+                    <% if comment.parent_comment.nil? %>
+                        <%= link_to "#{post.admin.full_name}", admin_path(post.admin), style:"color:#cecece; font-weight: bold;"%>
+                    <% else %>
+                        <%= link_to "#{comment.parent_comment.admin.full_name}", admin_path(comment.parent_comment.admin), style:"color:#cecece; font-weight: bold;"%>
+                    <% end %>
+                    in
+                    <%= link_to "#{post.title}", post_path(post), style:"color:#cecece; font-weight: bold;"%>
+                </a>
                 <% end %>
-                in
-                <%= link_to "#{post.title}", post_path(post), style:"color:#cecece; font-weight: bold;"%>
-            </a>
-            <% end %>
-        </p>
+            </p>
 
-        <div class="buttons">
-            <%= button_to upvote_post_comment_path(@post || post, comment), method: :put, class: "vote", style: "margin-bottom: 1em; color: #{'green' if @comment_votes_hash[comment.id] == 'upvote'}" do %>
-                <span> <%= comment.upvotes_count %> &nbsp;</span>
-                <i class="fas fa-arrow-up"></i>
-            <% end %>
+            <div class="buttons">
+                <%= button_to upvote_post_comment_path(@post || post, comment), method: :put, class: "vote", style: "margin-bottom: 1em; color: #{'green' if @comment_votes_hash[comment.id] == 'upvote'}" do %>
+                    <span> <%= comment.upvotes_count %> &nbsp;</span>
+                    <i class="fas fa-arrow-up"></i>
+                <% end %>
 
-            <%= button_to downvote_post_comment_path(@post || post, comment), method: :put, class: "vote", style: "margin-left: 10px; color: #{'red' if @comment_votes_hash[comment.id] == 'downvote'}" do %>
-                <span> <%= comment.downvotes_count %> &nbsp;</span>
-                <i class="fas fa-arrow-down"></i>
+                <%= button_to downvote_post_comment_path(@post || post, comment), method: :put, class: "vote", style: "margin-left: 10px; color: #{'red' if @comment_votes_hash[comment.id] == 'downvote'}" do %>
+                    <span> <%= comment.downvotes_count %> &nbsp;</span>
+                    <i class="fas fa-arrow-down"></i>
+                <% end %>
+            </div>
+        </div>
+
+        <div class="body">
+            <p><%= comment.body %></p>
+        </div>
+
+        <div class="actions" style="display: flex;">
+        <%= link_to 'reply', admin_signed_in? ? '#' : new_admin_session_path, class:"#{admin_signed_in? ? 'reply-link' : 'reply-link-logged-out'}", data: {comment_id: comment.id}%>
+            <% if admin_signed_in? && current_admin == comment.admin %>
+            <div class="dropdown" style="position: relative;">
+                <a href="#" class="dropdown-btn">more</a>
+                <div class="dropdown-content" style="position: absolute; top: 1em; right: -1.2em; margin-top: 10px;">
+                    <%= link_to 'edit', '#', class:'edit-comment-link', data: {comment_id: comment.id}%>
+                    <a style="margin-top:-20px;">
+                        <%= button_to "delete", post_comment_path(@post || post, comment), method: :delete, class:"delete-button" %>
+                    </a>
+                </div>
+                </div>
             <% end %>
         </div>
-    </div>
-
-    <div class="body">
-        <p><%= comment.body %></p>
-    </div>
-
-    <div class="actions" style="display: flex;">
-    <%= link_to 'reply', admin_signed_in? ? '#' : new_admin_session_path, class:"#{admin_signed_in? ? 'reply-link' : 'reply-link-logged-out'}", data: {comment_id: comment.id}%>
-        <% if admin_signed_in? && current_admin == comment.admin %>
-        <div class="dropdown" style="position: relative;">
-            <a href="#" class="dropdown-btn">more</a>
-            <div class="dropdown-content" style="position: absolute; top: 1em; right: -1.2em; margin-top: 10px;">
-                <%= link_to 'edit', '#', class:'edit-comment-link', data: {comment_id: comment.id}%>
-                <a style="margin-top:-20px;">
-                    <%= button_to "delete", post_comment_path(@post || post, comment), method: :delete, class:"delete-button" %>
-                </a>
-            </div>
-            </div>
-        <% end %>
     </div>
 
     <% if !params[:view].present? %>
