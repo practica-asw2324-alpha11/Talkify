@@ -496,3 +496,18 @@ a{
 .comment-reply{
   padding-left: 20px;
 }
+
+#show_admin {
+    position: relative; /* Establece la posición relativa para el contenedor */
+    padding-top: 300px; /* Ajusta según la altura del banner para evitar que el contenido se superponga */
+}
+
+.background-banner {
+    width: 100%;           /* Establece el ancho a todo lo ancho del div */
+    height: 300px;         /* Altura fija del banner */
+    object-fit: cover;     /* Asegura que la imagen cubra el área sin perder proporción */
+    position: absolute;    /* Posicionamiento absoluto para que se base en el contenedor #show_admin */
+    top: 0;
+    left: 0;
+    z-index: -1;           /* Coloca el banner detrás del contenido */
+}

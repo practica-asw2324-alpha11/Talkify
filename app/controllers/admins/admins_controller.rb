@@ -3,6 +3,7 @@ class Admins::AdminsController < ApplicationController
   before_action :authenticate_admin!
   before_action :set_votes_hash
 
+
   def show
     @admin = Admin.find(params[:id])
     params[:view] ||= 'threads'
@@ -51,21 +52,26 @@ class Admins::AdminsController < ApplicationController
   end
 
   def update
-    @admin = Admin.find(params[:id])
-    if @admin.update(admin_params)
-      redirect_to admin_path(@admin), notice: 'Perfil actualizado con éxito.'
-    else
-      render :edit
+    @admin = Admin.find(params[:id]) # Asegúrate de cargar @admin primero.
+
+    if params[:admin][:avatar].present?
+      @admin.avatar.attach(params[:admin][:avatar])
+    end
+
+    if params[:admin][:background].present?
+      @admin.background.attach(params[:admin][:background])
     end
   end
 
-  private
-    def set_admin
-       @admin = Admin.find(params[:id])
-    end
-    def admin_params
-        params.require(:admin).permit(:email, :full_name, :description, :avatar_url, :background_image, :uid)
 
-    end
+  def admin_params
+    params.require(:admin).permit(:email, :full_name, :description, :uid)
+  end
+
+  private
+
+  def set_admin
+    @admin = Admin.find(params[:id])
+  end
 
 end
