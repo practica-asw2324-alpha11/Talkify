@@ -12,6 +12,8 @@ default: &default
 development:
   <<: *default
   database: db/development.sqlite3
+  adapter: sqlite3
+  timeout: 10000 # Tiempo en milisegundos
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -23,3 +25,4 @@ test:
 production:
   <<: *default
   database: db/production.sqlite3
+
