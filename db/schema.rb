@@ -65,6 +65,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
     t.index ["post_id"], name: "index_boosts_on_post_id"
   end
 
+<<<<<<< HEAD
   create_table "comment_votes", force: :cascade do |t|
     t.integer "admin_id", null: false
     t.integer "comment_id", null: false
@@ -75,6 +76,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
     t.index ["comment_id"], name: "index_comment_votes_on_comment_id"
   end
 
+=======
+>>>>>>> origin/dev-magazine
   create_table "comments", force: :cascade do |t|
     t.text "body"
     t.integer "upvote", default: 0

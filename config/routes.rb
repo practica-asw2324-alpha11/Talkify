@@ -7,7 +7,12 @@ Rails.application.routes.draw do
     sessions: 'admins/sessions'
   }
 
-  resources :magazines
+  resources :magazines do
+    member do
+      post 'subscribe'
+      delete 'unsubscribe'
+    end
+  end
 
   resources :posts do
 
@@ -37,8 +42,6 @@ Rails.application.routes.draw do
   end
 
   root 'posts#index'
-
-  get '/magazines', to: 'magazines#index'
 
   devise_scope :admin do
     get 'admins/sign_in', to: 'admins/sessions#new', as: :new_admin_session

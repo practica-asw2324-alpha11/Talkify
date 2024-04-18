@@ -2,34 +2,58 @@ class MagazinesController < ApplicationController
     before_action :set_votes_hash
     before_action :set_magazine, only: %i[ show edit update destroy]
 
+    def subscribe
+      if admin_signed_in?
+        @magazine = Magazine.find(params[:id])
+        current_admin.magazines << @magazine unless current_admin.magazines.include?(@magazine)
+        redirect_to @magazine
+      end
+    end
+
+    def unsubscribe
+      if admin_signed_in?
+        @magazine = Magazine.find(params[:id])
+        current_admin.magazines.delete(@magazine)
+        redirect_to magazines_path
+      end
+    end
 
     def set_votes_hash
-    if admin_signed_in?
-      @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
-    else
-      @votes_hash = {}
+      if admin_signed_in?
+        @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+        @boosted_posts = current_admin.boosts.pluck(:post_id)
+      else
+        @votes_hash = {}
+        @boosted_posts = {}
+      end
     end
-  end
 
     # GET /magazines or /magazines.json
     def index
-
-      @magazines = Magazine.all
-
-      case params[:order_by]
-        when "posts"
-          @magazines = @magazines.order(posts_count: :desc)
-        when "comments"
-          @magazines = @magazines.order(comments_count: :desc)
-        when "subscribers"
-          @magazines = @magazines.order(admins_count: :desc)
-        else
-          @magazines = @magazines.order(created_at: :desc)
+      sort_by = params[:sort_by]
+      case sort_by
+      when "threads"
+        @magazines = Magazine.left_joins(:posts).group(:id).order('COUNT(posts.id) DESC')
+      when "comments"
+        @magazines = Magazine.left_joins(:comments).group(:id).order('COUNT(comments.id) DESC')
+      when "subscribers"
+        @magazines = Magazine.left_joins(:admins).group(:id).order('COUNT(admins.id) DESC')
+      else
+        @magazines = Magazine.order(:desc)
       end
     end
 
     # GET /magazines/1 or /magazines/1.json
     def show
+      sort_by = params[:sort_by]
+      case sort_by
+      when "top"
+        @posts = @magazine.posts.left_joins(:votes).where(votes: { vote_type: 'upvote' }).group('posts.id').order('COUNT(votes.id) DESC, posts.created_at DESC')
+      when "commented"
+        @posts = @magazine.posts.left_joins(:comments).group('posts.id').order('COUNT(comments.id) DESC, posts.created_at DESC')
+      else
+        @posts = @magazine.posts.order(created_at: :desc)
+      end
     end
 
     # GET /magazines/new
