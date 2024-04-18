@@ -13,6 +13,7 @@ class CommentsController < ApplicationController
       @votes_hash = {}
       @comment_votes_hash = {}
       @boosted_posts = {}
+
     end
   end
 
