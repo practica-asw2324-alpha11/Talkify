@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
     put 'upvote', on: :member
     put 'downvote', on: :member
+    post 'boost', on: :member
 
     member do
       get 'sort_comments', to: "comments#sort"
@@ -44,6 +45,9 @@ Rails.application.routes.draw do
     post 'admins/sign_in', to: 'admins/sessions#create', as: :admin_session
     get 'admins/sign_out', to: 'admins/sessions#destroy', as: :destroy_admin_session
     get 'admins/:id', to: 'admins/admins#show', as: :admin
+    get 'admins/:id/edit', to: 'admins/admins#edit', as: :edit_admin
+    patch '/admins/:id', to: 'admins/admins#update'
+
   end
 
   # Añadir la ruta para el perfil del admin

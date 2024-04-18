@@ -1,0 +1,18 @@
+<%= form_with(model: @admin, url: admin_path(@admin), local: true, html: { class: "post-form" }) do |form| %>
+
+<% if @admin.errors.any? %>
+   <div id="error_explanation">
+     <h2><%= pluralize(@admin.errors.count, "error") %> Han ocurrido los errores:</h2>
+     <ul>
+     <% @admin.errors.full_messages.each do |message| %>
+       <li><%= message %></li>
+     <% end %>
+     </ul>
+   </div>
+ <% end %>
+
+  <p><strong><%= @admin.full_name %></strong></p>
+  <p><%= @admin.email %></p>
+  <p><%= @admin.description %></p>
+
+<% end %>

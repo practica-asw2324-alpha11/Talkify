@@ -61,6 +61,7 @@ def downvote
     return
   end
 
+
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path) }
       format.json { head :no_content }
@@ -148,5 +149,5 @@ def downvote
   def comment_params
     params.require(:comment).permit(:parent_comment_id, :body)
   end
-  
+
 end

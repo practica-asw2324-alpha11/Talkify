@@ -31,6 +31,19 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_comment_votes_on_admin_id"
     t.index ["comment_id"], name: "index_comment_votes_on_comment_id"
+
+    create_table "admins_magazines", id: false, force: :cascade do |t|
+    t.integer "magazine_id", null: false
+    t.integer "admin_id", null: false
+  end
+
+  create_table "boosts", force: :cascade do |t|
+    t.integer "post_id", null: false
+    t.integer "admin_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_boosts_on_admin_id"
+    t.index ["post_id"], name: "index_boosts_on_post_id"
   end
 
   create_table "comments", force: :cascade do |t|
@@ -81,6 +94,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
 
   add_foreign_key "comment_votes", "admins"
   add_foreign_key "comment_votes", "comments"
+  add_foreign_key "boosts", "admins"
+  add_foreign_key "boosts", "posts"
   add_foreign_key "comments", "admins"
   add_foreign_key "comments", "posts"
   add_foreign_key "posts", "admins"

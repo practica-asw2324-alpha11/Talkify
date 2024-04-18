@@ -1,17 +1,38 @@
 class PostsController < ApplicationController
 before_action :set_votes_hash
-before_action :set_post, only: [:show, :edit, :update, :destroy,  :upvote, :downvote], except: [:search]
+before_action :set_post, only: [:show, :edit, :update, :destroy,  :upvote, :downvote, :boost], except: [:search]
 
 
-    def set_votes_hash
+   def set_votes_hash
     if admin_signed_in?
       @comment_votes_hash = current_admin.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
       @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+      @boosted_posts = current_admin.boosts.pluck(:post_id)
+
     else
       @votes_hash = {}
       @comment_votes_hash = {}
+      @boosted_posts = {}
+
     end
   end
+
+
+
+def boost
+    @post = Post.find(params[:id])
+    @boost = Boost.find_or_initialize_by(post: @post, admin: current_admin)
+
+    if @boost.new_record?
+      @boost.save!
+    else
+      @boost.destroy!
+    end
+    respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { head :no_content }
+  end
+end
 
 
 
@@ -28,18 +49,21 @@ before_action :set_post, only: [:show, :edit, :update, :destroy,  :upvote, :down
 
 
 def upvote
-  ActiveRecord::Base.transaction do
-    @vote = @post.votes.find_or_initialize_by(admin: current_admin)
+  if admin_signed_in?
+    ActiveRecord::Base.transaction do
+      @vote = @post.votes.find_or_initialize_by(admin: current_admin)
 
-    if @vote.new_record?
-      @vote.vote_type = 'upvote'
-      @vote.save!
-    elsif @vote.vote_type == 'downvote'
-      @vote.destroy!
-      @post.votes.create!(admin: current_admin, vote_type: 'upvote')
+      if @vote.new_record?
+        @vote.vote_type = 'upvote'
+        @vote.save!
+      elsif @vote.vote_type == 'downvote'
+        @vote.destroy!
+        @post.votes.create!(admin: current_admin, vote_type: 'upvote')
+      elsif @vote.vote_type == 'upvote'
+        @vote.destroy!
+      end
     end
   end
-
 
   respond_to do |format|
     format.html { redirect_back(fallback_location: root_path) }
@@ -47,16 +71,22 @@ def upvote
   end
 end
 
+
+
 def downvote
-  ActiveRecord::Base.transaction do
+  if admin_signed_in?
+    ActiveRecord::Base.transaction do
     @vote = @post.votes.find_or_initialize_by(admin: current_admin)
 
-    if @vote.new_record?
-      @vote.vote_type = 'downvote'
-      @vote.save!
-    elsif @vote.vote_type == 'upvote'
-      @vote.destroy!
-      @post.votes.create!(admin: current_admin, vote_type: 'downvote')
+      if @vote.new_record?
+        @vote.vote_type = 'downvote'
+        @vote.save!
+      elsif @vote.vote_type == 'upvote'
+        @vote.destroy!
+        @post.votes.create!(admin: current_admin, vote_type: 'downvote')
+      elsif @vote.vote_type == 'downvote'
+        @vote.destroy!
+      end
     end
   end
 
@@ -69,9 +99,12 @@ def downvote
 
 
 
- def sort
+def sort
   @posts = Post.order_by(params[:sort_by])
-  render 'index'
+  respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { head :no_content }
+  end
 end
 
 def search
@@ -79,7 +112,7 @@ def search
   @posts = Post.where("title LIKE :query OR body LIKE :query", query: "%#{@query}%")
 end
 
-   def index
+def index
   case params[:filter]
   when "links"
     @posts = Post.where(link: true).order(created_at: :desc)
@@ -118,6 +151,7 @@ end
     end
 
     def edit
+      @magazines = Magazine.all
     end
 
     # POST /posts or /posts.json
