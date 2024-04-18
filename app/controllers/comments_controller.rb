@@ -9,7 +9,6 @@ class CommentsController < ApplicationController
       @comment_votes_hash = current_admin.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
       @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
       @boosted_posts = current_admin.boosts.pluck(:post_id)
-
     else
       @votes_hash = {}
       @comment_votes_hash = {}
@@ -80,7 +79,11 @@ def downvote
     @post = Post.find(params[:id])
 
     if params[:sort_by] == "top"
-      @comments = @post.comments.left_joins(:comment_votes).group(:id).order('COUNT(comment_votes.id) DESC')
+      @comments = @post.comments
+                  .left_joins(:comment_votes)
+                  .select('comments.*, SUM(CASE WHEN comment_votes.vote_type = "upvote" THEN 1 WHEN comment_votes.vote_type = "downvote" THEN -1 ELSE 0 END) AS votes_difference')
+                  .group('comments.id')
+                  .order('votes_difference DESC')
     else
       @comments = @post.comments.order_by(params[:sort_by])
     end
