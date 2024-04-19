@@ -1,9 +1,11 @@
-<div class="comment wotitem" id="<%= dom_id comment %>" style="display: flex;">
+<div class="comment wotitem" id="<%= dom_id comment %>" style="display: flex; flex-direction: column;">
 
-    <div class="comment-avatar" style="flex: 0 0 auto; margin-right: 10px">
-        <% if comment.admin.avatar.attached? %>
-            <%= image_tag comment.admin.avatar.variant(resize_to_limit: [40, 40]), class: "avatar" %>
-        <% end %>
+    <div style="display:flex">
+        <div class="comment-avatar" style="flex: 0 0 auto; margin-right: 10px">
+            <% if comment.admin.avatar.attached? %>
+                <%= image_tag comment.admin.avatar.variant(resize_to_limit: [40, 40]), class: "avatar" %>
+            <% end %>
+        </div>
     </div>
 
     <div class="comment-content" style="flex: 1 1 auto;">
@@ -63,14 +65,16 @@
         </div>
     </div>
 
-    <% if !params[:view].present? %>
-        <div class="reply-comment-area" id="reply-comment-area-<%= comment.id %>" style="display: none;">
-            <%= render "comments/form", comment: comment, parent_comment: comment %>
-        </div>
-    <% end %>
+    <div class="fields">
+        <% if !params[:view].present? %>
+            <div class="reply-comment-area" id="reply-comment-area-<%= comment.id %>" style="display: none;">
+                <%= render "comments/form", comment: comment, parent_comment: comment %>
+            </div>
+        <% end %>
 
-    <div class="edit-comment-area" id="edit-comment-area-<%= comment.id %>">
-        <%= render "comments/edit_form", comment: comment %>
+        <div class="edit-comment-area" id="edit-comment-area-<%= comment.id %>">
+            <%= render "comments/edit_form", comment: comment %>
+        </div>
     </div>
 </div>
 
