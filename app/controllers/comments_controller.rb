@@ -1,43 +1,108 @@
 class CommentsController < ApplicationController
+  before_action :set_votes_hash
+  before_action :authenticate_admin!, only: [:create]
   before_action :set_comment, except: [:sort, :new, :create]
-  before_action :set_post, only: [:sort, :edit, :update, :destroy]
+  before_action :set_post, only: [:sort, :edit]
+
+  def set_votes_hash
+    if admin_signed_in?
+      @comment_votes_hash = current_admin.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
+      @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
+      @boosted_posts = current_admin.boosts.pluck(:post_id)
+    else
+      @votes_hash = {}
+      @comment_votes_hash = {}
+      @boosted_posts = {}
+
+    end
+  end
+
+def upvote
+  if admin_signed_in?
+    ActiveRecord::Base.transaction do
+      @comment_vote = @comment.comment_votes.find_or_initialize_by(admin: current_admin)
+
+      if @comment_vote.new_record?
+        @comment_vote.vote_type = 'upvote'
+        @comment_vote.save!
+      elsif @comment_vote.vote_type == 'downvote'
+        @comment_vote.destroy!
+        @comment.comment_votes.create!(admin: current_admin, vote_type: 'upvote')
+      elsif @comment_vote.vote_type == 'upvote'
+        @comment_vote.destroy!
+      end
+    end
+    else
+      redirect_to new_admin_session_path
+      return
+    end
+
+
+  respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { head :no_content }
+  end
+end
+
+def downvote
+  if admin_signed_in?
+    ActiveRecord::Base.transaction do
+      @comment_vote = @comment.comment_votes.find_or_initialize_by(admin: current_admin)
+
+      if @comment_vote.new_record?
+        @comment_vote.vote_type = 'downvote'
+        @comment_vote.save!
+      elsif @comment_vote.vote_type == 'upvote'
+        @comment_vote.destroy!
+        @comment.comment_votes.create!(admin: current_admin, vote_type: 'downvote')
+      elsif @comment_vote.vote_type == 'downvote'
+        @comment_vote.destroy!
+      end
+    end
+  else
+    redirect_to new_admin_session_path
+    return
+  end
+
+
+    respond_to do |format|
+      format.html { redirect_back(fallback_location: root_path) }
+      format.json { head :no_content }
+    end
+  end
 
   def edit
-
+    @comment = Comment.find(params[:id])
   end
 
   def sort
     @post = Post.find(params[:id])
-    @comments = @post.comments.order_by(params[:sort_by])
+
+    if params[:sort_by] == "top"
+      @comments = @post.comments
+                  .left_joins(:comment_votes)
+                  .select('comments.*, SUM(CASE WHEN comment_votes.vote_type = "upvote" THEN 1 WHEN comment_votes.vote_type = "downvote" THEN -1 ELSE 0 END) AS votes_difference')
+                  .group('comments.id')
+                  .order('votes_difference DESC')
+    else
+      @comments = @post.comments.order_by(params[:sort_by])
+    end
     @comment = @post.comments.build
+    @sort = params[:sort_by]
     render 'posts/show'
   end
 
-  def upvote
-
-    @comment.upvote +=1
-    @comment.save
-
-    respond_to do |format|
-      format.html { redirect_to post_path(@post)}
-      format.json { head :no_content }
-    end
-  end
-
-  def downvote
-
-    @comment.downvote +=1
-    @comment.save
-
-    respond_to do |format|
-      format.html { redirect_to post_path(@post)}
-      format.json { head :no_content }
-    end
+  def show
+    @post = Post.find(params[:post_id])
+    @coment = Comment.find(params[:id])
   end
 
   def update
+    @post = Post.find(params[:post_id])
+    @comment = Comment.find(params[:id])
+
     if @comment.update(comment_params)
-      redirect_to @comment.post, notice: 'Comentario actualizado correctamente.'
+      redirect_to post_path(@post), notice: "Comentario actualizado correctamente."
     else
       render :edit
     end
@@ -60,7 +125,19 @@ class CommentsController < ApplicationController
     end
   end
 
+  def create_reply
+    @parent_comment = Comment.find(params[:comment_id])
+    @reply = @parent_comment.replies.build(reply_params)
+
+    if @reply.save
+      redirect_to post_path(@parent_comment.post), notice: 'Respuesta creada correctamente.'
+    else
+      render 'posts/show'
+    end
+  end
+
   def destroy
+    @post = Post.find(params[:post_id])
     @comment.destroy
     redirect_to post_path(@post), notice: 'Comentario eliminado correctamente.'
   end
@@ -77,6 +154,7 @@ class CommentsController < ApplicationController
 
 
   def comment_params
-    params.require(:comment).permit(:body)
+    params.require(:comment).permit(:parent_comment_id, :body)
   end
+
 end

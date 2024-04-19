@@ -10,7 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_15_094406) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
     t.string "full_name"
@@ -23,6 +51,30 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_15_094406) do
     t.index ["email"], name: "index_admins_on_email", unique: true
   end
 
+  create_table "admins_magazines", id: false, force: :cascade do |t|
+    t.integer "magazine_id", null: false
+    t.integer "admin_id", null: false
+  end
+
+  create_table "boosts", force: :cascade do |t|
+    t.integer "post_id", null: false
+    t.integer "admin_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_boosts_on_admin_id"
+    t.index ["post_id"], name: "index_boosts_on_post_id"
+  end
+
+  create_table "comment_votes", force: :cascade do |t|
+    t.integer "admin_id", null: false
+    t.integer "comment_id", null: false
+    t.string "vote_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_comment_votes_on_admin_id"
+    t.index ["comment_id"], name: "index_comment_votes_on_comment_id"
+  end
+
   create_table "comments", force: :cascade do |t|
     t.text "body"
     t.integer "upvote", default: 0
@@ -31,8 +83,19 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_15_094406) do
     t.datetime "updated_at", null: false
     t.integer "post_id", null: false
     t.integer "admin_id", null: false
+    t.integer "parent_comment_id"
     t.index ["admin_id"], name: "index_comments_on_admin_id"
+    t.index ["parent_comment_id"], name: "index_comments_on_parent_comment_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
+  end
+
+  create_table "magazines", force: :cascade do |t|
+    t.string "name"
+    t.string "title"
+    t.string "description"
+    t.string "rules"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "posts", force: :cascade do |t|
@@ -43,7 +106,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_15_094406) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "admin_id", null: false
+    t.integer "magazine_id", null: false
     t.index ["admin_id"], name: "index_posts_on_admin_id"
+    t.index ["magazine_id"], name: "index_posts_on_magazine_id"
   end
 
   create_table "votes", force: :cascade do |t|
@@ -56,9 +121,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_15_094406) do
     t.index ["post_id"], name: "index_votes_on_post_id"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "boosts", "admins"
+  add_foreign_key "boosts", "posts"
+  add_foreign_key "comment_votes", "admins"
+  add_foreign_key "comment_votes", "comments"
   add_foreign_key "comments", "admins"
   add_foreign_key "comments", "posts"
   add_foreign_key "posts", "admins"
+  add_foreign_key "posts", "magazines"
   add_foreign_key "votes", "admins"
   add_foreign_key "votes", "posts"
 end

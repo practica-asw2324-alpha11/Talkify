@@ -1,109 +1,124 @@
-<div class="comment" id="<%= dom_id comment %>">
+<div class="comment wotitem" id="<%= dom_id comment %>" style="display: flex;">
 
-    <div class="top">
-        <p>
-            <strong>
-                <a style="color:#cecece;" href="<%= admin_path(comment.admin) %>">
-                    <%= comment.admin.name %>
-                </a>
-            </strong>,
-            <span class="comment-timestamp" data-timestamp="<%= comment.created_at %>">
-            </span>
-        </p>
-
-        <div class="buttons">
-            <%= link_to upvote_post_comment_path(@post, comment), method: :post, class: "vote", style: "margin-bottom: 1em;" do %>
-                <span> 0 &nbsp;</span>
-                <i class="fas fa-arrow-up"></i>
-            <% end %>
-
-            <%= link_to downvote_post_comment_path(@post, comment), method: :post, class: "vote", style: "margin-left: 10px;" do %>
-                <span> 0 &nbsp;</span>
-                <i class="fas fa-arrow-down"></i>
-            <% end %>
-        </div>
+    <div class="comment-avatar" style="flex: 0 0 auto; margin-right: 10px">
+        <% if comment.admin.avatar.attached? %>
+            <%= image_tag comment.admin.avatar.variant(resize_to_limit: [40, 40]), class: "avatar" %>
+        <% end %>
     </div>
 
-    <div class="body">
-        <p><%= comment.body %></p>
-    </div>
-
-    <div class="actions" style="display: flex;">
-        <a href="#" class="reply">reply</a>
-        <div class="dropdown" style="position: relative;">
-            <a href="#" class="dropdown-btn">more</a>
-            <div class="dropdown-content" style="position: absolute; top: 1em; right: 1em;">
-                <a href="#" class="edit-comment-link">edit</a>
-                <a style="margin-top:-20px;">
-                    <%= button_to "delete", post_comment_path(@post, comment), method: :delete, class:"delete-button" %>
+    <div class="comment-content" style="flex: 1 1 auto;">
+        <div class="top">
+            <p>
+            <a style="color:#cecece; font-weight: bold;" href="<%= admin_path(comment.admin.id) %>">
+                        <%= comment.admin.full_name %>,
                 </a>
+                </strong>
+                <span class="comment-timestamp">
+                    <%= time_ago_in_words(comment.created_at) %> ago
+                </span>
+                <% if params[:view].present? %>
+                <a>
+                    to
+                    <% if comment.parent_comment.nil? %>
+                        <%= link_to "#{post.admin.full_name}", admin_path(post.admin), style:"color:#cecece; font-weight: bold;"%>
+                    <% else %>
+                        <%= link_to "#{comment.parent_comment.admin.full_name}", admin_path(comment.parent_comment.admin), style:"color:#cecece; font-weight: bold;"%>
+                    <% end %>
+                    in
+                    <%= link_to "#{post.title}", post_path(post), style:"color:#cecece; font-weight: bold;"%>
+                </a>
+                <% end %>
+            </p>
+
+            <div class="buttons">
+                <%= button_to upvote_post_comment_path(@post || post, comment), method: :put, class: "vote", style: "margin-bottom: 1em; color: #{'green' if @comment_votes_hash[comment.id] == 'upvote'}" do %>
+                    <span> <%= comment.upvotes_count %> &nbsp;</span>
+                    <i class="fas fa-arrow-up"></i>
+                <% end %>
+
+                <%= button_to downvote_post_comment_path(@post || post, comment), method: :put, class: "vote", style: "margin-left: 10px; color: #{'red' if @comment_votes_hash[comment.id] == 'downvote'}" do %>
+                    <span> <%= comment.downvotes_count %> &nbsp;</span>
+                    <i class="fas fa-arrow-down"></i>
+                <% end %>
             </div>
         </div>
+
+        <div class="body">
+            <p><%= comment.body %></p>
+        </div>
+
+        <div class="actions" style="display: flex;">
+        <%= link_to 'reply', admin_signed_in? ? '#' : new_admin_session_path, class:"#{admin_signed_in? ? 'reply-link' : 'reply-link-logged-out'}", data: {comment_id: comment.id}%>
+            <% if admin_signed_in? && current_admin == comment.admin %>
+            <div class="dropdown" style="position: relative;">
+                <a href="#" class="dropdown-btn">more</a>
+                <div class="dropdown-content" style="position: absolute; top: 1em; right: -1.2em; margin-top: 10px;">
+                    <%= link_to 'edit', '#', class:'edit-comment-link', data: {comment_id: comment.id}%>
+                    <a style="margin-top:-20px;">
+                        <%= button_to "delete", post_comment_path(@post || post, comment), method: :delete, class:"delete-button" %>
+                    </a>
+                </div>
+                </div>
+            <% end %>
+        </div>
     </div>
 
-    <div class="edit-comment-area" style="display: none;">
-        <%= render "comments/form", post: @comment.post, comment: comment %>
-    </div>
+    <% if !params[:view].present? %>
+        <div class="reply-comment-area" id="reply-comment-area-<%= comment.id %>" style="display: none;">
+            <%= render "comments/form", comment: comment, parent_comment: comment %>
+        </div>
+    <% end %>
 
+    <div class="edit-comment-area" id="edit-comment-area-<%= comment.id %>">
+        <%= render "comments/edit_form", comment: comment %>
+    </div>
 </div>
 
+    <% if !params[:view].present? %>
+
+    <div class="comment-reply" id="replies-<%= comment.id %>">
+        <%= render comment.replies.order_by(@sort || 'newest') %>
+    </div>
+
+    <% end %>
+
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+  var editLinks = document.querySelectorAll('.edit-comment-link');
 
-  function timeDifference(current) {
-    var time = new Date();
-    var dateCreated = new Date(current);
+  editLinks.forEach(function(link) {
 
-    var diff = time - dateCreated;
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
 
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    const months = Math.floor(days / 30);
-    const years = Math.floor(months / 12);
+      // Obtener el ID del comentario
+      var commentId = this.dataset.commentId;
 
-    if (years > 0) {
-        return years + " years ago";
-    } else if (months > 0) {
-        return months + " months ago";
-    } else if (days > 0) {
-        return days + " days ago";
-    } else if (hours > 0) {
-        return hours + " hours ago";
-    } else if (minutes > 0) {
-        return minutes + " minutes ago";
-    } else {
-        return seconds + " seconds ago";
-    }
-}
+      var textArea = document.querySelector('#edit-comment-area-'+commentId);
+
+      textArea.style.display = 'block';
 
 
-document.querySelectorAll(".comment-timestamp").forEach(function(element) {
-element.textContent = timeDifference(element.getAttribute('data-timestamp'));
-});
-
- document.addEventListener('DOMContentLoaded', function() {
-    var editLinks = document.querySelectorAll('.edit-comment-link');
-    editLinks.forEach(function(link) {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-
-        // Buscar el elemento del comentario
-        var comment = this.closest('.comment');
-        if (!comment) return; // Verificar si se encontró el comentario
-
-
-        // Mostrar el área de texto para la edición
-        var editArea = comment.querySelector('.edit-comment-area');
-        if (editArea) {
-          if (editArea.style.display === 'block') {
-            editArea.style.display = 'none';
-          } else {
-            editArea.style.display = 'block';
-          }
-        }
-
-      });
     });
   });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  var replyLinks = document.querySelectorAll('.reply-link');
+
+  replyLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      // Obtener el ID del comentario
+      var commentId = this.dataset.commentId;
+
+      var replyArea = document.querySelector('#reply-comment-area-' + commentId);
+
+      replyArea.style.display = 'block';
+
+    });
+  });
+});
+
 </script>

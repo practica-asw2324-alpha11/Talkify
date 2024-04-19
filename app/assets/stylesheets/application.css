@@ -50,6 +50,7 @@
     padding: 1em;
     width: 90%;
     background-color: #3d3c3d;
+    border-color: #4a4a4a;
 }
 
 .wotitemLogin {
@@ -151,10 +152,10 @@ h2 {
     padding: 10px 15px;
     transition: background-color 0.3s ease;
   }
+  .navbar a:hover {
+    background-color: #555; /* Cambia el color de fondo de los enlaces al pasar el mouse sobre ellos */
+  }
 
-  /* .navbar a:hover {
-    /* background-color: #555; Cambia el color de fondo de los enlaces al pasar el mouse sobre ellos */
-  /* } */
 
   .head-nav__menu {
     list-style-type: none;
@@ -232,7 +233,7 @@ h2 {
     color: #b6b6b6;
     cursor: pointer;
     font-weight: 700;
-    height: 1.9rem;
+    height: 1.2rem;
     margin: 0;
     padding: 0;
     width: 4rem;
@@ -272,6 +273,7 @@ h2 {
         padding: 8px 12px;
         transition: background-color 0.3s ease;
       }
+
 
       .sub-navbar a, .sub-navbar .dropdown-btn {
         text-decoration: none;
@@ -352,7 +354,7 @@ h2 {
         background-color: #666; /* Color de fondo gris oscuro al pasar el mouse */
       }
 
-      .btn {
+      .btn-google {
         display: inline-block;
         background-color: #4285F4; /* Google blue */
         color: white;
@@ -366,7 +368,7 @@ h2 {
         transition: background-color 0.3s; /* Suave transición para hover */
       }
 
-      .btn:hover {
+      .btn-google:hover {
         background-color: #357ae8; /* Color más oscuro al pasar el mouse */
       }
 
@@ -449,9 +451,16 @@ a{
   text-decoration: none;
 }
 
+.comment {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+
 .comment .top{
   font-size: 0.8rem;
   opacity: .75;
+  margin-top: -10px;
 }
 
 .comment .body{
@@ -478,4 +487,54 @@ a{
   color: #d9dde5; /* Cambia el color según tu preferencia */
   text-decoration: none;
   cursor: pointer;
+}
+
+.edit-comment-area {
+  display: none;
+}
+
+.comment-reply{
+  padding-left: 20px;
+}
+
+#show_admin {
+    position: relative; /* Establece la posición relativa para el contenedor */
+    padding-top: 300px; /* Ajusta según la altura del banner para evitar que el contenido se superponga */
+}
+
+.profile-header {
+  height: 400px; /* Altura deseada del contenedor */
+  position: relative;
+}
+
+.background-banner-container {
+  width: 100%;
+  padding-top: 50%; /* Relación de aspecto 2:1 */
+  position: relative;
+}
+
+.background-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  transform: translateY(-250px);
+  
+}
+
+.avatar{
+  border: 3px solid #373737;
+
+}
+
+.user_actions{
+  color: #cecece;
+  background: #2c2c2c;
+  border: 1px dashed #373737;
 }

@@ -1,9 +1,9 @@
 <!-- Wall of Posts main view -->
 <div class="sub-navbar">
-  <div>
-    <a href="#">Top</a>
-    <a href="#">Newest</a>
-    <a href="#">Commented</a>
+ <div>
+    <%= link_to "Top", sort_posts_path(sort_by: "top") %>
+    <%= link_to "Newest", sort_posts_path(sort_by: "newest") %>
+    <%= link_to "Commented", sort_posts_path(sort_by: "commented") %>
   </div>
   <div class="navbar-icons">
     <a href="#"><i class="fas fa-eye"></i></a>
@@ -11,36 +11,22 @@
     <div class="dropdown">
       <a href="#" class="dropdown-btn"><i class="fas fa-filter" style="color: #fff;"></i></a>
         <div class="dropdown-content" style="top: 7.42rem; right: 5rem;">
-          <a href="#">All</a>
-          <a href="#">Links</a>
-          <a href="#">Threads</a>
+          <%= link_to "All", posts_path %>
+          <%= link_to "Links", posts_path(filter: "links") %>
+          <%= link_to "Threads", posts_path(filter: "threads") %>
         </div>
     </div>
   </div>
 </div>
 <body class="wotbody">
 
-  <% if notice %>
-  <br>
-  <div class="wotitem" id="notice">
-    <% if notice[0] == 'T' %>
-      <span style="color: green;"><%= notice %></span>
-    <% else %>
-      <span style="color: red;"><%= notice %></span>
-    <% end %>
-  </div>
-  <% end %>
-  <br>
-
   <div id="tweets">
     <% @posts.each do |post| %>
-      <% if @actual_day != @post_day %>
-        <h3 style="font-weight: normal;">
-          ......
-          <%= @actual_day = @post_day %>
-        </h3>
+      <% if post.id %>
+         <div>
+          <%= render post %>
+      </div>
       <% end %>
-      <%= render post %>
     <% end %>
   </div>
 

@@ -1,36 +1,98 @@
 <div class="wotitem">
   <div class="post-header">
-    <div>
-      <!-- Botones de votación -->
-      <span class="vote-buttons">
-        <%= button_to 'upvote', {class: 'vote', style: "margin-bottom: 1em;"} do %>
-          <span> 0 &nbsp;</span>
-          <i class="fas fa-arrow-up"></i>
-        <% end %>
-        <%= button_to 'downvote', {class: 'vote'} do %>
-          <span> 0 &nbsp;</span>
-          <i class="fas fa-arrow-down"></i>
-        <% end %>
-      </span>
-    </div>
+
+
+<div class="vote-buttons">
+  <%= button_to upvote_post_path(post), method: :put, class: "vote", style: "margin-bottom: 1em; color: #{'green' if @votes_hash[post.id] == 'upvote'}" do %>
+  <span> <%= post.upvotes_count %> &nbsp;</span>
+  <i class="fas fa-arrow-up" style="color: #{'green' if @votes_hash[post.id] == 'upvote'}"></i>
+<% end %>
+
+<%= button_to downvote_post_path(post), method: :put, class: "vote", style: "color: #{'red' if @votes_hash[post.id] == 'downvote'}" do %>
+  <span> <%= post.downvotes_count %> &nbsp;</span>
+  <i class="fas fa-arrow-down" style="color: #{'red' if @votes_hash[post.id] == 'downvote'}"></i>
+<% end %>
+
+<% unless admin_signed_in? %>
+  <script>
+    document.querySelectorAll('.vote').forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '<%= new_admin_session_path %>';
+      });
+    });
+  </script>
+<% end %>
+</div>
+
+
 
     <!-- Imagen -->
-    <div class="no-image">
+    <!-- <div class="no-image">
       <%= link_to post_path(post) do %>
         <i class="fas fa-comment-alt"></i>
       <% end %>
-    </div>
+    </div>-->
 
     <!-- Contenido del post -->
-    <div class="post-content">
-        <h2>Titulo:  <%= post.title %></h2>
-      <p><strong>URL:</strong> <%= post.url %></p>
-      <p><strong>Contenido:</strong> <%= post.body %></p>
+    <div class="post-content" style = "margin-left: 20px;">
+
+    <div class="text-container">
+       <span class="first-part">
+        <h2>
+          <%= link_to post.title, post_path(post), style: "color: white;" %>
+          <% if post.link? %>
+            <span style="font-size: 14px;">
+              (<%= link_to post.url, post.url, target: "_blank", style: "color: white;" %>)
+            </span>
+          <% end %>
+        </h2>
+
+        </span>
+
+      </div>
+
+  <div class="text-container" style="color:#cecece; font-size: 14px;">
+    <p> <strong><a style="color:#cecece;" href="<%= admin_path(post.admin) %>">
+                    <%= post.admin.full_name %>
+            </a>
+            </strong> <%= time_ago_in_words(post.created_at) %> ago to magazine <strong><%= link_to post.magazine.name, magazine_path(post.magazine), style: "color: white;" %></strong></p>
     </div>
-  </div>
-<!-- Mostrar el número de comentarios como un enlace al post -->
-<div class="comments-count" style="color: white; margin-left: 80px">
-  <%= link_to pluralize(post.comments_count, 'comment'), post_path(post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
+
+
+
+
+
+<div class="comments-count" style="color: white;font-size: 14px;">
+      <%= link_to pluralize(post.comments_count, 'comment'), post_path(post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
+         <% if @boosted_posts.include?(post.id) %>
+    <span class="boost-link" style="text-decoration: underline; color: white;" onclick="boostPost(<%= post.id %>);">boost(1)</span>
+  <% else %>
+    <span class="boost-link" style="text-decoration: underline; color: white;" onclick="boostPost(<%= post.id %>);">boost</span>
+  <% end %>
+
+  <%= form_with model: @post, url: boost_post_path(post), method: :post, id: "boost_form#{post.id}", style: "display: none;" do |form| %>
+  <% end %>
+
+  <% unless admin_signed_in? %>
+    <script>
+      document.querySelectorAll('.boost-link').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = '<%= new_admin_session_path %>';
+        });
+      });
+    </script>
+  <% end %>
+    </div>
+    </div>
 </div>
+
+<script>
+  function boostPost(postId) {
+    document.getElementById('boost_form' + postId).submit();
+  }
+</script>
+
 
 </div>

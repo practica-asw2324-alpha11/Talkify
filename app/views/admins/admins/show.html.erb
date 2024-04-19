@@ -1,5 +1,52 @@
-<!-- app/admins/admins/show.html.erb -->
-<h1>Perfil de Usuario</h1>
+<div class="wotitem profile-header">
+    <%= render 'admins/admins/admin' %>
+</div>
 
-<p>Nombre: <%= @user.full_name %></p> <!-- Asume que tienes un atributo full_name -->
-<p>Email: <%= @user.email %></p>
+<div>
+  <div class="sub-navbar wotitem">
+    <div>
+      <%= link_to "Threads", admin_path(@admin, view: 'threads') %>
+      <%= link_to "Comments", admin_path(@admin, view: 'comments') %>
+      <%= link_to "Boosts", admin_path(@admin, view: 'boost') %>
+    </div>
+  </div>
+</div>
+
+<p> </p>
+
+<body class="wotbody">
+  <% if params[:view] == 'threads' %>
+    <div class="sub-navbar wotitem">
+     <div>
+        <%= link_to "Top", sort_posts_path(sort_by: "top") %>
+        <%= link_to "Newest", sort_posts_path(sort_by: "newest") %>
+        <%= link_to "Commented", sort_posts_path(sort_by: "commented") %>
+      </div>
+    </div>
+    <div id="posts">
+      <% @posts.each do |post| %>
+          <div>
+              <%= render 'posts/post', post: post %>
+          </div>
+      <% end %>
+    </div>
+  <% elsif params[:view] == 'comments' %>
+    <div id="comments">
+      <% @comments.each do |comment| %>
+          <div>
+              <%= render 'comments/comment', comment: comment, post: comment.post %>
+          </div>
+      <% end %>
+    </div>
+  <% elsif params[:view] == 'boost' %>
+  <div id="boosts">
+    <% @boosted_posts.each do |post| %>
+      <div>
+        <%= render 'posts/post', post: post %>
+      </div>
+      <% end %>
+  </div>
+  <% end %>
+
+
+</body>
