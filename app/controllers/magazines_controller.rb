@@ -39,7 +39,7 @@ class MagazinesController < ApplicationController
       when "subscribers"
         @magazines = Magazine.left_joins(:admins).group(:id).order('COUNT(admins.id) DESC')
       else
-        @magazines = Magazine.order(:desc)
+        @magazines = Magazine.order(created_at: :desc)
       end
     end
 

@@ -82,8 +82,8 @@
     font-size: 9pt;
 }
 
-.item {;
-    border-left: 2px solid #dfcaca
+.item {
+    border-left: 2px solid #dfcaca;
     margin-left: 115px;
     padding-left: 1.1em;
 }
@@ -525,7 +525,7 @@ a{
 .overlay {
   position: absolute;
   transform: translateY(-250px);
-  
+
 }
 
 .avatar{
