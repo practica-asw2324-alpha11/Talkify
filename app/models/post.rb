@@ -1,6 +1,6 @@
 class Post < ApplicationRecord
     belongs_to :magazine
-    belongs_to :admin
+    belongs_to :user
     validates :title, length: { minimum: 0 }
     has_many :comments, dependent: :destroy
     has_many :votes, dependent: :destroy

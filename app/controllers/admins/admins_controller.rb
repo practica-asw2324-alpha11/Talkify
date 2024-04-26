@@ -1,23 +1,23 @@
-# app/controllers/admins/admins_controller.rb
-class Admins::AdminsController < ApplicationController
-  before_action :authenticate_admin!
+# app/controllers/users/users_controller.rb
+class Users::UsersController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_votes_hash
 
 
   def show
-    @admin = Admin.find(params[:id])
+    @user = User.find(params[:id])
     params[:view] ||= 'threads'
-    @posts = @admin.posts.order(created_at: :desc)
-    @comments = @admin.comments.order(created_at: :desc)
+    @posts = @user.posts.order(created_at: :desc)
+    @comments = @user.comments.order(created_at: :desc)
     set_votes_hash
   end
 
   def set_votes_hash
-    if admin_signed_in?
-      @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
-      @boosted_posts_ids = current_admin.boosts.pluck(:post_id)
+    if user_signed_in?
+      @votes_hash = current_user.votes.index_by(&:post_id).transform_values(&:vote_type)
+      @boosted_posts_ids = current_user.boosts.pluck(:post_id)
       @boosted_posts = Post.where(id: @boosted_posts_ids)
-      @comment_votes_hash = current_admin.comment_votes.index_by(&:comment_id).transform_values(&:vote_type) 
+      @comment_votes_hash = current_user.comment_votes.index_by(&:comment_id).transform_values(&:vote_type) 
 
     else
       @votes_hash = {}
@@ -29,7 +29,7 @@ class Admins::AdminsController < ApplicationController
 
 
   def boosted_posts
-    @boosted_posts = Boost.where(admin: current_admin).includes(:post).map(&:post)
+    @boosted_posts = Boost.where(user: current_user).includes(:post).map(&:post)
   end
 
 
@@ -37,41 +37,41 @@ class Admins::AdminsController < ApplicationController
     @posts = Post.order_by(params[:sort_by])
 
     case params[:from]
-    when "admin_show"
+    when "user_show"
       # Asegúrate de definir todas las variables necesarias para esta vista.
-      @admin = Admin.find(params[:admin_id]) # Asegúrate de pasar el admin_id de alguna manera.
-      @comments = @admin.comments.includes(:post).order(created_at: :desc)
-      render 'admins/admins/show'
+      @user = User.find(params[:user_id]) # Asegúrate de pasar el user_id de alguna manera.
+      @comments = @user.comments.includes(:post).order(created_at: :desc)
+      render 'users/users/show'
     else
       render 'index'
     end
   end
 
   def edit
-    @admin = Admin.find(params[:id])
+    @user = User.find(params[:id])
   end
 
   def update
-    @admin = Admin.find(params[:id]) # Asegúrate de cargar @admin primero.
+    @user = User.find(params[:id]) # Asegúrate de cargar @user primero.
 
-    if params[:admin][:avatar].present?
-      @admin.avatar.attach(params[:admin][:avatar])
+    if params[:user][:avatar].present?
+      @user.avatar.attach(params[:user][:avatar])
     end
 
-    if params[:admin][:background].present?
-      @admin.background.attach(params[:admin][:background])
+    if params[:user][:background].present?
+      @user.background.attach(params[:user][:background])
     end
   end
 
 
-  def admin_params
-    params.require(:admin).permit(:email, :full_name, :description, :uid)
+  def user_params
+    params.require(:user).permit(:email, :full_name, :description, :uid)
   end
 
   private
 
-  def set_admin
-    @admin = Admin.find(params[:id])
+  def set_user
+    @user = User.find(params[:id])
   end
 
 end

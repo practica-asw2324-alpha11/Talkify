@@ -497,7 +497,7 @@ a{
   padding-left: 20px;
 }
 
-#show_admin {
+#show_user {
     position: relative; /* Establece la posición relativa para el contenedor */
     padding-top: 300px; /* Ajusta según la altura del banner para evitar que el contenido se superponga */
 }

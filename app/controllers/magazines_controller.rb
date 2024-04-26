@@ -3,25 +3,25 @@ class MagazinesController < ApplicationController
     before_action :set_magazine, only: %i[ show edit update destroy]
 
     def subscribe
-      if admin_signed_in?
+      if user_signed_in?
         @magazine = Magazine.find(params[:id])
-        current_admin.magazines << @magazine unless current_admin.magazines.include?(@magazine)
+        current_user.magazines << @magazine unless current_user.magazines.include?(@magazine)
         redirect_to @magazine
       end
     end
 
     def unsubscribe
-      if admin_signed_in?
+      if user_signed_in?
         @magazine = Magazine.find(params[:id])
-        current_admin.magazines.delete(@magazine)
+        current_user.magazines.delete(@magazine)
         redirect_to magazines_path
       end
     end
 
     def set_votes_hash
-      if admin_signed_in?
-        @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
-        @boosted_posts = current_admin.boosts.pluck(:post_id)
+      if user_signed_in?
+        @votes_hash = current_user.votes.index_by(&:post_id).transform_values(&:vote_type)
+        @boosted_posts = current_user.boosts.pluck(:post_id)
       else
         @votes_hash = {}
         @boosted_posts = {}
@@ -37,7 +37,7 @@ class MagazinesController < ApplicationController
       when "comments"
         @magazines = Magazine.left_joins(:comments).group(:id).order('COUNT(comments.id) DESC')
       when "subscribers"
-        @magazines = Magazine.left_joins(:admins).group(:id).order('COUNT(admins.id) DESC')
+        @magazines = Magazine.left_joins(:users).group(:id).order('COUNT(users.id) DESC')
       else
         @magazines = Magazine.order(created_at: :desc)
       end
