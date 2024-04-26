@@ -1,7 +1,7 @@
 class Magazine < ApplicationRecord
   has_many :posts
   has_many :comments, through: :posts
-  has_and_belongs_to_many :admins
+  has_and_belongs_to_many :users
 
   def posts_count
     posts.count
@@ -11,8 +11,8 @@ class Magazine < ApplicationRecord
     comments.count
   end
 
-  def admins_count
-    admins.count
+  def users_count
+    users.count
   end
 
 end

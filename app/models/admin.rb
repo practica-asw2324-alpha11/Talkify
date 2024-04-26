@@ -1,4 +1,4 @@
-class Admin < ApplicationRecord
+class User < ApplicationRecord
   devise :omniauthable, omniauth_providers: [:google_oauth2]
   has_many :comments, dependent: :destroy
   has_many :posts, dependent: :destroy

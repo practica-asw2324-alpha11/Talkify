@@ -1,14 +1,14 @@
 class CommentsController < ApplicationController
   before_action :set_votes_hash
-  before_action :authenticate_admin!, only: [:create]
+  before_action :authenticate_user!, only: [:create]
   before_action :set_comment, except: [:sort, :new, :create]
   before_action :set_post, only: [:sort, :edit]
 
   def set_votes_hash
-    if admin_signed_in?
-      @comment_votes_hash = current_admin.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
-      @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
-      @boosted_posts = current_admin.boosts.pluck(:post_id)
+    if user_signed_in?
+      @comment_votes_hash = current_user.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
+      @votes_hash = current_user.votes.index_by(&:post_id).transform_values(&:vote_type)
+      @boosted_posts = current_user.boosts.pluck(:post_id)
     else
       @votes_hash = {}
       @comment_votes_hash = {}
@@ -18,22 +18,22 @@ class CommentsController < ApplicationController
   end
 
 def upvote
-  if admin_signed_in?
+  if user_signed_in?
     ActiveRecord::Base.transaction do
-      @comment_vote = @comment.comment_votes.find_or_initialize_by(admin: current_admin)
+      @comment_vote = @comment.comment_votes.find_or_initialize_by(user: current_user)
 
       if @comment_vote.new_record?
         @comment_vote.vote_type = 'upvote'
         @comment_vote.save!
       elsif @comment_vote.vote_type == 'downvote'
         @comment_vote.destroy!
-        @comment.comment_votes.create!(admin: current_admin, vote_type: 'upvote')
+        @comment.comment_votes.create!(user: current_user, vote_type: 'upvote')
       elsif @comment_vote.vote_type == 'upvote'
         @comment_vote.destroy!
       end
     end
     else
-      redirect_to new_admin_session_path
+      redirect_to new_user_session_path
       return
     end
 
@@ -45,22 +45,22 @@ def upvote
 end
 
 def downvote
-  if admin_signed_in?
+  if user_signed_in?
     ActiveRecord::Base.transaction do
-      @comment_vote = @comment.comment_votes.find_or_initialize_by(admin: current_admin)
+      @comment_vote = @comment.comment_votes.find_or_initialize_by(user: current_user)
 
       if @comment_vote.new_record?
         @comment_vote.vote_type = 'downvote'
         @comment_vote.save!
       elsif @comment_vote.vote_type == 'upvote'
         @comment_vote.destroy!
-        @comment.comment_votes.create!(admin: current_admin, vote_type: 'downvote')
+        @comment.comment_votes.create!(user: current_user, vote_type: 'downvote')
       elsif @comment_vote.vote_type == 'downvote'
         @comment_vote.destroy!
       end
     end
   else
-    redirect_to new_admin_session_path
+    redirect_to new_user_session_path
     return
   end
 
@@ -115,7 +115,7 @@ def downvote
   def create
     @post = Post.find(params[:post_id])
     @comment = @post.comments.build(comment_params)
-    @comment.admin_id = current_admin.id
+    @comment.user_id = current_user.id
 
 
     if @comment.save

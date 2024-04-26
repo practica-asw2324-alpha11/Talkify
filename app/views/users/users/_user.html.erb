@@ -1,0 +1,24 @@
+  <div class="profile-header">
+    
+    <% if @user.background.attached? %>
+      <%= image_tag @user.background.variant(resize_to_limit: [1080, 720]), class: "background-banner" %>
+    <% end %>
+    
+  </div>
+
+
+  <div class="overlay" style="float: left; display: flex; flex-direction: column; align-items: center;">
+    
+    <% if @user.avatar.attached? %>
+      <%= image_tag @user.avatar.variant(resize_to_limit: [100, 100]), class: "avatar" %>
+    <% end %>
+
+    <p style="font-weight: bold; margin-bottom: 5px"><%= @user.full_name %></p>
+    <p style="margin: 5px 0;"><%= @user.email %></p>
+    <p style="margin-top: 5px;"><%= @user.description %></p>
+    
+    <div class="user_actions">
+      <i style="margin: 5px 5px 5px 5px;" class="fas fa-users"></i> &nbsp 0 &nbsp
+    </div>
+
+  </div>

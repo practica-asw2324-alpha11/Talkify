@@ -4,10 +4,10 @@ before_action :set_post, only: [:show, :edit, :update, :destroy,  :upvote, :down
 
 
    def set_votes_hash
-    if admin_signed_in?
-      @comment_votes_hash = current_admin.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
-      @votes_hash = current_admin.votes.index_by(&:post_id).transform_values(&:vote_type)
-      @boosted_posts = current_admin.boosts.pluck(:post_id)
+    if user_signed_in?
+      @comment_votes_hash = current_user.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
+      @votes_hash = current_user.votes.index_by(&:post_id).transform_values(&:vote_type)
+      @boosted_posts = current_user.boosts.pluck(:post_id)
 
     else
       @votes_hash = {}
@@ -21,7 +21,7 @@ before_action :set_post, only: [:show, :edit, :update, :destroy,  :upvote, :down
 
 def boost
     @post = Post.find(params[:id])
-    @boost = Boost.find_or_initialize_by(post: @post, admin: current_admin)
+    @boost = Boost.find_or_initialize_by(post: @post, user: current_user)
 
     if @boost.new_record?
       @boost.save!
@@ -49,16 +49,16 @@ end
 
 
 def upvote
-  if admin_signed_in?
+  if user_signed_in?
     ActiveRecord::Base.transaction do
-      @vote = @post.votes.find_or_initialize_by(admin: current_admin)
+      @vote = @post.votes.find_or_initialize_by(user: current_user)
 
       if @vote.new_record?
         @vote.vote_type = 'upvote'
         @vote.save!
       elsif @vote.vote_type == 'downvote'
         @vote.destroy!
-        @post.votes.create!(admin: current_admin, vote_type: 'upvote')
+        @post.votes.create!(user: current_user, vote_type: 'upvote')
       elsif @vote.vote_type == 'upvote'
         @vote.destroy!
       end
@@ -74,16 +74,16 @@ end
 
 
 def downvote
-  if admin_signed_in?
+  if user_signed_in?
     ActiveRecord::Base.transaction do
-    @vote = @post.votes.find_or_initialize_by(admin: current_admin)
+    @vote = @post.votes.find_or_initialize_by(user: current_user)
 
       if @vote.new_record?
         @vote.vote_type = 'downvote'
         @vote.save!
       elsif @vote.vote_type == 'upvote'
         @vote.destroy!
-        @post.votes.create!(admin: current_admin, vote_type: 'downvote')
+        @post.votes.create!(user: current_user, vote_type: 'downvote')
       elsif @vote.vote_type == 'downvote'
         @vote.destroy!
       end
@@ -153,7 +153,7 @@ end
     # POST /posts or /posts.json
     def create
       @post = Post.new(post_params)
-      @post.admin_id = current_admin.id
+      @post.user_id = current_user.id
 
       respond_to do |format|
         if @post.save
