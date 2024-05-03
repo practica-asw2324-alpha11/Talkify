@@ -30,7 +30,7 @@ Rails.application.routes.draw do
       put 'upvote', on: :member
       put 'downvote', on: :member
       get 'edit', on: :member
-      
+
     end
     collection do
     get 'new_link'
@@ -55,4 +55,7 @@ Rails.application.routes.draw do
 
   # Añadir la ruta para el perfil del user
   #get 'profile', to: 'users/users#show', as: 'profile'
+  post 'posts/:id/', to: 'posts#destroy'
+  post 'posts/:id/upvote', to: 'posts#upvote'
+
 end
