@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_27_120911) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
-    t.bigint "record_id", null: false
-    t.bigint "blob_id", null: false
+    t.integer "record_id", null: false
+    t.integer "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
@@ -34,26 +34,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
   end
 
   create_table "active_storage_variant_records", force: :cascade do |t|
-    t.bigint "blob_id", null: false
+    t.integer "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
-  end
-
-  create_table "users", force: :cascade do |t|
-    t.string "email", null: false
-    t.string "full_name"
-    t.string "uid"
-    t.string "avatar_url"
-    t.string "background_image"
-    t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
-  end
-
-  create_table "users_magazines", id: false, force: :cascade do |t|
-    t.integer "magazine_id", null: false
-    t.integer "user_id", null: false
   end
 
   create_table "boosts", force: :cascade do |t|
@@ -61,8 +44,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_boosts_on_user_id"
     t.index ["post_id"], name: "index_boosts_on_post_id"
+    t.index ["user_id"], name: "index_boosts_on_user_id"
   end
 
   create_table "comment_votes", force: :cascade do |t|
@@ -71,8 +54,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
     t.string "vote_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_comment_votes_on_user_id"
     t.index ["comment_id"], name: "index_comment_votes_on_comment_id"
+    t.index ["user_id"], name: "index_comment_votes_on_user_id"
   end
 
   create_table "comments", force: :cascade do |t|
@@ -84,9 +67,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
     t.integer "post_id", null: false
     t.integer "user_id", null: false
     t.integer "parent_comment_id"
-    t.index ["user_id"], name: "index_comments_on_user_id"
     t.index ["parent_comment_id"], name: "index_comments_on_parent_comment_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "magazines", force: :cascade do |t|
@@ -98,6 +81,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "magazines_users", id: false, force: :cascade do |t|
+    t.integer "magazine_id", null: false
+    t.integer "user_id", null: false
+  end
+
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.string "url"
@@ -107,8 +95,22 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.integer "magazine_id", null: false
-    t.index ["user_id"], name: "index_posts_on_user_id"
     t.index ["magazine_id"], name: "index_posts_on_magazine_id"
+    t.index ["user_id"], name: "index_posts_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "full_name"
+    t.string "uid"
+    t.string "avatar_url"
+    t.string "background_image"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "api_key"
+    t.index ["api_key"], name: "index_users_on_api_key", unique: true
+    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   create_table "votes", force: :cascade do |t|
@@ -117,20 +119,20 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_17_165534) do
     t.string "vote_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_votes_on_user_id"
     t.index ["post_id"], name: "index_votes_on_post_id"
+    t.index ["user_id"], name: "index_votes_on_user_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "boosts", "users"
   add_foreign_key "boosts", "posts"
-  add_foreign_key "comment_votes", "users"
+  add_foreign_key "boosts", "users"
   add_foreign_key "comment_votes", "comments"
-  add_foreign_key "comments", "users"
+  add_foreign_key "comment_votes", "users"
   add_foreign_key "comments", "posts"
-  add_foreign_key "posts", "users"
+  add_foreign_key "comments", "users"
   add_foreign_key "posts", "magazines"
-  add_foreign_key "votes", "users"
+  add_foreign_key "posts", "users"
   add_foreign_key "votes", "posts"
+  add_foreign_key "votes", "users"
 end
