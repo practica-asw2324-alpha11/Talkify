@@ -66,10 +66,11 @@ Rails.application.configure do
   # config.action_view.annotate_rendered_view_with_filenames = true
 
   # Uncomment if you wish to allow Action Cable access from any origin.
-  # config.action_cable.disable_request_forgery_protection = true
+  #config.action_cable.disable_request_forgery_protection = true
 
   # Allow connections to local server on cloud IDE.
   config.hosts.clear
+
 
   ENV['GOOGLE_OAUTH_CLIENT_ID'] = '668591252695-rjoqh88kog8ueushtj2jp2615qrmgvbu.apps.googleusercontent.com'
   ENV['GOOGLE_OAUTH_CLIENT_SECRET'] = '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'
