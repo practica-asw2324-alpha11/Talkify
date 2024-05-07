@@ -1,21 +1,41 @@
 class MagazinesController < ApplicationController
     before_action :set_votes_hash
-    before_action :set_magazine, only: %i[ show edit update destroy]
+    before_action :set_magazine, only: %i[show update]
 
     def subscribe
-      if user_signed_in?
-        @magazine = Magazine.find(params[:id])
-        current_user.magazines << @magazine unless current_user.magazines.include?(@magazine)
-        redirect_to @magazine
+      api_key = request.headers[:HTTP_X_API_KEY]
+
+    if api_key.nil?
+      render :json => { "status" => "401", "error" => "No Api key provided." }, status: :unauthorized and return
+    else
+      @user = User.find_by_api_key(api_key)
+      if @user.nil?
+        render :json => { "status" => "401", "error" => "No User found with the Api key provided." }, status: :unauthorized and return
+      elsif @post.user != @user
+        render :json => { "status" => "401", "error" => "Only the creator of the micropost can delete it." }, status: :unauthorized and return
       end
+    end
+      @magazine = Magazine.find(params[:id])
+      current_user.magazines << @magazine unless current_user.magazines.include?(@magazine)
+      redirect_to @magazine
     end
 
     def unsubscribe
-      if user_signed_in?
-        @magazine = Magazine.find(params[:id])
-        current_user.magazines.delete(@magazine)
-        redirect_to magazines_path
+      api_key = request.headers[:HTTP_X_API_KEY]
+
+    if api_key.nil?
+      render :json => { "status" => "401", "error" => "No Api key provided." }, status: :unauthorized and return
+    else
+      @user = User.find_by_api_key(api_key)
+      if @user.nil?
+        render :json => { "status" => "401", "error" => "No User found with the Api key provided." }, status: :unauthorized and return
+      elsif @post.user != @user
+        render :json => { "status" => "401", "error" => "Only the creator of the micropost can delete it." }, status: :unauthorized and return
       end
+    end
+      @magazine = Magazine.find(params[:id])
+      current_user.magazines.delete(@magazine)
+      redirect_to magazines_path
     end
 
     def set_votes_hash
@@ -41,6 +61,10 @@ class MagazinesController < ApplicationController
       else
         @magazines = Magazine.order(created_at: :desc)
       end
+      respond_to do |format|
+        format.html
+        format.json {render json: @magazines}
+      end
     end
 
     # GET /magazines/1 or /magazines/1.json
@@ -54,15 +78,17 @@ class MagazinesController < ApplicationController
       else
         @posts = @magazine.posts.order(created_at: :desc)
       end
+
+      respond_to do |format|
+        format.html
+        format.json {render json: @magazine}
+      end
+
     end
 
     # GET /magazines/new
     def new
       @magazine = Magazine.new
-    end
-
-    # GET /magazines/1/edit
-    def edit
     end
 
     # magazine /magazines or /magazines.json
@@ -90,15 +116,6 @@ class MagazinesController < ApplicationController
           format.html { render :edit, status: :unprocessable_entity }
           format.json { render json: @magazine.errors, status: :unprocessable_entity }
         end
-      end
-    end
-
-    # DELETE /magazines/1 or /magazines/1.json
-    def destroy
-      @magazine.destroy
-      respond_to do |format|
-        format.html { redirect_to magazines_url, notice: "Magazine was successfully destroyed." }
-        format.json { head :no_content }
       end
     end
 
