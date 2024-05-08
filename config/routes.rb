@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  root 'posts#index'
 
 
   devise_for :users, controllers: {
@@ -16,10 +17,13 @@ Rails.application.routes.draw do
 
   resources :posts do
 
+    post 'new_thread', on: :collection
 
-    put 'upvote', on: :member
-    put 'downvote', on: :member
-    post 'boost', on: :member
+    post 'upvote', on: :member
+    post 'downvote', on: :member
+    put 'boost', on: :member
+    delete 'unboost', on: :member
+
 
     member do
       get 'sort_comments', to: "comments#sort"
@@ -41,7 +45,6 @@ Rails.application.routes.draw do
     end
   end
 
-  root 'posts#index'
 
   devise_scope :user do
     get 'users/sign_in', to: 'users/sessions#new', as: :new_user_session
@@ -55,7 +58,17 @@ Rails.application.routes.draw do
 
   # Añadir la ruta para el perfil del user
   #get 'profile', to: 'users/users#show', as: 'profile'
+  post 'posts', to: 'posts#create'
   delete 'posts/:id/', to: 'posts#destroy'
+  put 'posts/:id', to: 'posts#update'
+  get 'posts/:id', to: 'posts#show'
   post 'posts/:id/upvote', to: 'posts#upvote'
+  delete 'posts/:id/upvote', to: 'posts#upvote'
+  put 'posts/:id/boost', to:'posts#boost'
+  delete 'posts/:id/boost', to:'posts#unboost'
+  post 'posts/:id/downvote', to: 'posts#downvote'
+  delete 'posts/:id/downvote', to: 'posts#downvote'
+  get 'posts/search', to: 'posts#search'
+
 
 end

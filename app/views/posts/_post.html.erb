@@ -3,12 +3,12 @@
 
 
 <div class="vote-buttons">
-  <%= button_to upvote_post_path(post), method: :put, class: "vote", style: "margin-bottom: 1em; color: #{'green' if @votes_hash[post.id] == 'upvote'}" do %>
+  <%= button_to upvote_post_path(post), method: :post, class: "vote", style: "margin-bottom: 1em; color: #{'green' if @votes_hash[post.id] == 'upvote'}" do %>
   <span> <%= post.upvotes_count %> &nbsp;</span>
   <i class="fas fa-arrow-up" style="color: #{'green' if @votes_hash[post.id] == 'upvote'}"></i>
 <% end %>
 
-<%= button_to downvote_post_path(post), method: :put, class: "vote", style: "color: #{'red' if @votes_hash[post.id] == 'downvote'}" do %>
+<%= button_to downvote_post_path(post), method: :post, class: "vote", style: "color: #{'red' if @votes_hash[post.id] == 'downvote'}" do %>
   <span> <%= post.downvotes_count %> &nbsp;</span>
   <i class="fas fa-arrow-down" style="color: #{'red' if @votes_hash[post.id] == 'downvote'}"></i>
 <% end %>
@@ -67,12 +67,13 @@
       <%= link_to pluralize(post.comments_count, 'comment'), post_path(post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
          <% if @boosted_posts.include?(post.id) %>
     <span class="boost-link" style="text-decoration: underline; color: white;" onclick="boostPost(<%= post.id %>);">boost(1)</span>
+      <%= form_with model: @post, url: unboost_post_path(post), method: :delete, id: "boost_form#{post.id}", style: "display: none;" do |form| %> <% end %>
   <% else %>
     <span class="boost-link" style="text-decoration: underline; color: white;" onclick="boostPost(<%= post.id %>);">boost</span>
+    <%= form_with model: @post, url: boost_post_path(post), method: :put, id: "boost_form#{post.id}", style: "display: none;" do |form| %> <% end %>
   <% end %>
 
-  <%= form_with model: @post, url: boost_post_path(post), method: :post, id: "boost_form#{post.id}", style: "display: none;" do |form| %>
-  <% end %>
+
 
   <% unless user_signed_in? %>
     <script>
