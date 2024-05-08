@@ -10,6 +10,7 @@ class Users::UsersController < ApplicationController
     @posts = @user.posts.order(created_at: :desc)
     @comments = @user.comments.order(created_at: :desc)
     set_votes_hash
+
   end
 
   def set_votes_hash
@@ -17,7 +18,7 @@ class Users::UsersController < ApplicationController
       @votes_hash = current_user.votes.index_by(&:post_id).transform_values(&:vote_type)
       @boosted_posts_ids = current_user.boosts.pluck(:post_id)
       @boosted_posts = Post.where(id: @boosted_posts_ids)
-      @comment_votes_hash = current_user.comment_votes.index_by(&:comment_id).transform_values(&:vote_type) 
+      @comment_votes_hash = current_user.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
 
     else
       @votes_hash = {}
