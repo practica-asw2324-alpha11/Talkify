@@ -1,0 +1,582 @@
+openapi: 3.0.2
+info:
+  version: 1.0.0
+  title: Talkify :)
+  description: |-
+    Aqui encontrarás la REST API de Talkify, esperamos que sea de utilidad!
+
+    Links útiles:
+    - [Repositorio git de Talkify](https://github.com/practica-asw2324-alpha11/Talkify)
+servers:
+  - url: 'http://54.89.108.84:8080'
+paths:
+  /posts:
+    post:
+      tags:
+        - Post
+      summary: Create post (link or thread)
+      operationId: createPost
+      requestBody:
+        description: Provide parameters for creating a new post
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - magazine_id
+                - postType
+              properties:
+                title:
+                  type: string
+                  example: "Un post"
+                magazine_id:
+                  type: integer
+                  example: 1
+                postType:
+                  type: string
+                  enum: [link, thread]
+                  description: "Specify the type of the post"
+              oneOf:
+                - properties:
+                    postType:
+                      enum: [link]  # Using enum with a single value instead of const
+                    url:
+                      type: string
+                      example: "kbin.social"
+                  required:
+                    - url
+                - properties:
+                    postType:
+                      enum: [thread]  # Using enum with a single value instead of const
+                    body:
+                      type: string
+                      example: "Este es un post sobre kbin.social"
+      responses:
+        201:
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewPost'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+    get:
+        tags:
+          - Post
+        summary: Get all posts with optional filtering and sorting
+        operationId: getAllPosts
+        parameters:
+          - name: filter
+            in: query
+            description: Filter posts by "links" or "threads"
+            schema:
+              type: string
+              enum: [links, threads]
+          - name: sort_by
+            in: query
+            description: Sort posts by "top", "newest", or "commented"
+            schema:
+              type: string
+              enum: [top, newest, commented]
+        responses:
+          '200':
+            description: List of posts
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    posts:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Post'
+          '404':
+            description: No posts found
+        security:
+        - apiKey: []
+  /posts/{id}:
+    get:
+      tags:
+        - Post
+      summary: Show an existing post
+      description: Show an existing post by Id
+      operationId: getPost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: 'Post not found'
+      security:
+      - apiKey: []
+    put:
+      tags:
+        - Post
+      summary: Update an existing post
+      description: Update an existing post by Id
+      operationId: UpdatePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Provide parameters for updating the post
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "Updated Post Title"
+                url:
+                  type: string
+                  example: "https://updated-example.com"
+                body:
+                  type: string
+                  example: "This is an updated post."
+                magazine_id:
+                  type: integer
+                  example: 2
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+      - apiKey: []
+    delete:
+      tags:
+        - Post
+      summary: Deletes a post
+      description: delete a post by id
+      parameters:
+        - name: id
+          in: path
+          description: Post id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        204:
+          description: Post deleted successfully
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+      - apiKey: []
+  /posts/{id}/upvote:
+    post:
+      tags:
+        - Post
+      summary: Add a like to an existing Post
+      description: Add a like to an existing Post by Id
+      operationId: postUpvote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+      - apiKey: []
+    delete:
+      tags:
+        - Post
+      summary: Delete a like to an existing Post
+      description: Delete a like to an existing Post by Id
+      operationId: deleteUpvote
+      parameters:
+        - name: id
+          in: path
+          description: Post id to delete the like
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+      - apiKey: []
+  /posts/{id}/downvote:
+    post:
+      tags:
+        - Post
+      summary: Add a dislike to an existing Post
+      description: Add a dislike to an existing Post by Id
+      operationId: postDownvote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+      - apiKey: []
+    delete:
+      tags:
+        - Post
+      summary: Delete a dislike to an existing Post
+      description: Delete a dislike to an existing Post by Id
+      operationId: deleteDownvote
+      parameters:
+        - name: id
+          in: path
+          description: Post id to delete the dislike
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+      - apiKey: []
+  /posts/{id}/boost:
+    put:
+      tags:
+        - Post
+      summary: Boost an existing Post
+      description: Boost an existing Post by Id
+      operationId: boost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+      - apiKey: []
+
+  /posts/{id}/unboost:
+    delete:
+      tags:
+        - Post
+      summary: Unboost an existing Post
+      description: Unboost an existing Post by Id
+      operationId: unboost
+      parameters:
+        - name: id
+          in: path
+          description: Post id to unboost
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+      - apiKey: []
+  /posts/search:
+    get:
+      tags:
+        - Post
+      summary: Search content in any post
+      operationId: searchPosts
+      parameters:
+        - name: query
+          in: query
+          description: Text to search
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+        '404':
+          description: No posts found
+      security:
+        - apiKey: []
+
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Un post"
+        url:
+          type: string
+          example: "kbin.social"
+        body:
+          type: string
+          example: "Este es un post sobre kbin.social"
+        link:
+          type: boolean
+          example: true
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        magazine_id:
+          type: integer
+          format: int64
+          example: 1
+      xml:
+        name: post
+    Boosts:
+      type: object
+      properties:
+        post_id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+      xml:
+        name: boosts
+    Votes:
+      type: object
+      properties:
+        post_id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        vote_type:
+          type: string
+          example: "upvote"
+          enum:
+            - upvote
+            - downvote
+      xml:
+        name: votes
+    NewPost:
+      allOf:
+        - $ref: '#/components/schemas/Post'
+        - type: object
+          properties:
+            HTTP_X_API_KEY:
+              type: string
+              example: '9656f8894781485f7e9e167'
+          required:
+            - token
+    ErrorResult:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Content is too long (maximum is 280 characters)'
+      required:
+        - message
+  examples:
+    error400:
+      value:
+        message: "Content is too long (maximum is 280 characters)"
+    error401:
+      value:
+        message: "No Api key provided."
+    error403:
+      value:
+        message: "No User found with the Api key provided."
+    error404:
+      value:
+        message: "There is no tweet with 'id'=8"
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: X-API-KEY #Custom headers in rails apps must have the X- prefix
+      in: header
+
+
