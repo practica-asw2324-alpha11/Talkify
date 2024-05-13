@@ -1,6 +1,5 @@
 class CommentsController < ApplicationController
   before_action :set_votes_hash
-  before_action :authenticate_user!, only: [:create]
   before_action :set_user
   before_action :set_comment, except: [:sort, :new, :create]
   before_action :set_post, only: [:sort, :edit]
@@ -116,7 +115,7 @@ def downvote
   def create
     @post = Post.find(params[:post_id])
     @comment = @post.comments.build(comment_params)
-    @comment.user_id = current_user.id
+    @comment.user_id = @user.id
 
 
     if @comment.save
