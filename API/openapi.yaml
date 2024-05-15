@@ -442,7 +442,7 @@ paths:
   /posts/{postId}/comments:
     post:
       tags:
-        - Post
+        - Comment
       summary: Crea un nuevo comentario
       operationId: createComment
       parameters:
@@ -493,11 +493,51 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error403'
+      security:
+        - apiKey: []
+
+    get:
+      tags:
+        - Comment
+      summary: Get All comments of a Post
+      operationId: getPostComments
+      parameters:
+        - name: postId
+          in: path
+          description: Post identifier
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: sort_by
+          in: query
+          description: Sort posts by "top", "newest", or "oldest"
+          schema:
+            type: string
+            enum: [top, newest, oldest]
+      responses:
+        200:
+          description: Got Comments successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: 'Error: Post Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExamples:
+                  $ref: '#/components/examples/error404'
 
   /posts/{postId}/comments/{commentId}/upvote:
     post:
       tags:
-        - Post
+        - Comment
       summary: Vota positivamente un comentario
       operationId: upvoteComment
       parameters:
@@ -521,7 +561,7 @@ paths:
   /posts/{postId}/comments/{commentId}/downvote:
     post:
       tags:
-        - Post
+        - Comment
       summary: Vota negativamente un comentario
       operationId: downvoteComment
       parameters:
@@ -545,7 +585,7 @@ paths:
   /posts/{postId}/comments/{commentId}:
     get:
       tags:
-        - Post
+        - Comment
       summary: Obtiene un comentario específico
       operationId: getComment
       parameters:
@@ -568,7 +608,7 @@ paths:
           description: No se encontró un usuario con la API key proporcionada
     put:
       tags:
-        - Post
+        - Comment
       summary: Actualiza un comentario existente
       operationId: updateComment
       parameters:
@@ -599,7 +639,7 @@ paths:
           description: No se encontró un usuario con la API key proporcionada
     delete:
       tags:
-        - Post
+        - Comment
       summary: Elimina un comentario existente
       operationId: deleteComment
       parameters:

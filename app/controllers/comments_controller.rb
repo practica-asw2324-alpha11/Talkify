@@ -1,7 +1,7 @@
 class CommentsController < ApplicationController
   before_action :set_votes_hash
   before_action :set_user
-  before_action :set_comment, except: [:sort, :new, :create]
+  before_action :set_comment, except: [:sort, :new, :create, :index]
   before_action :set_post, only: [:sort, :edit]
 
   def set_votes_hash
@@ -76,15 +76,19 @@ def downvote
   def sort
     @post = Post.find(params[:id])
 
-    if params[:sort_by] == "top"
+    case params[:sort_by]
+    when "top"
       @comments = @post.comments
                   .left_joins(:comment_votes)
                   .select('comments.*, SUM(CASE WHEN comment_votes.vote_type = "upvote" THEN 1 WHEN comment_votes.vote_type = "downvote" THEN -1 ELSE 0 END) AS votes_difference')
                   .group('comments.id')
                   .order('votes_difference DESC')
+      when "newest"
+      @comments = @post.comments.order_by(created_at: :desc)
     else
-      @comments = @post.comments.order_by(params[:sort_by])
+      @comments = @post.comments.order_by(created_at: :asc)
     end
+
     @comment = @post.comments.build
     @sort = params[:sort_by]
     render 'posts/show'
@@ -108,6 +112,31 @@ def downvote
 
   def new
 
+  end
+
+  def index
+    @post = Post.find(params[:post_id])
+
+    case params[:sort_by]
+    when "top"
+      @comments = @post.comments
+                       .left_joins(:comment_votes)
+                       .select('comments.*, SUM(CASE WHEN comment_votes.vote_type = "upvote" THEN 1 WHEN comment_votes.vote_type = "downvote" THEN -1 ELSE 0 END) AS votes_difference')
+                       .group('comments.id')
+                       .order('votes_difference DESC')
+    when "newest"
+      @comments = @post.comments.order_by(created_at: :desc)
+    else
+      @comments = @post.comments.order_by(created_at: :asc)
+    end
+
+    @comment = @post.comments.build
+    @sort = params[:sort_by]
+
+    respond_to do |format|
+      format.html { render 'posts/show' }
+      format.json { render json: @comments, include: { replies: { include: :user } } }
+    end
   end
 
   def create
