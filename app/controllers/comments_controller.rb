@@ -20,52 +20,80 @@ class CommentsController < ApplicationController
 def upvote
 
     ActiveRecord::Base.transaction do
+
       @comment_vote = @comment.comment_votes.find_or_initialize_by(user: @user)
-      puts "==========="
-      puts "HELLOOOOOOO"
-      puts "==========="
-      if @comment_vote.new_record?
-        @comment_vote.vote_type = 'upvote'
-        @comment_vote.save!
-      elsif @comment_vote.vote_type == 'downvote'
-        @comment_vote.destroy!
-        @comment.comment_votes.create!(user: @user, vote_type: 'upvote')
-      elsif @comment_vote.vote_type == 'upvote'
-        @comment_vote.destroy!
+      if request.request_method == "POST"
+        if @comment_vote.new_record?
+          @comment_vote.vote_type = 'upvote'
+          @comment_vote.save!
+          @comment.upvote += 1
+          @comment.save!
+        elsif @comment_vote.vote_type == 'downvote'
+          @comment_vote.destroy!
+          @comment.upvote += 1
+          @comment.downvote -= 1
+          @comment.save!
+          @comment.comment_votes.create!(user: @user, vote_type: 'upvote')
+        elsif @comment_vote.vote_type == 'upvote'
+          @comment_vote.destroy!
+          @comment.upvote -= 1
+          @comment.save!
+        end
+      elsif request.request_method == "DELETE"
+        if @comment_vote.new_record?
+          render :json => { "status" => "404", "error" => "No upvote found to delete." }, status: :forbidden and return
+        elsif @comment_vote.vote_type == 'upvote'
+          @comment_vote.destroy!
+          @comment.upvote -= 1
+          @comment.save!
+        end
       end
-    end
+      end
 
 
   respond_to do |format|
     format.html { redirect_back(fallback_location: root_path) }
-    format.json { render json: { "status" => "200", "message" => "Vote successfully added." }, status: :ok }
+    #format.json { render json: { "status" => "200", "message" => "Vote successfully added." }, status: :ok }
+    format.json { render json:@comment , status: :ok }
   end
 end
 
 def downvote
-  if user_signed_in?
-    ActiveRecord::Base.transaction do
-      @comment_vote = @comment.comment_votes.find_or_initialize_by(user: current_user)
 
-      if @comment_vote.new_record?
-        @comment_vote.vote_type = 'downvote'
-        @comment_vote.save!
-      elsif @comment_vote.vote_type == 'upvote'
-        @comment_vote.destroy!
-        @comment.comment_votes.create!(user: current_user, vote_type: 'downvote')
-      elsif @comment_vote.vote_type == 'downvote'
-        @comment_vote.destroy!
+    ActiveRecord::Base.transaction do
+      @comment_vote = @comment.comment_votes.find_or_initialize_by(user: @user)
+      if request.request_method == "POST"
+        if @comment_vote.new_record?
+          @comment_vote.vote_type = 'downvote'
+          @comment_vote.save!
+          @comment.downvote += 1
+          @comment.save!
+        elsif @comment_vote.vote_type == 'upvote'
+          @comment_vote.destroy!
+          @comment.upvote -= 1
+          @comment.downvote += 1
+          @comment.save!
+          @comment.comment_votes.create!(user: @user, vote_type: 'downvote')
+        elsif @comment_vote.vote_type == 'downvote'
+          @comment_vote.destroy!
+          @comment.downvote -= 1
+          @comment.save!
+        end
+      elsif request.request_method == "DELETE"
+        if @comment_vote.new_record?
+          render :json => { "status" => "403", "error" => "No vote found to delete." }, status: :forbidden and return
+        elsif @comment_vote.vote_type == 'downvote'
+          @comment_vote.destroy!
+          @comment.downvote -= 1
+          @comment.save!
+        end
       end
     end
-  else
-    redirect_to new_user_session_path
-    return
-  end
-
 
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path) }
-      format.json { head :no_content }
+      # format.json { render json: { "status" => "200", "message" => "Vote successfully added." }, status: :ok }
+      format.json { render json:@comment , status: :ok }
     end
   end
 
@@ -101,12 +129,22 @@ def downvote
 
   def update
     @post = Post.find(params[:post_id])
+
+    if @post.user != @user
+      render :json => { "status" => "403", "error" => "Only the creator can complete this action." }, status: :forbidden and return
+    end
     @comment = Comment.find(params[:id])
 
     if @comment.update(comment_params)
-      redirect_to post_path(@post), notice: "Comentario actualizado correctamente."
+      respond_to do |format|
+        format.html { redirect_to post_path(@post), notice: "Comentario actualizado correctamente." }
+        format.json { render json: @comment }
+      end
     else
-      render :edit
+      respond_to do |format|
+        format.html { render :edit }
+        format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -152,17 +190,6 @@ def downvote
         format.html { render 'new' }
         format.json { render json: @comment.errors, status: :unprocessable_entity }
       end
-    end
-  end
-
-  def create_reply
-    @parent_comment = Comment.find(params[:comment_id])
-    @reply = @parent_comment.replies.build(reply_params)
-
-    if @reply.save
-      redirect_to post_path(@parent_comment.post), notice: 'Respuesta creada correctamente.'
-    else
-      render 'posts/show'
     end
   end
 

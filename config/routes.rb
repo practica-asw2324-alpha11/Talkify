@@ -36,9 +36,9 @@ Rails.application.routes.draw do
         # put 'upvote', on: :member
         # put 'downvote', on: :member
         post 'upvote'
-        delete 'upvote', action: :unvote
+        delete 'upvote'
         post 'downvote'
-        delete 'downvote', action: :unvote
+        delete 'downvote'
 
         get 'edit'
       end

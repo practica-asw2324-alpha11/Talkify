@@ -443,7 +443,7 @@ paths:
     post:
       tags:
         - Comment
-      summary: Crea un nuevo comentario
+      summary: Create new Comment
       operationId: createComment
       parameters:
         - name: postId
@@ -533,12 +533,109 @@ paths:
               examples:
                 errorExamples:
                   $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+
+  /posts/{postId}/comments/{commentId}:
+    put:
+      tags:
+        - Comment
+      summary: Update existing comment
+      operationId: updateComment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Provide a new body for the comment
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentUpdate'
+      responses:
+        '200':
+          description: Comment updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        '403':
+          description: You are not the creator of this comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+      security:
+        - apiKey: []
+
+    delete:
+      tags:
+        - Comment
+      summary: Delete Comment of a Post
+      operationId: deletePostComment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Comment deleted
+          content:
+            application/json: {}
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        '403':
+          description: You are not the creator of this comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+      security:
+        - apiKey: []
 
   /posts/{postId}/comments/{commentId}/upvote:
     post:
       tags:
         - Comment
-      summary: Vota positivamente un comentario
+      summary: Upvote a comment
       operationId: upvoteComment
       parameters:
         - name: postId
@@ -553,16 +650,72 @@ paths:
             type: integer
       responses:
         '200':
-          description: Voto registrado correctamente
+          description: Comment upvoted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
         '401':
-          description: No se proporcionó la API key
-        '403':
-          description: No se encontró un usuario con la API key proporcionada
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+      security:
+        - apiKey: []
+
+    delete:
+      tags:
+        - Comment
+      summary: Delete the upvote of a comment
+      operationId: deleteUpvoteComment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Upvote deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        '405':
+          description: You have not upvoted this comment yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+
   /posts/{postId}/comments/{commentId}/downvote:
     post:
       tags:
         - Comment
-      summary: Vota negativamente un comentario
+      summary: Downvote a comment
       operationId: downvoteComment
       parameters:
         - name: postId
@@ -577,71 +730,28 @@ paths:
             type: integer
       responses:
         '200':
-          description: Voto registrado correctamente
+          description: Comment upvoted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
         '401':
-          description: No se proporcionó la API key
-        '403':
-          description: No se encontró un usuario con la API key proporcionada
-  /posts/{postId}/comments/{commentId}:
-    get:
-      tags:
-        - Comment
-      summary: Obtiene un comentario específico
-      operationId: getComment
-      parameters:
-        - name: postId
-          in: path
-          required: true
-          schema:
-            type: integer
-        - name: commentId
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Comentario recuperado correctamente
-        '401':
-          description: No se proporcionó la API key
-        '403':
-          description: No se encontró un usuario con la API key proporcionada
-    put:
-      tags:
-        - Comment
-      summary: Actualiza un comentario existente
-      operationId: updateComment
-      parameters:
-        - name: postId
-          in: path
-          required: true
-          schema:
-            type: integer
-        - name: commentId
-          in: path
-          required: true
-          schema:
-            type: integer
-        - name: parent_comment_id
-          in: query
-          schema:
-            type: integer
-        - name: body
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Comentario actualizado correctamente
-        '401':
-          description: No se proporcionó la API key
-        '403':
-          description: No se encontró un usuario con la API key proporcionada
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+      security:
+        - apiKey: []
+
     delete:
       tags:
         - Comment
-      summary: Elimina un comentario existente
-      operationId: deleteComment
+      summary: Delete the downvote of a comment
+      operationId: deleteDownvoteComment
       parameters:
         - name: postId
           in: path
@@ -655,11 +765,33 @@ paths:
             type: integer
       responses:
         '200':
-          description: Comentario eliminado correctamente
+          description: Downvote deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
         '401':
-          description: No se proporcionó la API key
-        '403':
-          description: No se encontró un usuario con la API key proporcionada
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+
+        '405':
+          description: You have not upvoted this comment yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+
 components:
   schemas:
     Post:
@@ -728,6 +860,13 @@ components:
         - body
         - post_id
         - user_id
+    CommentUpdate:
+      type: object
+      properties:
+        body:
+          type: string
+          description: new body
+          example: "Updated body"
     Boosts:
       type: object
       properties:
