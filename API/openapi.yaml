@@ -283,19 +283,19 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        200:
           description: successful operation
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Post'
-        '400':
+        400:
           description: 'Error: Bad Request'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
-        '404':
+        404:
           description: 'Error: Not Found'
           content:
             application/json:
@@ -438,7 +438,7 @@ paths:
           description: No posts found
       security:
         - apiKey: []
-      
+
   /posts/{postId}/comments:
     post:
       tags:
@@ -451,26 +451,49 @@ paths:
           required: true
           schema:
             type: integer
-          description: ID del post en el que se está comentando
-        - name: parent_comment_id
-          in: query
-          schema:
-            type: integer
-          description: ID del comentario padre (en el caso en el que sea una respuesta)
-        - name: body
-          in: query
-          required: true
-          schema:
-            type: string
-          description: Contenido del comentario
+            format: int64
+      requestBody:
+        description: Provide parameters for creating a new comment
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - body
+              properties:
+                body:
+                  type: string
+                  example: "Un Comment"
+                parent_comment_id:
+                  type: integer
+                  example: null
       responses:
-        '200':
+        200:
           description: Comentario creado correctamente
-        '401':
-          description: No se proporcionó la API key
-        '403':
-          description: No se encontró un usuario con la API key proporcionada
-        
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        401:
+          description: 'Unauthorized user'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        403:
+          description: 'Error: Forbidden. No API Key in our system'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+
   /posts/{postId}/comments/{commentId}/upvote:
     post:
       tags:
@@ -627,9 +650,21 @@ components:
     Comment:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
         body:
           type: string
           example: "Comentario"
+        upvote:
+          type: integer
+          format: int64
+          example: 0
+        downvote:
+          type: integer
+          format: int64
+          example: 0
         post_id:
           type: integer
           format: int64
@@ -638,11 +673,15 @@ components:
           type: integer
           format: int64
           example: 1
-        parent_id:
+        parent_comment_id:
           type: integer
           format: int64
           nullable: true
           example: null
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
       xml:
         name: comment
       required:
@@ -691,37 +730,36 @@ components:
               example: '9656f8894781485f7e9e167'
           required:
             - token
-    NewComment:
-      allOf:
-        - $ref: '#/components/schemas/Comment'
-        - type: object
-          properties:
-            HTTP_X_API_KEY:
-              type: string
-              example: '9656f8894781485f7e9e167'
-          required:
-            - token
     ErrorResult:
       type: object
       properties:
-        message:
+        status:
+          type: integer
+          enum: [304, 400, 401, 403, 404, 409]
+        error:
           type: string
-          example: 'Content is too long (maximum is 280 characters)'
-      required:
-        - message
+          enum: ["Not Modified", "Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict"]
   examples:
     error400:
       value:
-        message: "Content is too long (maximum is 280 characters)"
+        status: 400
+        error: "Bad Request"
+        message: "Bad Request"
     error401:
       value:
-        message: "No Api key provided."
+        status: 401
+        error: "Unauthorized"
+        message: "No Api Key provided"
     error403:
       value:
-        message: "No User found with the Api key provided."
+        status: 403
+        error: "Forbidden"
+        message: "Forbidden behaviour for that user"
     error404:
       value:
-        message: "There is no post with 'id'=8"
+        status: 404
+        error: "Not Found"
+        message: "No object with that ID"
   
   securitySchemes:
     apiKey:

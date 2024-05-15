@@ -18,29 +18,27 @@ class CommentsController < ApplicationController
   end
 
 def upvote
-  if user_signed_in?
-    ActiveRecord::Base.transaction do
-      @comment_vote = @comment.comment_votes.find_or_initialize_by(user: current_user)
 
+    ActiveRecord::Base.transaction do
+      @comment_vote = @comment.comment_votes.find_or_initialize_by(user: @user)
+      puts "==========="
+      puts "HELLOOOOOOO"
+      puts "==========="
       if @comment_vote.new_record?
         @comment_vote.vote_type = 'upvote'
         @comment_vote.save!
       elsif @comment_vote.vote_type == 'downvote'
         @comment_vote.destroy!
-        @comment.comment_votes.create!(user: current_user, vote_type: 'upvote')
+        @comment.comment_votes.create!(user: @user, vote_type: 'upvote')
       elsif @comment_vote.vote_type == 'upvote'
         @comment_vote.destroy!
       end
-    end
-    else
-      redirect_to new_user_session_path
-      return
     end
 
 
   respond_to do |format|
     format.html { redirect_back(fallback_location: root_path) }
-    format.json { head :no_content }
+    format.json { render json: { "status" => "200", "message" => "Vote successfully added." }, status: :ok }
   end
 end
 
@@ -117,11 +115,14 @@ def downvote
     @comment = @post.comments.build(comment_params)
     @comment.user_id = @user.id
 
-
-    if @comment.save
-      redirect_to post_path(@post)
-    else
-      render 'new'
+    respond_to do |format|
+      if @comment.save
+        format.html { redirect_to post_path(@post) }
+        format.json { render json: @comment, status: :created }
+      else
+        format.html { render 'new' }
+        format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -137,9 +138,18 @@ def downvote
   end
 
   def destroy
+
+    if @comment.user != @user
+      render :json => { "status" => "403", "error" => "Only the creator can complete this action." }, status: :forbidden and return
+    end
+
     @post = Post.find(params[:post_id])
     @comment.destroy
-    redirect_to post_path(@post), notice: 'Comentario eliminado correctamente.'
+
+    respond_to do |format|
+      format.html { redirect_to post_path(@post), notice: "Comment was successfully destroyed." }
+      format.json { render json: { "status" => "200", "message" => "Comment successfully destroyed." }, status: :ok }
+    end
   end
 
   private
