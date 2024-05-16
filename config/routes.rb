@@ -10,8 +10,8 @@ Rails.application.routes.draw do
 
   resources :magazines do
     member do
-      post 'subscribe'
-      delete 'unsubscribe'
+      post 'subscribe', to: 'magazines#subscribe'
+      delete 'subscribe', to: 'magazines#unsubscribe'
     end
   end
 
@@ -61,6 +61,9 @@ Rails.application.routes.draw do
     get 'users/:id', to: 'users/users#show', as: :user
     get 'users/:id/edit', to: 'users/users#edit', as: :edit_user
     patch '/users/:id', to: 'users/users#update'
+
+    get 'users', to: 'users/users#index'
+    get 'users/:id/posts', to: 'users/users#user_posts'
 
   end
 
