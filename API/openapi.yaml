@@ -11,7 +11,7 @@ servers:
   - url: 'http://54.89.108.84:8080'
   - url: 'https://talkify.fly.dev'
 paths:
-# MAGAZINES
+  # MAGAZINES
   /magazines:
     post:
       tags:
@@ -26,7 +26,7 @@ paths:
             schema:
               type: object
               required:
-              - name
+                - name
                 - title
               properties:
                 name:
@@ -459,6 +459,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResult'
       security:
         - apiKey: []
+
   /posts/{id}/downvote:
     post:
       tags:
@@ -530,7 +531,7 @@ paths:
       security:
         - apiKey: []
   /posts/{id}/boost:
-    put:
+    post:
       tags:
         - Post
       summary: Boost an existing Post
@@ -564,17 +565,17 @@ paths:
                 $ref: '#/components/schemas/ErrorResult'
       security:
         - apiKey: []
-  /posts/{id}/unboost:
+
     delete:
       tags:
         - Post
-      summary: Unboost an existing Post
-      description: Unboost an existing Post by Id
-      operationId: unboost
+      summary: Delete a boost to an existing Post
+      description: Delete a boost to an existing Post by Id
+      operationId: deleteBoost
       parameters:
         - name: id
           in: path
-          description: Post id to unboost
+          description: Post id to delete the boost
           required: true
           schema:
             type: integer
@@ -598,8 +599,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
       security:
         - apiKey: []
+
   /posts/search:
     get:
       tags:
@@ -629,7 +640,7 @@ paths:
           description: No posts found
 
 
-# COMMENTS
+  # COMMENTS
   /posts/{postId}/comments:
     post:
       tags:

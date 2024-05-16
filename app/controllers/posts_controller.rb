@@ -17,6 +17,7 @@ class PostsController < ApplicationController
 
 
   def boost
+    if request.method == "POST"
     @post = Post.find(params[:id])
     @boost = Boost.find_or_initialize_by(post: @post, user: @user)
 
@@ -28,6 +29,9 @@ class PostsController < ApplicationController
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path) }
       format.json { render json: { post: @post, boost_status: boost_status } }
+    end
+    elsif request.method == "DELETE"
+      unboost
     end
   end
 

@@ -21,8 +21,8 @@ Rails.application.routes.draw do
 
     post 'upvote', on: :member
     post 'downvote', on: :member
-    put 'boost', on: :member
-    delete 'unboost', on: :member
+    post 'boost', on: :member
+    delete 'boost', on: :member
 
 
     member do
