@@ -18,11 +18,12 @@ Rails.application.routes.draw do
   resources :posts do
 
     post 'new_thread', on: :collection
-
-    post 'upvote', on: :member
-    post 'downvote', on: :member
-    put 'boost', on: :member
-    delete 'unboost', on: :member
+    member do
+      post 'upvote'
+      post 'downvote'
+      post 'boost'
+      delete 'boost', action: :unboost
+    end
 
 
     member do
