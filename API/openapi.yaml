@@ -605,8 +605,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
               examples:
-                  errorExample:
-                      $ref: '#/components/examples/error400'
+                errorExample:
+                  $ref: '#/components/examples/error400'
         '401':
           description: 'Error: Unauthorized'
           content:
@@ -797,7 +797,7 @@ paths:
             format: int64
         - name: sort_by
           in: query
-          description: Sort posts by "top", "newest", or "oldest"
+          description: Sort comments by "top", "newest", or "oldest"
           schema:
             type: string
             enum: [top, newest, oldest]
@@ -1075,6 +1075,120 @@ paths:
                   $ref: '#/components/examples/error404'
       security:
         - apiKey: []
+  # Users
+  /users/{id}/comments:
+    get:
+      tags:
+        - User
+      summary: Get all users' comments
+      operationId: getUsersComments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: sort_by
+          in: query
+          description: Sort comments by "top", "newest", or "oldest"
+          schema:
+            type: string
+            enum: [top, newest, oldest]
+      responses:
+        200:
+          description: Got Comments successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: 'Error: User Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExamples:
+                  $ref: '#/components/examples/error404'
+
+  /users/{id}/posts:
+    get:
+      tags:
+        - User
+      summary: Get all users' posts
+      operationId: getUsersPosts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: sort_by
+          in: query
+          description: Sort posts by "top", "newest", or "oldest"
+          schema:
+            type: string
+            enum: [top, newest, oldest]
+      responses:
+        200:
+          description: Got Posts successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        404:
+          description: 'Error: User Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExamples:
+                  $ref: '#/components/examples/error404'
+
+  /users/{id}/boosts:
+    get:
+      tags:
+        - User
+      summary: Get all logged users boosts
+      operationId: getUsersBoosts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Got boosts successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        404:
+          description: 'Error: User Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExamples:
+                  $ref: '#/components/examples/error404'
+        403:
+          description: 'Error: You are not allowd to see others boosts'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExamples:
+                  $ref: '#/components/examples/error403'
 
   #USERS
   /users:

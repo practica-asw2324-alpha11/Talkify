@@ -66,7 +66,10 @@ Rails.application.routes.draw do
     patch '/users/:id', to: 'users/users#update'
 
     get 'users', to: 'users/users#index'
+    get 'users/:id/comments', to: 'users/users#user_comments'
     get 'users/:id/posts', to: 'users/users#user_posts'
+    get 'users/:id/boosts', to: 'users/users#user_boosts'
+    put 'users/:id', to: 'users/users#update'
 
   end
 
