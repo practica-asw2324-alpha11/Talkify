@@ -4,6 +4,10 @@ class Users::UsersController < ApplicationController
   before_action :set_votes_hash
   before_action :set_user
 
+  def index
+    @users = User.all
+    render json: @users
+  end
 
   def show
     @user = User.find(params[:id])
@@ -11,7 +15,10 @@ class Users::UsersController < ApplicationController
     @posts = @user.posts.order(created_at: :desc)
     @comments = @user.comments.order(created_at: :desc)
     set_votes_hash
-
+    respond_to do |format|
+      format.html
+      format.json {render json: @user}
+    end
   end
 
   def set_votes_hash
@@ -68,6 +75,11 @@ class Users::UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :full_name, :description, :uid)
+  end
+
+  def user_posts
+    @posts = @user.posts.order(created_at: :desc)
+    render json: @posts.as_json
   end
 
   private

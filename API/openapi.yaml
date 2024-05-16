@@ -76,7 +76,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  posts:
+                  magazines:
                     type: array
                     items:
                       $ref: '#/components/schemas/Magazine'
@@ -86,7 +86,6 @@ paths:
     get:
       tags:
         - Magazines
-      summary: get one magazine
       operationId: getMagazine
       parameters:
         - name: id
@@ -95,13 +94,18 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: [top, newest, commented]
       responses:
         200:
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Magazine'
+                $ref: '#/components/schemas/MagazineWithPosts'
         400:
           description: 'Error: Bad Request'
           content:
@@ -127,7 +131,6 @@ paths:
       tags:
         - Magazines
       operationId: subscribeToMagazine
-      summary: Subscribe to a magazine
       parameters:
         - name: id
           in: path
@@ -162,7 +165,6 @@ paths:
                   $ref: '#/components/examples/error404'
       security:
         - apiKey: []
-  /magazines/{id}/unsubscribe:
     delete:
       tags:
         - Magazines
@@ -1151,6 +1153,57 @@ components:
         rules:
           type: string
           example: "rules of magazine 1"
+        subscribers:
+          type: integer
+          format: int64
+          example: 1
+      required:
+        - name
+        - title
+    MagazineWithPosts:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Magazine 1"
+        title:
+          type: string
+          example: "magazine1"
+        description:
+          type: string
+          example: "body of magazine 1"
+        rules:
+          type: string
+          example: "rules of magazine 1"
+        subscribers:
+          type: integer
+          format: int64
+          example: 1
+        posts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Post"
+      required:
+        - name
+        - title
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "mail@mail.com"
+        full_name:
+          type: string
+          example: "Name Surname"
+        uid:
+          type: string
+        avatar_url:
+          type: string
+        background_image:
+          type: string
+        description:
+          type: string
+          example: "description for user"
     NewPost:
       allOf:
         - $ref: '#/components/schemas/Post'
@@ -1196,7 +1249,6 @@ components:
         status: 409
         error: "Conflict"
         message: "There has been a conflict with the target resource"
-  
   securitySchemes:
     apiKey:
       type: apiKey
