@@ -47,9 +47,10 @@ class MagazinesController < ApplicationController
       else
         @magazines = Magazine.order(created_at: :desc)
       end
+
       respond_to do |format|
         format.html
-        format.json {render json: @magazines}
+        format.json {render json: magazines_with_subscribers}
       end
     end
 
@@ -67,7 +68,7 @@ class MagazinesController < ApplicationController
 
       respond_to do |format|
         format.html
-        format.json {render json: @magazine}
+        format.json {render json: @magazine.as_json.merge({subscribers: @magazine.users.count, posts: @posts.as_json})}
       end
 
     end
@@ -116,6 +117,12 @@ class MagazinesController < ApplicationController
       # Only allow a list of trusted parameters through.
       def magazine_params
         params.require(:magazine).permit(:name, :title, :description, :rules)
+      end
+
+      def magazines_with_subscribers
+        @magazines.map do |magazine|
+          magazine.as_json.merge(subscribers: magazine.users.count)
+        end
       end
 
       def set_user

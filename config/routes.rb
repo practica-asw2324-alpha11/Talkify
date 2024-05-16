@@ -62,6 +62,9 @@ Rails.application.routes.draw do
     get 'users/:id/edit', to: 'users/users#edit', as: :edit_user
     patch '/users/:id', to: 'users/users#update'
 
+    get 'users', to: 'users/users#index'
+    get 'users/:id/posts', to: 'users/users#user_posts'
+
   end
 
   # Añadir la ruta para el perfil del user
