@@ -1,12 +1,11 @@
 # app/controllers/users/users_controller.rb
 class Users::UsersController < ApplicationController
-  before_action :authenticate_user!
   before_action :set_votes_hash
   before_action :set_user
 
   def index
     @users = User.all
-    render json: @users
+    render json: @users.as_json(except: [:uid, :api_key])
   end
 
   def show
@@ -14,10 +13,11 @@ class Users::UsersController < ApplicationController
     params[:view] ||= 'threads'
     @posts = @user.posts.order(created_at: :desc)
     @comments = @user.comments.order(created_at: :desc)
+
     set_votes_hash
     respond_to do |format|
       format.html
-      format.json {render json: @user}
+      format.json {render json: @user.as_json(except: [:uid, :api_key])}
     end
   end
 
