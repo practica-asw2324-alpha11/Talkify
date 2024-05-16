@@ -68,9 +68,26 @@ class MagazinesController < ApplicationController
 
       respond_to do |format|
         format.html
-        format.json {render json: @magazine.as_json.merge({subscribers: @magazine.users.count, posts: @posts.as_json})}
+        format.json {render json: @magazine.as_json.merge(subscribers: @magazine.users.count)}
       end
 
+    end
+
+    def posts
+      @magazine = Magazine.find(params[:id])
+      @posts = @magazine.posts
+      sort_by = params[:sort_by]
+      case sort_by
+      when "top"
+        @posts = @magazine.posts.left_joins(:votes).where(votes: { vote_type: 'upvote' }).group('posts.id').order('COUNT(votes.id) DESC, posts.created_at DESC')
+      when "commented"
+        @posts = @magazine.posts.left_joins(:comments).group('posts.id').order('COUNT(comments.id) DESC, posts.created_at DESC')
+      else
+        @posts = @magazine.posts.order(created_at: :desc)
+      end
+      respond_to do |format|
+        format.json { render json: @posts }
+      end
     end
 
     # GET /magazines/new

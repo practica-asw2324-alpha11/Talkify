@@ -105,7 +105,52 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MagazineWithPosts'
+                $ref: '#/components/schemas/Magazine'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+  /magazines/{id}/posts:
+    get:
+      tags:
+        - Magazines
+        - Post
+      operationId: getMagazinePosts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: [top, newest, commented]
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
         400:
           description: 'Error: Bad Request'
           content:
@@ -983,6 +1028,80 @@ paths:
       security:
         - apiKey: []
 
+  #USERS
+  /users:
+    get:
+      tags:
+        - Users
+      operationId: getAllUsers
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+      security:
+        - apiKey: []
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: view
+          in: query
+          schema:
+            type: string
+            enum: [threads, comments, boost]
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+
 components:
   schemas:
     Post:
@@ -1112,32 +1231,6 @@ components:
       required:
         - name
         - title
-    MagazineWithPosts:
-      type: object
-      properties:
-        name:
-          type: string
-          example: "Magazine 1"
-        title:
-          type: string
-          example: "magazine1"
-        description:
-          type: string
-          example: "body of magazine 1"
-        rules:
-          type: string
-          example: "rules of magazine 1"
-        subscribers:
-          type: integer
-          format: int64
-          example: 1
-        posts:
-          type: array
-          items:
-            $ref: "#/components/schemas/Post"
-      required:
-        - name
-        - title
     User:
       type: object
       properties:
@@ -1147,8 +1240,6 @@ components:
         full_name:
           type: string
           example: "Name Surname"
-        uid:
-          type: string
         avatar_url:
           type: string
         background_image:
