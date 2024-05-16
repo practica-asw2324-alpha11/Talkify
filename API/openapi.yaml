@@ -11,6 +11,243 @@ servers:
   - url: 'http://54.89.108.84:8080'
   - url: 'https://talkify.fly.dev'
 paths:
+  # MAGAZINES
+  /magazines:
+    post:
+      tags:
+        - Magazines
+      summary: create magazine
+      operationId: createMagazine
+      requestBody:
+        description: Provide parameters for creating a new magazine
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - title
+              properties:
+                name:
+                  type: string
+                  example: "Magazine 1"
+                title:
+                  type: string
+                  example: "magazine1"
+                description:
+                  type: string
+                  example: "description for magazine 1"
+                rules:
+                  type: string
+                  example: "rules for magazine 1"
+      responses:
+        201:
+          description: Magazine created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+    get:
+      tags:
+        - Magazines
+      summary: get all magazines with optional sorting
+      operationId: getAllMagazines
+      parameters:
+        - name: sort_by
+          in: query
+          description: Sort magazines by "Most threads", "Most Commented", or "Most subscribers"
+          schema:
+            type: string
+            enum: [threads, comments, subscribers]
+      responses:
+        200:
+          description: List of magazines
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  magazines:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Magazine'
+      security:
+        - apiKey: []
+  /magazines/{id}:
+    get:
+      tags:
+        - Magazines
+      operationId: getMagazine
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: [top, newest, commented]
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+  /magazines/{id}/posts:
+    get:
+      tags:
+        - Magazines
+        - Post
+      operationId: getMagazinePosts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: [top, newest, commented]
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+  /magazines/{id}/subscribe:
+    post:
+      tags:
+        - Magazines
+      operationId: subscribeToMagazine
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+    delete:
+      tags:
+        - Magazines
+      operationId: unsubscribeFromMagazine
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
   /posts:
     post:
       tags:
@@ -269,6 +506,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResult'
       security:
         - apiKey: []
+
   /posts/{id}/downvote:
     post:
       tags:
@@ -340,7 +578,7 @@ paths:
       security:
         - apiKey: []
   /posts/{id}/boost:
-    put:
+    post:
       tags:
         - Post
       summary: Boost an existing Post
@@ -366,25 +604,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
         '404':
           description: 'Error: Not Found'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+
+        '409':
+          description: 'Error: Post Already Boosted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
       security:
         - apiKey: []
-  /posts/{id}/unboost:
+
     delete:
       tags:
         - Post
-      summary: Unboost an existing Post
-      description: Unboost an existing Post by Id
-      operationId: unboost
+      summary: Delete a boost to an existing Post
+      description: Delete a boost to an existing Post by Id
+      operationId: deleteBoost
       parameters:
         - name: id
           in: path
-          description: Post id to unboost
+          description: Post id to delete the boost
           required: true
           schema:
             type: integer
@@ -402,14 +662,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+              example:
+                errorExample:
+                  $ref: '#/components/examples/error400'
         '404':
           description: 'Error: Not Found'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+              example:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        '409':
+          description: 'Error: Post has not been boosted yet'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
       security:
         - apiKey: []
+
   /posts/search:
     get:
       tags:
@@ -438,6 +723,8 @@ paths:
         '404':
           description: No posts found
 
+
+  # COMMENTS
   /posts/{postId}/comments:
     post:
       tags:
@@ -510,7 +797,7 @@ paths:
             format: int64
         - name: sort_by
           in: query
-          description: Sort posts by "top", "newest", or "oldest"
+          description: Sort comments by "top", "newest", or "oldest"
           schema:
             type: string
             enum: [top, newest, oldest]
@@ -788,6 +1075,256 @@ paths:
                   $ref: '#/components/examples/error404'
       security:
         - apiKey: []
+  #USERS
+  /users:
+    get:
+      tags:
+        - User
+      operationId: getAllUsers
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+      security:
+        - apiKey: []
+        
+  /users/{id}:
+    get:
+      tags:
+        - User
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: view
+          in: query
+          schema:
+            type: string
+            enum: [threads, comments, boost]
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+    
+    put:
+      tags:
+        - User
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        - name: full_name
+          in: formData
+          schema:
+            type: string
+        - name: description
+          in: formData
+          schema:
+            type: string
+        - name: avatar
+          in: formData
+          schema:
+            type: string
+            format: binary
+        - name: background
+          in: formData
+          schema:
+            type: string
+            format: binary
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+        
+  /users/{id}/comments:
+    get:
+      tags:
+        - User
+      summary: Get all users' comments
+      operationId: getUsersComments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: sort_by
+          in: query
+          description: Sort comments by "top", "newest", or "oldest"
+          schema:
+            type: string
+            enum: [top, newest, oldest]
+      responses:
+        200:
+          description: Got Comments successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: 'Error: User Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExamples:
+                  $ref: '#/components/examples/error404'
+
+  /users/{id}/posts:
+    get:
+      tags:
+        - User
+      summary: Get all users' posts
+      operationId: getUsersPosts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: sort_by
+          in: query
+          description: Sort posts by "top", "newest", or "oldest"
+          schema:
+            type: string
+            enum: [top, newest, oldest]
+      responses:
+        200:
+          description: Got Posts successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        404:
+          description: 'Error: User Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExamples:
+                  $ref: '#/components/examples/error404'
+
+  /users/{id}/boosts:
+    get:
+      tags:
+        - User
+      summary: Get all logged users boosts
+      operationId: getUsersBoosts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Got boosts successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        404:
+          description: 'Error: User Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExamples:
+                  $ref: '#/components/examples/error404'
+        403:
+          description: 'Error: You are not allowd to see others boosts'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExamples:
+                  $ref: '#/components/examples/error403'
+      security:
+        - apiKey: []
+
+  
 
 components:
   schemas:
@@ -896,6 +1433,44 @@ components:
             - downvote
       xml:
         name: votes
+    Magazine:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Magazine 1"
+        title:
+          type: string
+          example: "magazine1"
+        description:
+          type: string
+          example: "body of magazine 1"
+        rules:
+          type: string
+          example: "rules of magazine 1"
+        subscribers:
+          type: integer
+          format: int64
+          example: 1
+      required:
+        - name
+        - title
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "mail@mail.com"
+        full_name:
+          type: string
+          example: "Name Surname"
+        avatar_url:
+          type: string
+        background_image:
+          type: string
+        description:
+          type: string
+          example: "description for user"
     NewPost:
       allOf:
         - $ref: '#/components/schemas/Post'
@@ -936,6 +1511,11 @@ components:
         status: 404
         error: "Not Found"
         message: "No object with that ID"
+    error409:
+      value:
+        status: 409
+        error: "Conflict"
+        message: "There has been a conflict with the target resource"
 
   securitySchemes:
     apiKey:
