@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
   before_action :set_votes_hash
-  before_action :set_user
+  before_action :set_user, except: [:index]
   before_action :set_comment, except: [:sort, :new, :create, :index]
   before_action :set_post, only: [:sort, :edit]
 
@@ -173,7 +173,7 @@ def downvote
 
     respond_to do |format|
       format.html { render 'posts/show' }
-      format.json { render json: @comments, include: { replies: { include: :user } } }
+      format.json { render json: @comments, include: :replies }
     end
   end
 
@@ -185,7 +185,7 @@ def downvote
     respond_to do |format|
       if @comment.save
         format.html { redirect_to post_path(@post) }
-        format.json { render json: @comment, status: :created }
+        format.json { render json: @comment, include: :replies, status: :created }
       else
         format.html { render 'new' }
         format.json { render json: @comment.errors, status: :unprocessable_entity }

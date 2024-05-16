@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for talkify-asw-v2 on 2024-04-19T07:06:48Z
+# fly.toml app configuration file generated for talkify on 2024-05-16T09:44:51Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'talkify-asw-v2'
+app = 'talkify'
 primary_region = 'mad'
 console_command = '/rails/bin/rails console'
 
@@ -22,7 +22,3 @@ console_command = '/rails/bin/rails console'
 
 [[vm]]
   size = 'shared-cpu-1x'
-
-[[statics]]
-  guest_path = '/rails/public'
-  url_prefix = '/'

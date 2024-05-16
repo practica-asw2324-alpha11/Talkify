@@ -1,5 +1,5 @@
 class PostsController < ApplicationController
-  before_action :set_user
+  before_action :set_user, except: [:index, :show, :search]
   before_action :set_votes_hash
   before_action :set_post, only: [:show, :edit, :update, :destroy, :upvote, :downvote, :boost], except: [:search]
 
