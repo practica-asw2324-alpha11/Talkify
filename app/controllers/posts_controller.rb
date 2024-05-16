@@ -17,21 +17,23 @@ class PostsController < ApplicationController
 
 
   def boost
-    if request.method == "POST"
     @post = Post.find(params[:id])
     @boost = Boost.find_or_initialize_by(post: @post, user: @user)
 
     if @boost.new_record?
       @boost.save!
       boost_status = "boosted"
+      status = :ok
+      response = { post: @post, boost_status: boost_status }
+    else
+      boost_status = "already boosted"
+      status = :conflict
+      response = { boost_status: boost_status }
     end
 
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path) }
-      format.json { render json: { post: @post, boost_status: boost_status } }
-    end
-    elsif request.method == "DELETE"
-      unboost
+      format.json { render json: response, status: status }
     end
   end
 
@@ -42,11 +44,17 @@ class PostsController < ApplicationController
     if @boost.present?
       @boost.destroy!
       boost_status = "unboosted"
+      status = :ok
+      response = { boost_status: boost_status }
+    else
+      boost_status = "not boosted"
+      status = :conflict
+      response = { boost_status: boost_status }
     end
 
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path) }
-      format.json { render json: { post: @post, boost_status: boost_status } }
+      format.json { render json: response, status: status }
     end
   end
 
