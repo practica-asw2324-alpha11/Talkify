@@ -1,0 +1,947 @@
+openapi: 3.0.2
+info:
+  version: 1.0.0
+  title: Talkify :)
+  description: |-
+    Aquí encontrarás la REST API de Talkify, esperamos que sea de utilidad!
+
+    Links útiles:
+    - [Repositorio git de Talkify](https://github.com/practica-asw2324-alpha11/Talkify)
+servers:
+  - url: 'http://54.89.108.84:8080'
+paths:
+  /posts:
+    post:
+      tags:
+        - Post
+      summary: Create post (link or thread)
+      operationId: createPost
+      requestBody:
+        description: Provide parameters for creating a new post
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - magazine_id
+                - postType
+              properties:
+                title:
+                  type: string
+                  example: "Un post"
+                magazine_id:
+                  type: integer
+                  example: 1
+                postType:
+                  type: string
+                  enum: [link, thread]
+                  description: "Specify the type of the post"
+              oneOf:
+                - properties:
+                    postType:
+                      enum: [link]
+                    url:
+                      type: string
+                      example: "kbin.social"
+                  required:
+                    - url
+                - properties:
+                    postType:
+                      enum: [thread]
+                    body:
+                      type: string
+                      example: "Este es un post sobre kbin.social"
+      responses:
+        '201':
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewPost'
+        '400':
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+    get:
+      tags:
+        - Post
+      summary: Get all posts with optional filtering and sorting
+      operationId: getAllPosts
+      parameters:
+        - name: filter
+          in: query
+          description: Filter posts by "links" or "threads"
+          schema:
+            type: string
+            enum: [links, threads]
+        - name: sort_by
+          in: query
+          description: Sort posts by "top", "newest", or "commented"
+          schema:
+            type: string
+            enum: [top, newest, commented]
+      responses:
+        '200':
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+        '404':
+          description: No posts found
+      security:
+        - apiKey: []
+  /posts/{id}:
+    get:
+      tags:
+        - Post
+      summary: Show an existing post
+      description: Show an existing post by Id
+      operationId: getPost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: 'Post not found'
+      security:
+        - apiKey: []
+    put:
+      tags:
+        - Post
+      summary: Update an existing post
+      description: Update an existing post by Id
+      operationId: UpdatePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Provide parameters for updating the post
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "Updated Post Title"
+                url:
+                  type: string
+                  example: "https://updated-example.com"
+                body:
+                  type: string
+                  example: "This is an updated post."
+                magazine_id:
+                  type: integer
+                  example: 2
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+        '404':
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+    delete:
+      tags:
+        - Post
+      summary: Deletes a post
+      description: delete a post by id
+      parameters:
+        - name: id
+          in: path
+          description: Post id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Post deleted successfully
+        '404':
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+  /posts/{id}/upvote:
+    post:
+      tags:
+        - Post
+      summary: Add a like to an existing Post
+      description: Add a like to an existing Post by Id
+      operationId: postUpvote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+    delete:
+      tags:
+        - Post
+      summary: Delete a like to an existing Post
+      description: Delete a like to an existing Post by Id
+      operationId: deleteUpvote
+      parameters:
+        - name: id
+          in: path
+          description: Post id to delete the like
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+        '404':
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+  /posts/{id}/downvote:
+    post:
+      tags:
+        - Post
+      summary: Add a dislike to an existing Post
+      description: Add a dislike to an existing Post by Id
+      operationId: postDownvote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+    delete:
+      tags:
+        - Post
+      summary: Delete a dislike to an existing Post
+      description: Delete a dislike to an existing Post by Id
+      operationId: deleteDownvote
+      parameters:
+        - name: id
+          in: path
+          description: Post id to delete the dislike
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+        '404':
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+  /posts/{id}/boost:
+    put:
+      tags:
+        - Post
+      summary: Boost an existing Post
+      description: Boost an existing Post by Id
+      operationId: boost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+        '404':
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+  /posts/{id}/unboost:
+    delete:
+      tags:
+        - Post
+      summary: Unboost an existing Post
+      description: Unboost an existing Post by Id
+      operationId: unboost
+      parameters:
+        - name: id
+          in: path
+          description: Post id to unboost
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+        '404':
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+  /posts/search:
+    get:
+      tags:
+        - Post
+      summary: Search content in any post
+      operationId: searchPosts
+      parameters:
+        - name: query
+          in: query
+          description: Text to search
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+        '404':
+          description: No posts found
+      security:
+        - apiKey: []
+
+  /posts/{postId}/comments:
+    post:
+      tags:
+        - Comment
+      summary: Create new Comment
+      operationId: createComment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Provide parameters for creating a new comment
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - body
+              properties:
+                body:
+                  type: string
+                  example: "Un Comment"
+                parent_comment_id:
+                  type: integer
+                  example: null
+      responses:
+        200:
+          description: Comentario creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        401:
+          description: 'Unauthorized user'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        403:
+          description: 'Error: Forbidden. No API Key in our system'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+      security:
+        - apiKey: []
+
+    get:
+      tags:
+        - Comment
+      summary: Get All comments of a Post
+      operationId: getPostComments
+      parameters:
+        - name: postId
+          in: path
+          description: Post identifier
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: sort_by
+          in: query
+          description: Sort posts by "top", "newest", or "oldest"
+          schema:
+            type: string
+            enum: [top, newest, oldest]
+      responses:
+        200:
+          description: Got Comments successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: 'Error: Post Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExamples:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+
+  /posts/{postId}/comments/{commentId}:
+    put:
+      tags:
+        - Comment
+      summary: Update existing comment
+      operationId: updateComment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Provide a new body for the comment
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentUpdate'
+      responses:
+        '200':
+          description: Comment updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        '403':
+          description: You are not the creator of this comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+      security:
+        - apiKey: []
+
+    delete:
+      tags:
+        - Comment
+      summary: Delete Comment of a Post
+      operationId: deletePostComment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Comment deleted
+          content:
+            application/json: {}
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        '403':
+          description: You are not the creator of this comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+      security:
+        - apiKey: []
+
+  /posts/{postId}/comments/{commentId}/upvote:
+    post:
+      tags:
+        - Comment
+      summary: Upvote a comment
+      operationId: upvoteComment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Comment upvoted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+      security:
+        - apiKey: []
+
+    delete:
+      tags:
+        - Comment
+      summary: Delete the upvote of a comment
+      operationId: deleteUpvoteComment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Upvote deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        '405':
+          description: You have not upvoted this comment yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+
+  /posts/{postId}/comments/{commentId}/downvote:
+    post:
+      tags:
+        - Comment
+      summary: Downvote a comment
+      operationId: downvoteComment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Comment upvoted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+      security:
+        - apiKey: []
+
+    delete:
+      tags:
+        - Comment
+      summary: Delete the downvote of a comment
+      operationId: deleteDownvoteComment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Downvote deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+
+        '405':
+          description: You have not upvoted this comment yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Un post"
+        url:
+          type: string
+          example: "kbin.social"
+        body:
+          type: string
+          example: "Este es un post sobre kbin.social"
+        link:
+          type: boolean
+          example: true
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        magazine_id:
+          type: integer
+          format: int64
+          example: 1
+      xml:
+        name: post
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        body:
+          type: string
+          example: "Comentario"
+        upvote:
+          type: integer
+          format: int64
+          example: 0
+        downvote:
+          type: integer
+          format: int64
+          example: 0
+        post_id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        parent_comment_id:
+          type: integer
+          format: int64
+          nullable: true
+          example: null
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+      xml:
+        name: comment
+      required:
+        - body
+        - post_id
+        - user_id
+    CommentUpdate:
+      type: object
+      properties:
+        body:
+          type: string
+          description: new body
+          example: "Updated body"
+    Boosts:
+      type: object
+      properties:
+        post_id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+      xml:
+        name: boosts
+    Votes:
+      type: object
+      properties:
+        post_id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        vote_type:
+          type: string
+          example: "upvote"
+          enum:
+            - upvote
+            - downvote
+      xml:
+        name: votes
+    NewPost:
+      allOf:
+        - $ref: '#/components/schemas/Post'
+        - type: object
+          properties:
+            HTTP_X_API_KEY:
+              type: string
+              example: '9656f8894781485f7e9e167'
+          required:
+            - token
+    ErrorResult:
+      type: object
+      properties:
+        status:
+          type: integer
+          enum: [304, 400, 401, 403, 404, 409]
+        error:
+          type: string
+          enum: ["Not Modified", "Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict"]
+  examples:
+    error400:
+      value:
+        status: 400
+        error: "Bad Request"
+        message: "Bad Request"
+    error401:
+      value:
+        status: 401
+        error: "Unauthorized"
+        message: "No Api Key provided"
+    error403:
+      value:
+        status: 403
+        error: "Forbidden"
+        message: "Forbidden behaviour for that user"
+    error404:
+      value:
+        status: 404
+        error: "Not Found"
+        message: "No object with that ID"
+  
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: X-API-KEY #Custom headers in rails apps must have the X- prefix
+      in: header

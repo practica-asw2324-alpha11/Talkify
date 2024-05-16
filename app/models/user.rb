@@ -1,4 +1,4 @@
-class Admin < ApplicationRecord
+class User < ApplicationRecord
   devise :omniauthable, omniauth_providers: [:google_oauth2]
   has_many :comments, dependent: :destroy
   has_many :posts, dependent: :destroy
@@ -8,8 +8,18 @@ class Admin < ApplicationRecord
   has_many :boosts, dependent: :destroy
   has_one_attached :avatar
   has_one_attached :background
-  
+  before_create :set_api_key
+
+
   def self.from_google(email:, full_name:, uid:, avatar_url:)
     create_with(uid: uid, full_name: full_name, avatar_url: avatar_url).find_or_create_by!(email: email)
+  end
+
+  def generate_api_key
+    self.api_key = SecureRandom.base58(24)
+  end
+
+  def set_api_key
+    generate_api_key if api_key.blank?
   end
 end

@@ -2,12 +2,12 @@
   <div class="post-header">
 
     <div class="post-content" style="color: white;">
-      <%= form_with(model: @admin, method: :patch, local: true, html: { class: "post-form" }) do |form| %>
-        <% if @admin.errors.any? %>
+      <%= form_with(model: @user, method: :patch, local: true, html: { class: "post-form" }) do |form| %>
+        <% if @user.errors.any? %>
           <div id="error_explanation">
-            <h2><%= pluralize(@admin.errors.count, "error") %> han ocurrido al editar el usuario:</h2>
+            <h2><%= pluralize(@user.errors.count, "error") %> han ocurrido al editar el usuario:</h2>
             <ul>
-              <% @admin.errors.full_messages.each do |message| %>
+              <% @user.errors.full_messages.each do |message| %>
                 <li><%= message %></li>
               <% end %>
             </ul>

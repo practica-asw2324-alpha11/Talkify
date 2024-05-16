@@ -6,20 +6,20 @@
       <p><%= @magazine.description %></p>
       <strong><p>Rules:</p></strong>
       <p><%= @magazine.rules %></p>
-      <% if admin_signed_in? %>
-        <% if current_admin.magazines.include?(@magazine) %>
+      <% if user_signed_in? %>
+        <% if current_user.magazines.include?(@magazine) %>
           <%= button_to "Unsubscribe", unsubscribe_magazine_path(@magazine), method: :delete, class: 'btn btn-primary btn-rectangular' %>
         <% else %>
           <%= button_to "Subscribe", subscribe_magazine_path(@magazine), method: :post, class: 'btn btn-primary btn-rectangular' %>
         <% end %>
       <% else %>
-        <%= button_to "Subscribe", new_admin_session_path, method: :get, class: 'btn btn-primary btn-rectangular' %>
+        <%= button_to "Subscribe", new_user_session_path, method: :get, class: 'btn btn-primary btn-rectangular' %>
       <% end %>
     </div>
 
     <div class="wotitem">
       <p><strong>Created: </strong><%= time_ago_in_words(@magazine.created_at) %> ago</p>
-      <p><strong>Subscribers: </strong><%= @magazine.admins.count %></p>
+      <p><strong>Subscribers: </strong><%= @magazine.users.count %></p>
       <p><strong>Threads: </strong><%= @magazine.posts.count %></p>
       <p><strong>Comments: </strong><%= @magazine.comments.count %></p>
     </div>
