@@ -1075,7 +1075,139 @@ paths:
                   $ref: '#/components/examples/error404'
       security:
         - apiKey: []
-  # Users
+  #USERS
+  /users:
+    get:
+      tags:
+        - User
+      operationId: getAllUsers
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+      security:
+        - apiKey: []
+        
+  /users/{id}:
+    get:
+      tags:
+        - User
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: view
+          in: query
+          schema:
+            type: string
+            enum: [threads, comments, boost]
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+    
+    put:
+      tags:
+        - User
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        - name: full_name
+          in: formData
+          schema:
+            type: string
+        - name: description
+          in: formData
+          schema:
+            type: string
+        - name: avatar
+          in: formData
+          schema:
+            type: string
+            format: binary
+        - name: background
+          in: formData
+          schema:
+            type: string
+            format: binary
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+        
   /users/{id}/comments:
     get:
       tags:
@@ -1189,80 +1321,10 @@ paths:
               examples:
                 errorExamples:
                   $ref: '#/components/examples/error403'
+      security:
+        - apiKey: []
 
-  #USERS
-  /users:
-    get:
-      tags:
-        - Users
-      operationId: getAllUsers
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  users:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/User'
-        400:
-          description: 'Error: Bad Request'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error400'
-      security:
-        - apiKey: []
-  /users/{id}:
-    get:
-      tags:
-        - Users
-      operationId: getUser
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: view
-          in: query
-          schema:
-            type: string
-            enum: [threads, comments, boost]
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        400:
-          description: 'Error: Bad Request'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error400'
-        404:
-          description: 'Error: Not Found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error404'
-      security:
-        - apiKey: []
+  
 
 components:
   schemas:
