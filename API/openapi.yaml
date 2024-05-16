@@ -9,6 +9,7 @@ info:
     - [Repositorio git de Talkify](https://github.com/practica-asw2324-alpha11/Talkify)
 servers:
   - url: 'http://54.89.108.84:8080'
+  - url: 'https://talkify.fly.dev'
 paths:
   /posts:
     post:
@@ -100,8 +101,7 @@ paths:
                       $ref: '#/components/schemas/Post'
         '404':
           description: No posts found
-      security:
-        - apiKey: []
+
   /posts/{id}:
     get:
       tags:
@@ -125,8 +125,7 @@ paths:
                 $ref: '#/components/schemas/Post'
         '400':
           description: 'Post not found'
-      security:
-        - apiKey: []
+
     put:
       tags:
         - Post
@@ -183,7 +182,7 @@ paths:
     delete:
       tags:
         - Post
-      summary: Deletes a post
+      summary: Delete a post
       description: delete a post by id
       parameters:
         - name: id
@@ -196,6 +195,8 @@ paths:
       responses:
         '204':
           description: Post deleted successfully
+          content:
+            application/json: {}
         '404':
           description: 'Error: Not Found'
           content:
@@ -436,8 +437,6 @@ paths:
                       $ref: '#/components/schemas/Post'
         '404':
           description: No posts found
-      security:
-        - apiKey: []
 
   /posts/{postId}/comments:
     post:
@@ -533,8 +532,6 @@ paths:
               examples:
                 errorExamples:
                   $ref: '#/components/examples/error404'
-      security:
-        - apiKey: []
 
   /posts/{postId}/comments/{commentId}:
     put:
@@ -939,7 +936,7 @@ components:
         status: 404
         error: "Not Found"
         message: "No object with that ID"
-  
+
   securitySchemes:
     apiKey:
       type: apiKey
