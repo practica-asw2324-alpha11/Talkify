@@ -1162,25 +1162,24 @@ paths:
             type: integer
             format: int64
       requestBody:
-        description: Introduce the new data to update the user
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                full_name:
-                  type: string
-                description:
-                  type: string
-                avatar:
-                  type: string
-                  format: binary
-                  description: Profile picture image
-                background:
-                  type: string
-                  format: binary
-                  description: Background profile image
-        required: true
+        - name: full_name
+          in: formData
+          schema:
+            type: string
+        - name: description
+          in: formData
+          schema:
+            type: string
+        - name: avatar
+          in: formData
+          schema:
+            type: string
+            format: binary
+        - name: background
+          in: formData
+          schema:
+            type: string
+            format: binary
       responses:
         200:
           description: successful operation
