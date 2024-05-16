@@ -2,6 +2,7 @@
 class Users::UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_votes_hash
+  before_action :set_user
 
 
   def show
@@ -72,7 +73,20 @@ class Users::UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.find(params[:id])
+    if request.headers[:Accept] == "application/json"
+      api_key = request.headers[:HTTP_X_API_KEY]
+
+      if api_key.nil?
+        render :json => { "status" => "401", "error" => "No Api key provided." }, status: :unauthorized and return
+      else
+        @user = User.find_by_api_key(api_key)
+        if @user.nil?
+          render :json => { "status" => "403", "error" => "No User found with the Api key provided." }, status: :unauthorized and return
+        end
+      end
+    else
+      @user = current_user
+    end
   end
 
 end

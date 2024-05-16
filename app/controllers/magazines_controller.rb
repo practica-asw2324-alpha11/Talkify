@@ -1,49 +1,35 @@
 class MagazinesController < ApplicationController
+    before_action :set_user
     before_action :set_votes_hash
     before_action :set_magazine, only: %i[show update]
 
     def subscribe
-      api_key = request.headers[:HTTP_X_API_KEY]
-
-    if api_key.nil?
-      render :json => { "status" => "401", "error" => "No Api key provided." }, status: :unauthorized and return
-    else
-      @user = User.find_by_api_key(api_key)
-      if @user.nil?
-        render :json => { "status" => "401", "error" => "No User found with the Api key provided." }, status: :unauthorized and return
-      elsif @post.user != @user
-        render :json => { "status" => "401", "error" => "Only the creator of the micropost can delete it." }, status: :unauthorized and return
-      end
-    end
       @magazine = Magazine.find(params[:id])
-      current_user.magazines << @magazine unless current_user.magazines.include?(@magazine)
-      redirect_to @magazine
+      @user.magazines << @magazine unless @user.magazines.include?(@magazine)
+      respond_to do |format|
+        format.html { redirect_to @magazine }
+        format.json { render json: { "status" => "200", "message" => "Successfully subscribed." }, status: :ok }
+      end
     end
 
     def unsubscribe
-      api_key = request.headers[:HTTP_X_API_KEY]
 
-    if api_key.nil?
-      render :json => { "status" => "401", "error" => "No Api key provided." }, status: :unauthorized and return
-    else
-      @user = User.find_by_api_key(api_key)
-      if @user.nil?
-        render :json => { "status" => "401", "error" => "No User found with the Api key provided." }, status: :unauthorized and return
-      elsif @post.user != @user
-        render :json => { "status" => "401", "error" => "Only the creator of the micropost can delete it." }, status: :unauthorized and return
-      end
-    end
       @magazine = Magazine.find(params[:id])
-      current_user.magazines.delete(@magazine)
-      redirect_to magazines_path
+      @user.magazines.delete(@magazine)
+      respond_to do |format|
+        format.html { redirect_to magazines_path }
+        format.json { render json: { "status" => "200", "message" => "Successfully unsubscribed." }, status: :ok }
+      end
     end
 
     def set_votes_hash
       if user_signed_in?
+        @comment_votes_hash = current_user.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
         @votes_hash = current_user.votes.index_by(&:post_id).transform_values(&:vote_type)
         @boosted_posts = current_user.boosts.pluck(:post_id)
       else
         @votes_hash = {}
+        @comment_votes_hash = {}
         @boosted_posts = {}
       end
     end
@@ -98,7 +84,7 @@ class MagazinesController < ApplicationController
       respond_to do |format|
         if @magazine.save
           format.html { redirect_to magazines_url, notice: "Magazine was successfully created." }
-          format.json { render :index, status: :created, location: @magazine }
+          format.json { render json: @magazine }
         else
           format.html { redirect_to magazines_url, notice: @magazine.errors.full_messages.join(", ") }
           format.json { render json: @magazine.errors, status: :unprocessable_entity }
@@ -119,6 +105,8 @@ class MagazinesController < ApplicationController
       end
     end
 
+
+
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_magazine
@@ -129,4 +117,21 @@ class MagazinesController < ApplicationController
       def magazine_params
         params.require(:magazine).permit(:name, :title, :description, :rules)
       end
-  end
+
+      def set_user
+        if request.headers[:Accept] == "application/json"
+          api_key = request.headers[:HTTP_X_API_KEY]
+
+        if api_key.nil?
+          render :json => { "status" => "401", "error" => "No Api key provided." }, status: :unauthorized and return
+        else
+          @user = User.find_by_api_key(api_key)
+          if @user.nil?
+            render :json => { "status" => "403", "error" => "No User found with the Api key provided." }, status: :unauthorized and return
+          end
+        end
+        else
+          @user = current_user
+        end
+      end
+end
