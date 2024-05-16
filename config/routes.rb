@@ -31,9 +31,17 @@ Rails.application.routes.draw do
 
     end
     resources :comments do
-      put 'upvote', on: :member
-      put 'downvote', on: :member
-      get 'edit', on: :member
+
+      member do
+        # put 'upvote', on: :member
+        # put 'downvote', on: :member
+        post 'upvote'
+        delete 'upvote'
+        post 'downvote'
+        delete 'downvote'
+
+        get 'edit'
+      end
 
     end
     collection do

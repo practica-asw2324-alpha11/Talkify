@@ -136,7 +136,7 @@ end
 
   respond_to do |format|
     format.html # Renderizará el HTML por defecto
-    format.json { render json: @posts } # Renderizará los posts en formato JSON
+    format.json { render json: @posts, include: { comments: { include: :replies} } } # Renderizará los posts en formato JSON
   end
 end
 
@@ -147,7 +147,7 @@ end
 
     respond_to do |format|
       format.html # Renderizará el HTML por defecto
-      format.json { render json: @post } # Renderizará el post en formato JSON
+      format.json { render json: @post, include: { comments: { include: :replies} } } # Renderizará los posts en formato JSON
     end
   end
 
@@ -222,8 +222,6 @@ end
       format.json { render json: { "status" => "200", "message" => "Post successfully destroyed." }, status: :ok }
     end
   end
-
-
 
 
   private
