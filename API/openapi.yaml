@@ -9,7 +9,198 @@ info:
     - [Repositorio git de Talkify](https://github.com/practica-asw2324-alpha11/Talkify)
 servers:
   - url: 'http://54.89.108.84:8080'
+  - url: 'https://talkify.fly.dev'
 paths:
+# MAGAZINES
+  /magazines:
+    post:
+      tags:
+        - Magazines
+      summary: create magazine
+      operationId: createMagazine
+      requestBody:
+        description: Provide parameters for creating a new magazine
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+                - title
+              properties:
+                name:
+                  type: string
+                  example: "Magazine 1"
+                title:
+                  type: string
+                  example: "magazine1"
+                description:
+                  type: string
+                  example: "description for magazine 1"
+                rules:
+                  type: string
+                  example: "rules for magazine 1"
+      responses:
+        201:
+          description: Magazine created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      security:
+        - apiKey: []
+    get:
+      tags:
+        - Magazines
+      summary: get all magazines with optional sorting
+      operationId: getAllMagazines
+      parameters:
+        - name: sort_by
+          in: query
+          description: Sort magazines by "Most threads", "Most Commented", or "Most subscribers"
+          schema:
+            type: string
+            enum: [threads, comments, subscribers]
+      responses:
+        200:
+          description: List of magazines
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Magazine'
+      security:
+        - apiKey: []
+  /magazines/{id}:
+    get:
+      tags:
+        - Magazines
+      summary: get one magazine
+      operationId: getMagazine
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+  /magazines/{id}/subscribe:
+    post:
+      tags:
+        - Magazines
+      operationId: subscribeToMagazine
+      summary: Subscribe to a magazine
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
+  /magazines/{id}/unsubscribe:
+    delete:
+      tags:
+        - Magazines
+      operationId: unsubscribeFromMagazine
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
   /posts:
     post:
       tags:
@@ -100,8 +291,7 @@ paths:
                       $ref: '#/components/schemas/Post'
         '404':
           description: No posts found
-      security:
-        - apiKey: []
+
   /posts/{id}:
     get:
       tags:
@@ -125,8 +315,7 @@ paths:
                 $ref: '#/components/schemas/Post'
         '400':
           description: 'Post not found'
-      security:
-        - apiKey: []
+
     put:
       tags:
         - Post
@@ -183,7 +372,7 @@ paths:
     delete:
       tags:
         - Post
-      summary: Deletes a post
+      summary: Delete a post
       description: delete a post by id
       parameters:
         - name: id
@@ -196,6 +385,8 @@ paths:
       responses:
         '204':
           description: Post deleted successfully
+          content:
+            application/json: {}
         '404':
           description: 'Error: Not Found'
           content:
@@ -436,10 +627,9 @@ paths:
                       $ref: '#/components/schemas/Post'
         '404':
           description: No posts found
-      security:
-        - apiKey: []
-<<<<<<< HEAD
 
+
+# COMMENTS
   /posts/{postId}/comments:
     post:
       tags:
@@ -455,23 +645,12 @@ paths:
             format: int64
       requestBody:
         description: Provide parameters for creating a new comment
-=======
-  /magazines:
-    post:
-      tags:
-        - Magazines
-      summary: create magazine
-      operationId: createMagazine
-      requestBody:
-        description: Provide parameters for creating a new magazine
->>>>>>> 59dbff2 (magazines terminadas para segunda entrega)
         required: true
         content:
           application/json:
             schema:
               type: object
               required:
-<<<<<<< HEAD
                 - body
               properties:
                 body:
@@ -489,37 +668,10 @@ paths:
                 $ref: '#/components/schemas/Comment'
         401:
           description: 'Unauthorized user'
-=======
-                - name
-                - title
-              properties:
-                name:
-                  type: string
-                  example: "Magazine 1"
-                title:
-                  type: string
-                  example: "magazine1"
-                description:
-                  type: string
-                  example: "description for magazine 1"
-                rules:
-                  type: string
-                  example: "rules for magazine 1"
-      responses:
-        201:
-          description: Magazine created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Magazine'
-        400:
-          description: 'Error: Bad Request'
->>>>>>> 59dbff2 (magazines terminadas para segunda entrega)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
-<<<<<<< HEAD
               examples:
                 errorExample:
                   $ref: '#/components/examples/error401'
@@ -572,8 +724,6 @@ paths:
               examples:
                 errorExamples:
                   $ref: '#/components/examples/error404'
-      security:
-        - apiKey: []
 
   /posts/{postId}/comments/{commentId}:
     put:
@@ -588,49 +738,11 @@ paths:
           schema:
             type: integer
         - name: commentId
-=======
-      security:
-        - apiKey: []
-    get:
-      tags:
-        - Magazines
-      summary: get all magazines with optional sorting
-      operationId: getAllMagazines
-      parameters:
-        - name: sort_by
-          in: query
-          description: Sort magazines by "Most threads", "Most Commented", or "Most subscribers"
-          schema:
-            type: string
-            enum: [threads, comments, subscribers]
-      responses:
-        200:
-          description: List of magazines
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  posts:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Magazine'
-      security:
-        - apiKey: []
-  /magazines/{id}:
-    get:
-      tags:
-        - Magazines
-      operationId: getMagazine
-      parameters:
-        - name: id
->>>>>>> 59dbff2 (magazines terminadas para segunda entrega)
           in: path
           required: true
           schema:
             type: integer
             format: int64
-<<<<<<< HEAD
       requestBody:
         description: Provide a new body for the comment
         required: true
@@ -647,24 +759,12 @@ paths:
                 $ref: '#/components/schemas/Comment'
         '401':
           description: 'Error: Unauthorized'
-=======
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Magazine'
-        400:
-          description: 'Error: Bad Request'
->>>>>>> 59dbff2 (magazines terminadas para segunda entrega)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
               examples:
                 errorExample:
-<<<<<<< HEAD
                   $ref: '#/components/examples/error401'
         '403':
           description: You are not the creator of this comment
@@ -790,11 +890,6 @@ paths:
                   $ref: '#/components/examples/error401'
         '405':
           description: You have not upvoted this comment yet
-=======
-                  $ref: '#/components/examples/error400'
-        404:
-          description: 'Error: Not Found'
->>>>>>> 59dbff2 (magazines terminadas para segunda entrega)
           content:
             application/json:
               schema:
@@ -804,7 +899,6 @@ paths:
                   $ref: '#/components/examples/error404'
       security:
         - apiKey: []
-<<<<<<< HEAD
 
   /posts/{postId}/comments/{commentId}/downvote:
     post:
@@ -819,20 +913,10 @@ paths:
           schema:
             type: integer
         - name: commentId
-=======
-  /magazines/{id}/subscribe:
-    post:
-      tags:
-        - Magazines
-      operationId: subscribeToMagazine
-      parameters:
-        - name: id
->>>>>>> 59dbff2 (magazines terminadas para segunda entrega)
           in: path
           required: true
           schema:
             type: integer
-<<<<<<< HEAD
       responses:
         '200':
           description: Comment upvoted successfully
@@ -842,25 +926,12 @@ paths:
                 $ref: '#/components/schemas/Comment'
         '401':
           description: 'Error: Unauthorized'
-=======
-            format: int64
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Magazine'
-        400:
-          description: 'Error: Bad Request'
->>>>>>> 59dbff2 (magazines terminadas para segunda entrega)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
               examples:
                 errorExample:
-<<<<<<< HEAD
                   $ref: '#/components/examples/error401'
       security:
         - apiKey: []
@@ -900,10 +971,6 @@ paths:
 
         '405':
           description: You have not upvoted this comment yet
-=======
-                  $ref: '#/components/examples/error400'
-        404:
-          description: 'Error: Not Found'
           content:
             application/json:
               schema:
@@ -913,50 +980,7 @@ paths:
                   $ref: '#/components/examples/error404'
       security:
         - apiKey: []
-  /magazines/{id}/unsubscribe:
-    delete:
-      tags:
-        - Magazines
-      operationId: unsubscribeFromMagazine
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Magazine'
-        400:
-          description: 'Error: Bad Request'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error400'
-        404:
-          description: 'Error: Not Found'
->>>>>>> 59dbff2 (magazines terminadas para segunda entrega)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error404'
-      security:
-        - apiKey: []
-<<<<<<< HEAD
 
-=======
->>>>>>> 59dbff2 (magazines terminadas para segunda entrega)
 components:
   schemas:
     Post:
@@ -1125,7 +1149,3 @@ components:
       type: apiKey
       name: X-API-KEY #Custom headers in rails apps must have the X- prefix
       in: header
-<<<<<<< HEAD
-=======
-
->>>>>>> 59dbff2 (magazines terminadas para segunda entrega)
