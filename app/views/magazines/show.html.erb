@@ -8,7 +8,7 @@
       <p><%= @magazine.rules %></p>
       <% if user_signed_in? %>
         <% if current_user.magazines.include?(@magazine) %>
-          <%= button_to "Unsubscribe", unsubscribe_magazine_path(@magazine), method: :delete, class: 'btn btn-primary btn-rectangular' %>
+          <%= button_to "Unsubscribe", subscribe_magazine_path(@magazine), method: :delete, class: 'btn btn-primary btn-rectangular' %>
         <% else %>
           <%= button_to "Subscribe", subscribe_magazine_path(@magazine), method: :post, class: 'btn btn-primary btn-rectangular' %>
         <% end %>

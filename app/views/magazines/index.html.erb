@@ -40,9 +40,9 @@
             <div class="user_actions_mag">
               <% if user_signed_in? %>
                 <% if current_user.magazines.include?(magazine) %>
-                  <%= button_to "Unsubscribe", unsubscribe_magazine_path(magazine), method: :delete, class: 'btn btn-primary btn-rectangular-mag' %>
+                  <%= button_to "Unsubscribe", subscribe_magazine_path(magazine.id), method: :delete, class: 'btn btn-primary btn-rectangular-mag' %>
                 <% else %>
-                  <%= button_to "Subscribe", subscribe_magazine_path(magazine), method: :post, class: 'btn btn-primary btn-rectangular-mag' %>
+                  <%= button_to "Subscribe", subscribe_magazine_path(magazine.id), method: :post, class: 'btn btn-primary btn-rectangular-mag' %>
                 <% end %>
               <% else %>
                 <%= button_to "Subscribe", new_user_session_path, method: :get, class: 'btn btn-primary btn-rectangular-mag' %>
