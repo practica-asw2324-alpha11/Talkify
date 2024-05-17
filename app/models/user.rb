@@ -10,6 +10,17 @@ class User < ApplicationRecord
   has_one_attached :background
   before_create :set_api_key
 
+  def comments_num
+    comments.count
+  end
+
+  def posts_num
+    posts.count
+  end
+
+  def boosts_num
+    boosts.count
+  end
 
   def self.from_google(email:, full_name:, uid:, avatar_url:)
     create_with(uid: uid, full_name: full_name, avatar_url: avatar_url).find_or_create_by!(email: email)
@@ -21,5 +32,18 @@ class User < ApplicationRecord
 
   def set_api_key
     generate_api_key if api_key.blank?
+  end
+
+  def save_image_to_s3(image, image_type)
+    name = File.basename(image.path)
+    s3 = Aws::S3::Resource.new(
+      region: 'us-east-1',
+      access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+      secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+      session_token: ENV['AWS_SESSION_TOKEN']
+    )
+    bucket = s3.bucket('talkify-bucket')
+    obj = bucket.object("#{image_type}/#{name}")
+    obj.upload_file(image.path)
   end
 end

@@ -10,15 +10,30 @@ class Users::UsersController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
     params[:view] ||= 'threads'
-    @posts = @user.posts.order(created_at: :desc)
-    @comments = @user.comments.order(created_at: :desc)
+    @posts = @user_target.posts.order(created_at: :desc)
+    @comments = @user_target.comments.order(created_at: :desc)
+
+    # Calculate the counts
+    comments_count = @user_target.comments.count
+    posts_count = @user_target.posts.count
+
+    # Only calculate boosts_count if the user is the same as @user
+    boosts_count = @user == @user_target ? Boost.where(user: @user_target).count : nil
 
     set_votes_hash
     respond_to do |format|
       format.html
-      format.json {render json: @user.as_json(except: [:uid, :api_key])}
+      format.json do
+        user_json = @user.as_json(except: [:uid, :api_key]).merge({
+          comments_count: comments_count,
+          posts_count: posts_count
+        })
+
+        user_json[:boosts_count] = boosts_count unless boosts_count.nil?
+
+        render json: user_json
+      end
     end
   end
 
@@ -61,40 +76,52 @@ class Users::UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
-  def update
+   def update
 
-    if request.content_type == "multipart/form-data" && @user == @user_target
-      puts "User updating"
-      puts request.content_type
-      puts params
-      @user.full_name = params[:full_name] if params[:full_name].present?
-      @user.description = params[:description] if params[:description].present?
-      if params[:avatar].present?
-        @user.avatar.attach(params[:avatar])
-      end
-      if params[:background].present?
-        @user.background.attach(params[:background])
-      end
+    if @user != @user_target
+      format.json { render json: { error: "You can only edit your profile", errors: @user.errors }, status: :forbidden }
+    end
+    user_params = params[:user].present? ? params[:user] : params
+
+    puts @user.inspect
+
+    if user_params[:avatar].present?
+      avatar = user_params[:avatar].is_a?(String) ? parse_image_data(user_params[:avatar]) : user_params[:avatar]
+      @user.avatar.attach(avatar)
+      @user.save_image_to_s3(avatar, 'avatar')
+    end
+    if user_params[:background].present?
+      background_image = user_params[:background].is_a?(String) ? parse_image_data(user_params[:background]) : user_params[:background]
+      @user.background.attach(background_image) # Corrección aquí
+      @user.save_image_to_s3(background_image, 'background') # Corrección aquí
+    end
+    if user_params[:full_name].present?
+      @user.full_name = user_params[:full_name]
+    end
+    if user_params[:description].present?
+      @user.description = user_params[:description]
+    end
+
+    respond_to do |format|
       if @user.save
-        respond_to do |format|
-          format.html { redirect_to @user }
-          format.json { render json: @user, status: :ok }
-        end
+        user_hash = @user.attributes.except('updated_at', 'url', 'encrypted_password', 'reset_password_token', 'reset_password_sent_at', 'remember_created_at', 'provider', 'uid').merge({
+                 posts_count: @user.posts.count,
+                 comments_count: @user.comments.count,
+                 boosts_count: @user.boosts.count,
+                 avatar: @user.avatar.attached? ? url_for(@user.avatar) : nil,
+                 background: @user.background.attached? ? url_for(@user.background) : nil # Corrección aquí
+               })
+
+        format.html { redirect_to @user, notice: "User was successfully updated." }
+        format.json { render json: user_hash }
       else
-        respond_to do |format|
-          format.html { render :edit }
-          format.json { render json: @user.errors, status: :unprocessable_entity }
-        end
-      end
-    elsif @user == @user_target
-      if params[:user][:avatar].present?
-        @user.avatar.attach(params[:user][:avatar])
-      end
-      if params[:user][:background].present?
-        @user.background.attach(params[:user][:background])
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: { error: "There was an error updating the user.", errors: @user.errors }, status: :unprocessable_entity }
       end
     end
   end
+
+
 
   def user_comments
     @user = User.find(params[:id])
@@ -172,6 +199,31 @@ class Users::UsersController < ApplicationController
     if @user_target.nil?
       render json: { "error" => "User not found" }, status: :not_found and return
     end
+  end
+
+  def parse_image_data(base64_image)
+    filename = "upload-image"
+    in_content_type, encoding, string = base64_image.split(/[:;,]/)[1..3]
+
+    @tempfile = Tempfile.new(filename)
+    @tempfile.binmode
+    @tempfile.write Base64.decode64(string)
+    @tempfile.rewind
+
+    # for security we want the actual content type, not just what was passed in
+    content_type = MIME::Types[in_content_type].first.content_type
+
+    # we will also add the extension ourselves based on the above
+    # if it's not gif/jpeg/png, it will fail the validation in the upload model
+    extension = MIME::Types[content_type].first.extensions.first
+    filename += ".#{extension}" if extension
+
+    ActionDispatch::Http::UploadedFile.new({
+                                             tempfile: @tempfile,
+                                             content_type: content_type,
+                                             filename: filename
+                                           })
+
   end
 
 end

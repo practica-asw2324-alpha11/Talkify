@@ -68,45 +68,74 @@ class PostsController < ApplicationController
     end
   end
 
-def upvote
-  ActiveRecord::Base.transaction do
-    @vote = @post.votes.find_or_initialize_by(user: @user)
-
-    if @vote.new_record?
-      @vote.vote_type = 'upvote'
-      @vote.save!
-    elsif @vote.vote_type == 'downvote'
-      @vote.destroy!
-      @post.votes.create!(user: @user, vote_type: 'upvote')
-    elsif @vote.vote_type == 'upvote'
-      @vote.destroy!
-    end
-  end
-
-  respond_to do |format|
-    format.html { redirect_back(fallback_location: root_path) }
-    format.json { render json: { "status" => "200", "message" => "Vote successfully added." }, status: :ok }
-  end
-end
-
-  def downvote
+  def upvote
+    message = ''
     ActiveRecord::Base.transaction do
       @vote = @post.votes.find_or_initialize_by(user: @user)
 
-      if @vote.new_record?
-        @vote.vote_type = 'downvote'
+      if @vote.new_record? && request.method == "POST"
+        @vote.vote_type = 'upvote'
         @vote.save!
-      elsif @vote.vote_type == 'upvote'
-        @vote.destroy!
-        @post.votes.create!(user: @user, vote_type: 'downvote')
+        status = :ok
+        message = "Vote successfully added."
+      elsif @vote.new_record? && request.method == "DELETE"
+        status = :conflict
+        message = "No vote found to delete."
       elsif @vote.vote_type == 'downvote'
         @vote.destroy!
+        @post.votes.create!(user: @user, vote_type: 'upvote')
+        status = :ok
+        message = "Vote successfully changed to upvote."
+      elsif @vote.vote_type == 'upvote' && request.method == "POST"
+        status = :conflict
+        message = "Already upvoted."
+      elsif @vote.vote_type == 'upvote' && request.method == "DELETE"
+        @vote.destroy!
+        status = :ok
+        message = "Vote successfully removed."
       end
     end
 
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path) }
-      format.json { render json: { "status" => "200", "message" => "Vote successfully added." }, status: :ok }
+      format.json { render json: { "status" => status, "message" => message }, status: status }
+    end
+  end
+
+  def downvote
+    message = ''
+    ActiveRecord::Base.transaction do
+      @vote = @post.votes.find_or_initialize_by(user: @user)
+
+      if @vote.new_record? && request.method == "POST"
+        @vote.vote_type = 'downvote'
+        @vote.save!
+        status = :ok
+        message = "Vote successfully added."
+      elsif @vote.new_record? && request.method == "DELETE"
+        status = :conflict
+        message = "No vote found to delete."
+      elsif @vote.vote_type == 'downvote' && request.method == "DELETE"
+        @vote.destroy!
+        status = :ok
+        message = "Vote successfully removed."
+      elsif @vote.vote_type == 'upvote' && request.method == "DELETE"
+        status = :conflict
+        message = "No downvote found to delete."
+      elsif @vote.vote_type == 'upvote'
+        @vote.destroy!
+        @post.votes.create!(user: @user, vote_type: 'downvote')
+        status = :ok
+        message = "Vote successfully changed to downvote."
+      elsif @vote.vote_type == 'downvote' && request.method == "POST"
+        status = :conflict
+        message = "Already downvoted."
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_back(fallback_location: root_path) }
+      format.json { render json: { "status" => status, "message" => message }, status: status }
     end
   end
 
@@ -135,16 +164,16 @@ end
  def index
   case params[:filter]
   when "links"
-    @posts = Post.where(link: true).order(created_at: :desc)
+    @posts = Post.where(link: true).order_by(params[:sort_by] ? params[:sort_by] : [:created_at, :desc])
   when "threads"
-    @posts = Post.where(link: false).order(created_at: :desc)
+    @posts = Post.where(link: false).order_by(params[:sort_by] ? params[:sort_by] : [:created_at, :desc])
   else
     @posts = Post.order(created_at: :desc)
   end
 
-  if params[:sort_by].present?
-    @posts = Post.order_by(params[:sort_by])
-  end
+  # if params[:sort_by].present?
+  #   @posts = Post.order_by(params[:sort_by])
+  # end
 
   respond_to do |format|
     format.html # Renderizará el HTML por defecto
@@ -154,7 +183,9 @@ end
 
   def show
     @post = Post.find(params[:id])
-    @comment = @post.comments.build
+    if request.headers[:Accept] != "application/json"
+      @comment = @post.comments.build
+    end
     @comments = @post.comments.includes(:replies)
 
     respond_to do |format|
@@ -184,7 +215,9 @@ end
 
 
  def create
+
     @post = Post.new(post_params)
+    @post.link = post_params[:url].present?
     @post.user_id = @user.id
     @magazines = Magazine.all # o cualquier otra lógica para obtener las revistas disponibles
 
@@ -203,7 +236,7 @@ end
 
 def update
   if @post.user != @user
-    render :json => { "status" => "405", "error" => "Only the creator can complete this action." }, status: :unauthorized and return
+    render :json => { "status" => "403", "error" => "Only the creator can complete this action." }, status: :forbidden and return
   end
   @magazines = Magazine.all # o cualquier otra lógica para obtener las revistas disponibles
 
@@ -226,7 +259,7 @@ end
 
   def destroy
     if @post.user != @user
-      render :json => { "status" => "405", "error" => "Only the creator can complete this action." }, status: :unauthorized and return
+      render :json => { "status" => "403", "error" => "Only the creator can complete this action." }, status: :forbidden and return
     end
     @post.destroy
     respond_to do |format|
