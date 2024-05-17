@@ -264,7 +264,7 @@ paths:
               required:
                 - title
                 - magazine_id
-                - postType
+                - link
               properties:
                 title:
                   type: string
@@ -272,14 +272,12 @@ paths:
                 magazine_id:
                   type: integer
                   example: 1
-                postType:
-                  type: string
-                  enum: [link, thread]
+                link:
+                  type: boolean
+                  enum: [true, false]
                   description: "Specify the type of the post"
               oneOf:
                 - properties:
-                    postType:
-                      enum: [link]
                     url:
                       type: string
                       example: "kbin.social"
@@ -304,6 +302,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        '422':
+          description: 'Error: Unprocessable Content'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
       security:
         - apiKey: []
     get:
@@ -337,7 +356,32 @@ paths:
                     items:
                       $ref: '#/components/schemas/Post'
         '404':
-          description: No posts found
+          description: "Error: No posts found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
 
   /posts/{id}:
     get:
@@ -361,7 +405,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/Post'
         '400':
-          description: 'Post not found'
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        '404':
+          description: "Error: No posts found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
 
     put:
       tags:
@@ -408,12 +477,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
         '404':
           description: 'Error: Not Found'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+        '422':
+          description: 'Error: Unprocessable Content'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
       security:
         - apiKey: []
     delete:
@@ -430,16 +532,48 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        '200':
           description: Post deleted successfully
           content:
-            application/json: {}
+            application/json:  {}
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
         '404':
           description: 'Error: Not Found'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+        '400':
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+
       security:
         - apiKey: []
   /posts/{id}/upvote:
@@ -458,17 +592,27 @@ paths:
             format: int64
       responses:
         '200':
-          description: successful operation
+          description: Vote successfully added
+          content:
+            application/json: {}
+        '401':
+          description: 'Error: Unauthorized'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Post'
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
         '404':
           description: 'Error: Not Found'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
       security:
         - apiKey: []
     delete:
@@ -487,7 +631,7 @@ paths:
             format: int64
       responses:
         '200':
-          description: successful operation
+          description: Vote successfully errased
           content:
             application/json:
               schema:
@@ -498,6 +642,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
         '404':
           description: 'Error: Not Found'
           content:
@@ -522,19 +675,28 @@ paths:
             type: integer
             format: int64
       responses:
-        200:
-          description: successful operation
+        '200':
+          description: Vote successfully added
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Post'
-        400:
+        '400':
           description: 'Error: Bad Request'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
-        404:
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        '404':
           description: 'Error: Not Found'
           content:
             application/json:
@@ -558,7 +720,7 @@ paths:
             format: int64
       responses:
         '200':
-          description: successful operation
+          description: Vote successfully errased
           content:
             application/json:
               schema:
@@ -569,6 +731,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
         '404':
           description: 'Error: Not Found'
           content:
@@ -662,7 +833,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
-              example:
+              examples:
                 errorExample:
                   $ref: '#/components/examples/error400'
         '404':
@@ -720,8 +891,26 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Post'
+        '400':
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        '401':
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
         '404':
-          description: No posts found
+          description: "There are no posts that match the query"
 
 
   # COMMENTS
@@ -1104,7 +1293,7 @@ paths:
                   $ref: '#/components/examples/error400'
       security:
         - apiKey: []
-        
+
   /users/{id}:
     get:
       tags:
@@ -1149,7 +1338,7 @@ paths:
                   $ref: '#/components/examples/error404'
       security:
         - apiKey: []
-    
+
     put:
       tags:
         - User
@@ -1208,7 +1397,7 @@ paths:
                   $ref: '#/components/examples/error404'
       security:
         - apiKey: []
-        
+
   /users/{id}/comments:
     get:
       tags:
@@ -1325,7 +1514,7 @@ paths:
       security:
         - apiKey: []
 
-  
+
 
 components:
   schemas:
@@ -1487,10 +1676,10 @@ components:
       properties:
         status:
           type: integer
-          enum: [304, 400, 401, 403, 404, 409]
+          enum: [304, 400, 401, 403, 404, 409, 422]
         error:
           type: string
-          enum: ["Not Modified", "Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict"]
+          enum: ["Not Modified", "Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "Unprocessable Content"]
   examples:
     error400:
       value:
@@ -1517,6 +1706,11 @@ components:
         status: 409
         error: "Conflict"
         message: "There has been a conflict with the target resource"
+    error422:
+      value:
+        status: 422
+        error: "Unprocessable Content"
+        message: "There is a problem with the data provided"
 
   securitySchemes:
     apiKey:
