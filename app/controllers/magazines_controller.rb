@@ -5,20 +5,33 @@ class MagazinesController < ApplicationController
 
     def subscribe
       @magazine = Magazine.find(params[:id])
-      @user.magazines << @magazine unless @user.magazines.include?(@magazine)
-      respond_to do |format|
-        format.html { redirect_to @magazine }
-        format.json { render json: { "status" => "200", "message" => "Successfully subscribed." }, status: :ok }
+      if @user.magazines.include?(@magazine)
+        respond_to do |format|
+          format.html { redirect_to @magazine, notice: "You are already subscribed." }
+          format.json { render json: { "status" => "409", "message" => "Already subscribed." }, status: :conflict }
+        end
+      else
+        @user.magazines << @magazine
+        respond_to do |format|
+          format.html { redirect_to @magazine }
+          format.json { render json: { "status" => "200", "message" => "Successfully subscribed." }, status: :ok }
+        end
       end
     end
 
     def unsubscribe
-
       @magazine = Magazine.find(params[:id])
-      @user.magazines.delete(@magazine)
-      respond_to do |format|
-        format.html { redirect_to magazines_path }
-        format.json { render json: { "status" => "200", "message" => "Successfully unsubscribed." }, status: :ok }
+      if @user.magazines.include?(@magazine)
+        @user.magazines.delete(@magazine)
+        respond_to do |format|
+          format.html { redirect_to magazines_path }
+          format.json { render json: { "status" => "200", "message" => "Successfully unsubscribed." }, status: :ok }
+        end
+      else
+        respond_to do |format|
+          format.html { redirect_to @magazine, notice: "You are not subscribed." }
+          format.json { render json: { "status" => "409", "message" => "Not subscribed." }, status: :conflict }
+        end
       end
     end
 
