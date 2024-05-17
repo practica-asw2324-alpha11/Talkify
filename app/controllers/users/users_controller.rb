@@ -15,10 +15,26 @@ class Users::UsersController < ApplicationController
     @posts = @user.posts.order(created_at: :desc)
     @comments = @user.comments.order(created_at: :desc)
 
+    # Calculate the counts
+    comments_count = @user.comments.count
+    posts_count = @user.posts.count
+
+    # Only calculate boosts_count if the user is the same as @user
+    boosts_count = @user == @user_target ? Boost.where(user: @user).count : nil
+
     set_votes_hash
     respond_to do |format|
       format.html
-      format.json {render json: @user.as_json(except: [:uid, :api_key])}
+      format.json do
+        user_json = @user.as_json(except: [:uid, :api_key]).merge({
+          comments_count: comments_count,
+          posts_count: posts_count
+        })
+
+        user_json[:boosts_count] = boosts_count unless boosts_count.nil?
+
+        render json: user_json
+      end
     end
   end
 

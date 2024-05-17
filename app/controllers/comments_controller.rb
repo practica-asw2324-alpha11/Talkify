@@ -157,15 +157,11 @@ def downvote
 
     case params[:sort_by]
     when "top"
-      @comments = @post.comments
-                       .left_joins(:comment_votes)
-                       .select('comments.*, SUM(CASE WHEN comment_votes.vote_type = "upvote" THEN 1 WHEN comment_votes.vote_type = "downvote" THEN -1 ELSE 0 END) AS votes_difference')
-                       .group('comments.id')
-                       .order('votes_difference DESC')
+      @comments = @post.comments.order(Arel.sql('(upvote - downvote) DESC'))
     when "newest"
-      @comments = @post.comments.order_by(created_at: :desc)
+      @comments = @post.comments.order(created_at: :desc)
     else
-      @comments = @post.comments.order_by(created_at: :asc)
+      @comments = @post.comments.order(created_at: :asc)
     end
 
     @comment = @post.comments.build
