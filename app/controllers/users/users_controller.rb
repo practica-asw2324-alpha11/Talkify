@@ -123,16 +123,7 @@ class Users::UsersController < ApplicationController
   def user_posts
     @user = User.find(params[:id])
 
-    case params[:sort_by]
-    when "top"
-      @posts = @user.posts
-                    .select('posts.*, (posts.upvotes - posts.downvotes) AS votes_difference')
-                    .order('votes_difference DESC')
-    when "newest"
-      @posts = @user.posts.order(created_at: :desc)
-    else
-      @posts = @user.posts.order(created_at: :asc)
-    end
+    @posts = @user.posts.order_by(params[:sort_by])
 
     respond_to do |format|
       format.html { render 'user/show' }

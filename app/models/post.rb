@@ -18,25 +18,26 @@ class Post < ApplicationRecord
 
 
   def self.order_by(sort_by)
-      case sort_by
-      when "top"
-        left_joins(:votes)
-        .select('posts.*, SUM(CASE WHEN votes.vote_type = "upvote" THEN 1 ELSE 0 END) AS upvotes_count, SUM(CASE WHEN votes.vote_type = "downvote" THEN 1 ELSE 0 END) AS downvotes_count')
-        .group('posts.id')
-        .order(Arel.sql('upvotes_count - downvotes_count DESC'))
-      when "newest"
-        order(created_at: :desc)
-      when "commented"
-        select('posts.*, COUNT(comments.id) AS comments_count')
-          .left_joins(:comments)
-          .group('posts.id')
-          .order('comments_count DESC, created_at DESC')
-      else
-        order(created_at: :desc) # Ordenar por defecto por fecha de creación
-      end
-    end
+    case sort_by
+    when "top"
+      subquery = select('posts.*, SUM(CASE WHEN votes.vote_type = \'upvote\' THEN 1 ELSE 0 END) AS upvotes_count, SUM(CASE WHEN votes.vote_type = \'downvote\' THEN 1 ELSE 0 END) AS downvotes_count')
+                   .left_joins(:votes)
+                   .group('posts.id')
 
-        def upvotes_count
+      from(subquery, :posts).order(Arel.sql('upvotes_count - downvotes_count DESC'))
+    when "newest"
+      order(created_at: :desc)
+    when "commented"
+      select('posts.*, COUNT(comments.id) AS comments_count')
+        .left_joins(:comments)
+        .group('posts.id')
+        .order('comments_count DESC, created_at DESC')
+    else
+      order(created_at: :desc) # Ordenar por defecto por fecha de creación
+    end
+  end
+
+    def upvotes_count
       votes.where(vote_type: 'upvote').count
     end
 

@@ -67,7 +67,7 @@
       <%= link_to pluralize(post.comments_count, 'comment'), post_path(post), class: 'comment-link', style: "text-decoration: underline; color: white;" %>
          <% if @boosted_posts.include?(post.id) %>
     <span class="boost-link" style="text-decoration: underline; color: white;" onclick="boostPost(<%= post.id %>);">boost(1)</span>
-      <%= form_with model: @post, url: unboost_post_path(post), method: :delete, id: "boost_form#{post.id}", style: "display: none;" do |form| %> <% end %>
+      <%= form_with model: @post, url: boost_post_path(post), method: :delete, id: "boost_form#{post.id}", style: "display: none;" do |form| %> <% end %>
   <% else %>
     <span class="boost-link" style="text-decoration: underline; color: white;" onclick="boostPost(<%= post.id %>);">boost</span>
     <%= form_with model: @post, url: boost_post_path(post), method: :put, id: "boost_form#{post.id}", style: "display: none;" do |form| %> <% end %>
