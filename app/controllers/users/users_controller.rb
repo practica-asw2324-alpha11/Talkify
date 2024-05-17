@@ -10,17 +10,16 @@ class Users::UsersController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
     params[:view] ||= 'threads'
-    @posts = @user.posts.order(created_at: :desc)
-    @comments = @user.comments.order(created_at: :desc)
+    @posts = @user_target.posts.order(created_at: :desc)
+    @comments = @user_target.comments.order(created_at: :desc)
 
     # Calculate the counts
-    comments_count = @user.comments.count
-    posts_count = @user.posts.count
+    comments_count = @user_target.comments.count
+    posts_count = @user_target.posts.count
 
     # Only calculate boosts_count if the user is the same as @user
-    boosts_count = @user == @user_target ? Boost.where(user: @user).count : nil
+    boosts_count = @user == @user_target ? Boost.where(user: @user_target).count : nil
 
     set_votes_hash
     respond_to do |format|
