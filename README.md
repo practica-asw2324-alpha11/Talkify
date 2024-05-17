@@ -10,4 +10,5 @@ Integrantes:
 Grupo: alpha-11
 
 app: https://talkify.fly.dev
+
 taiga: https://tree.taiga.io/project/sarachillon-asw/timeline
