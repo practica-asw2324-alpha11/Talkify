@@ -2,7 +2,7 @@
 class Users::UsersController < ApplicationController
   before_action :set_votes_hash
   before_action :set_user
-  before_action :set_target_user, only: [:show, :user_comments, :user_posts, :user_boosts]
+  before_action :set_target_user, only: [:show, :user_comments, :user_posts, :user_boosts, :update]
 
   def index
     @users = User.all
@@ -76,50 +76,50 @@ class Users::UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
-   def update
-
-    if @user != @user_target
-      format.json { render json: { error: "You can only edit your profile", errors: @user.errors }, status: :forbidden }
-    end
+  def update
     user_params = params[:user].present? ? params[:user] : params
 
     puts @user.inspect
 
-    if user_params[:avatar].present?
-      avatar = user_params[:avatar].is_a?(String) ? parse_image_data(user_params[:avatar]) : user_params[:avatar]
-      @user.avatar.attach(avatar)
-      @user.save_image_to_s3(avatar, 'avatar')
-    end
-    if user_params[:background].present?
-      background_image = user_params[:background].is_a?(String) ? parse_image_data(user_params[:background]) : user_params[:background]
-      @user.background.attach(background_image) # Corrección aquí
-      @user.save_image_to_s3(background_image, 'background') # Corrección aquí
-    end
-    if user_params[:full_name].present?
-      @user.full_name = user_params[:full_name]
-    end
-    if user_params[:description].present?
-      @user.description = user_params[:description]
-    end
-
     respond_to do |format|
-      if @user.save
-        user_hash = @user.attributes.except('updated_at', 'url', 'encrypted_password', 'reset_password_token', 'reset_password_sent_at', 'remember_created_at', 'provider', 'uid').merge({
-                 posts_count: @user.posts.count,
-                 comments_count: @user.comments.count,
-                 boosts_count: @user.boosts.count,
-                 avatar: @user.avatar.attached? ? url_for(@user.avatar) : nil,
-                 background: @user.background.attached? ? url_for(@user.background) : nil # Corrección aquí
-               })
-
-        format.html { redirect_to @user, notice: "User was successfully updated." }
-        format.json { render json: user_hash }
+      if @user != @user_target
+        format.json { render json: { error: "You can only edit your profile", errors: @user.errors }, status: :forbidden }
       else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: { error: "There was an error updating the user.", errors: @user.errors }, status: :unprocessable_entity }
+        if user_params[:avatar].present?
+          avatar = user_params[:avatar].is_a?(String) ? parse_image_data(user_params[:avatar]) : user_params[:avatar]
+          @user.avatar.attach(avatar)
+          @user.save_image_to_s3(avatar, 'avatar') if @user.avatar.attached?
+        end
+        if user_params[:background].present?
+          background_image = user_params[:background].is_a?(String) ? parse_image_data(user_params[:background]) : user_params[:background]
+          @user.background.attach(background_image)
+          @user.save_image_to_s3(background_image, 'background') if @user.background.attached?
+        end
+        if user_params[:full_name].present?
+          @user.full_name = user_params[:full_name]
+        end
+        if user_params[:description].present?
+          @user.description = user_params[:description]
+        end
+
+        if @user.save
+          user_hash = @user.attributes.except('updated_at', 'url', 'encrypted_password', 'reset_password_token', 'reset_password_sent_at', 'remember_created_at', 'provider', 'uid').merge({
+                   posts_count: @user.posts.count,
+                   comments_count: @user.comments.count,
+                   boosts_count: @user.boosts.count,
+                   avatar: @user.avatar.attached? ? url_for(@user.avatar) : nil,
+                   background: @user.background.attached? ? url_for(@user.background) : nil
+                 })
+
+          format.html { redirect_to @user, notice: "User was successfully updated." }
+          format.json { render json: user_hash }
+        else
+          format.html { render :edit, status: :unprocessable_entity }
+          format.json { render json: { error: "There was an error updating the user.", errors: @user.errors }, status: :unprocessable_entity }
+        end
       end
     end
-  end
+end
 
 
 
