@@ -16,7 +16,7 @@
         <th class="magazine-th"># Comments</th>
         <%
 =begin%>
- <th class="magazine-th"># Subscribers</th> 
+ <th class="magazine-th"># Subscribers</th>
 <%
 =end%>
         <th class="magazine-th">Subscribe/Unsubscribe</th>
@@ -30,22 +30,22 @@
           <td class="magazine-td"><%= magazine.comments.count %></td>
           <%
 =begin%>
- <td class="magazine-td"><%= magazine.admins.size %></td> 
+ <td class="magazine-td"><%= magazine.users.size %></td>
 <%
 =end%>
           <td class="magazine-td" style="display: flex; flex-direction: row; justify-content: center;">
             <div class="user_actions_mag">
-              <i style="margin: 10px 5px 5px 5px;" class="fas fa-users"></i> &nbsp <%= magazine.admins.size %> &nbsp
+              <i style="margin: 10px 5px 5px 5px;" class="fas fa-users"></i> &nbsp <%= magazine.users.size %> &nbsp
             </div>
             <div class="user_actions_mag">
-              <% if admin_signed_in? %>
-                <% if current_admin.magazines.include?(magazine) %>
-                  <%= button_to "Unsubscribe", unsubscribe_magazine_path(magazine), method: :delete, class: 'btn btn-primary btn-rectangular-mag' %>
+              <% if user_signed_in? %>
+                <% if current_user.magazines.include?(magazine) %>
+                  <%= button_to "Unsubscribe", subscribe_magazine_path(magazine.id), method: :delete, class: 'btn btn-primary btn-rectangular-mag' %>
                 <% else %>
-                  <%= button_to "Subscribe", subscribe_magazine_path(magazine), method: :post, class: 'btn btn-primary btn-rectangular-mag' %>
+                  <%= button_to "Subscribe", subscribe_magazine_path(magazine.id), method: :post, class: 'btn btn-primary btn-rectangular-mag' %>
                 <% end %>
               <% else %>
-                <%= button_to "Subscribe", new_admin_session_path, method: :get, class: 'btn btn-primary btn-rectangular-mag' %>
+                <%= button_to "Subscribe", new_user_session_path, method: :get, class: 'btn btn-primary btn-rectangular-mag' %>
               <% end %>
             <div>
           </td>
