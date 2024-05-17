@@ -54,6 +54,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+
+        422:
+          description: 'Error: Unprocessable'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
       security:
         - apiKey: []
     get:
@@ -94,11 +104,6 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: sort_by
-          in: query
-          schema:
-            type: string
-            enum: [top, newest, commented]
       responses:
         200:
           description: successful operation
@@ -130,7 +135,6 @@ paths:
     get:
       tags:
         - Magazines
-        - Post
       operationId: getMagazinePosts
       parameters:
         - name: id
@@ -264,7 +268,6 @@ paths:
               required:
                 - title
                 - magazine_id
-                - link
               properties:
                 title:
                   type: string
@@ -272,10 +275,10 @@ paths:
                 magazine_id:
                   type: integer
                   example: 1
-                link:
-                  type: boolean
-                  enum: [true, false]
-                  description: "Specify the type of the post"
+                body:
+                  type: string
+                  example: "This is a post"
+
               oneOf:
                 - properties:
                     url:
@@ -290,7 +293,7 @@ paths:
                       type: string
                       example: "Este es un post sobre kbin.social"
       responses:
-        '201':
+        '200':
           description: Post created
           content:
             application/json:
@@ -613,6 +616,15 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
+        '409':
+          description: 'Error: Problem with the action'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
       security:
         - apiKey: []
     delete:
@@ -631,11 +643,10 @@ paths:
             format: int64
       responses:
         '200':
-          description: Vote successfully errased
+          description: Vote successfully erased
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Post'
+            application/json: {}
+
         '400':
           description: 'Error: Bad Request'
           content:
@@ -657,6 +668,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+
+        '409':
+          description: 'Error: Problem with the action'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
       security:
         - apiKey: []
 
@@ -680,7 +701,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Post'
+                {}
         '400':
           description: 'Error: Bad Request'
           content:
@@ -702,6 +723,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+
+        '409':
+          description: 'Error: Problem with the action'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
       security:
         - apiKey: []
     delete:
@@ -724,7 +755,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Post'
+                {}
         '400':
           description: 'Error: Bad Request'
           content:
@@ -746,6 +777,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
+
+        '409':
+          description: 'Error: Problem with the action'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
       security:
         - apiKey: []
   /posts/{id}/boost:
@@ -1270,6 +1311,7 @@ paths:
       tags:
         - User
       operationId: getAllUsers
+      summary: Get all users
       responses:
         200:
           description: successful operation
@@ -1299,6 +1341,7 @@ paths:
       tags:
         - User
       operationId: getUser
+      summary: Get user from id
       parameters:
         - name: id
           in: path
@@ -1306,11 +1349,6 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: view
-          in: query
-          schema:
-            type: string
-            enum: [threads, comments, boost]
       responses:
         200:
           description: successful operation
@@ -1343,6 +1381,7 @@ paths:
       tags:
         - User
       operationId: updateUser
+      summary: Update user info
       parameters:
         - name: id
           in: path
@@ -1395,6 +1434,15 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
+        403:
+          description: 'Error: You only can dit your own profile'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
       security:
         - apiKey: []
 
@@ -1434,6 +1482,8 @@ paths:
               examples:
                 errorExamples:
                   $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
 
   /users/{id}/posts:
     get:
@@ -1471,6 +1521,8 @@ paths:
               examples:
                 errorExamples:
                   $ref: '#/components/examples/error404'
+      security:
+        - apiKey: []
 
   /users/{id}/boosts:
     get:
@@ -1656,7 +1708,7 @@ components:
           example: "Name Surname"
         avatar_url:
           type: string
-        background_image:
+        background:
           type: string
         description:
           type: string
