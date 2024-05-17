@@ -1690,6 +1690,14 @@ components:
         rules:
           type: string
           example: "rules of magazine 1"
+        threads:
+          type: integer
+          format: int64
+          example: 1
+        comments:
+          type: integer
+          format: int64
+          example: 1
         subscribers:
           type: integer
           format: int64
