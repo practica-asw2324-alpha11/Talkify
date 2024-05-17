@@ -164,16 +164,16 @@ class PostsController < ApplicationController
  def index
   case params[:filter]
   when "links"
-    @posts = Post.where(link: true).order(created_at: :desc)
+    @posts = Post.where(link: true).order_by(params[:sort_by] ? params[:sort_by] : [:created_at, :desc])
   when "threads"
-    @posts = Post.where(link: false).order(created_at: :desc)
+    @posts = Post.where(link: false).order_by(params[:sort_by] ? params[:sort_by] : [:created_at, :desc])
   else
     @posts = Post.order(created_at: :desc)
   end
 
-  if params[:sort_by].present?
-    @posts = Post.order_by(params[:sort_by])
-  end
+  # if params[:sort_by].present?
+  #   @posts = Post.order_by(params[:sort_by])
+  # end
 
   respond_to do |format|
     format.html # Renderizará el HTML por defecto
@@ -215,7 +215,9 @@ end
 
 
  def create
+
     @post = Post.new(post_params)
+    @post.link = post_params[:url].present?
     @post.user_id = @user.id
     @magazines = Magazine.all # o cualquier otra lógica para obtener las revistas disponibles
 
