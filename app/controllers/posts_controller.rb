@@ -236,7 +236,7 @@ end
 
 def update
   if @post.user != @user
-    render :json => { "status" => "405", "error" => "Only the creator can complete this action." }, status: :unauthorized and return
+    render :json => { "status" => "403", "error" => "Only the creator can complete this action." }, status: :forbidden and return
   end
   @magazines = Magazine.all # o cualquier otra lógica para obtener las revistas disponibles
 
@@ -259,7 +259,7 @@ end
 
   def destroy
     if @post.user != @user
-      render :json => { "status" => "405", "error" => "Only the creator can complete this action." }, status: :unauthorized and return
+      render :json => { "status" => "403", "error" => "Only the creator can complete this action." }, status: :forbidden and return
     end
     @post.destroy
     respond_to do |format|
