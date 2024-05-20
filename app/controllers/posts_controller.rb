@@ -170,14 +170,11 @@ class PostsController < ApplicationController
   else
     @posts = Post.order(created_at: :desc)
   end
-
-  # if params[:sort_by].present?
-  #   @posts = Post.order_by(params[:sort_by])
-  # end
+  @posts = @posts.as_json(methods: [:upvotes_count, :downvotes_count, :comments_count])
 
   respond_to do |format|
-    format.html # Renderizará el HTML por defecto
-    format.json { render json: @posts, include: { comments: { include: :replies} } } # Renderizará los posts en formato JSON
+    format.html
+    format.json { render json: @posts }
   end
 end
 
@@ -187,6 +184,7 @@ end
       @comment = @post.comments.build
     end
     @comments = @post.comments.includes(:replies)
+    @post = @post.as_json(methods: [:upvotes_count, :downvotes_count, :comments_count])
 
     respond_to do |format|
       format.html # Renderizará el HTML por defecto
