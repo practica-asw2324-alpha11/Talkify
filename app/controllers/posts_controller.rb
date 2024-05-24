@@ -1,10 +1,14 @@
 class PostsController < ApplicationController
-  before_action :set_user, except: [:index, :show, :search]
+  before_action :set_user
   before_action :set_votes_hash
   before_action :set_post, only: [:show, :edit, :update, :destroy, :upvote, :downvote, :boost], except: [:search]
 
   def set_votes_hash
-    if user_signed_in?
+    if @user.present?
+      @comment_votes_hash = @user.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
+      @votes_hash = @user.votes.index_by(&:post_id).transform_values(&:vote_type)
+      @boosted_posts = @user.boosts.pluck(:post_id)
+    elsif user_signed_in?
       @comment_votes_hash = current_user.comment_votes.index_by(&:comment_id).transform_values(&:vote_type)
       @votes_hash = current_user.votes.index_by(&:post_id).transform_values(&:vote_type)
       @boosted_posts = current_user.boosts.pluck(:post_id)
@@ -171,15 +175,31 @@ class PostsController < ApplicationController
     @posts = Post.order(created_at: :desc)
   end
 
-  # if params[:sort_by].present?
-  #   @posts = Post.order_by(params[:sort_by])
-  # end
-
   respond_to do |format|
-    format.html # Renderizará el HTML por defecto
-    format.json { render json: @posts, include: { comments: { include: :replies} } } # Renderizará los posts en formato JSON
+    format.html
+    format.json do
+      @posts = @posts.map do |post|
+        post_json = post.as_json(methods: [:upvotes_count, :downvotes_count, :comments_count], except: [:magazine_id, :user_id]).merge(
+          is_upvoted: post.is_upvoted(@user),
+          is_downvoted: post.is_downvoted(@user),
+          is_boosted: post.is_boosted(@user)
+        )
+
+        if post.magazine.present?
+          post_json[:magazine] = post.magazine.as_json(only: [:id, :title, :description])
+        end
+
+        if post.user.present?
+          post_json[:user] = post.user.as_json(only: [:id, :full_name, :email])
+        end
+
+        post_json
+      end
+      render json: { posts: @posts }
+    end
   end
 end
+
 
   def show
     @post = Post.find(params[:id])
@@ -190,7 +210,10 @@ end
 
     respond_to do |format|
       format.html # Renderizará el HTML por defecto
-      format.json { render json: @post, include: { comments: { include: :replies} } } # Renderizará los posts en formato JSON
+      format.json do
+        @post = @post.as_json(methods: [:upvotes_count, :downvotes_count, :comments_count])
+        render json: { post: @post, comments: { include: :replies} } # Renderizará los posts en formato JSON
+      end
     end
   end
 
