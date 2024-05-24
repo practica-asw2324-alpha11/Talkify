@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
   before_action :set_votes_hash
-  before_action :set_user, except: [:index]
+  before_action :set_user
   before_action :set_comment, except: [:sort, :new, :create, :index]
   before_action :set_post, only: [:sort, :edit]
 
@@ -54,7 +54,7 @@ def upvote
   respond_to do |format|
     format.html { redirect_back(fallback_location: root_path) }
     #format.json { render json: { "status" => "200", "message" => "Vote successfully added." }, status: :ok }
-    format.json { render json:@comment , status: :ok }
+    format.json { render json: json_with_replies(@comment) , status: :ok }
   end
 end
 
@@ -93,7 +93,7 @@ def downvote
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path) }
       # format.json { render json: { "status" => "200", "message" => "Vote successfully added." }, status: :ok }
-      format.json { render json:@comment , status: :ok }
+      format.json { render json: json_with_replies(@comment) , status: :ok }
     end
   end
 
@@ -138,7 +138,7 @@ def downvote
     if @comment.update(comment_params)
       respond_to do |format|
         format.html { redirect_to post_path(@post), notice: "Comentario actualizado correctamente." }
-        format.json { render json: @comment }
+        format.json { render json: json_with_replies(@comment) }
       end
     else
       respond_to do |format|
@@ -169,7 +169,7 @@ def downvote
 
     respond_to do |format|
       format.html { render 'posts/show' }
-      format.json { render json: @comments, include: :replies }
+      format.json { render json: json_with_replies(@comments)}
     end
   end
 
@@ -205,6 +205,19 @@ def downvote
   end
 
   private
+
+  def json_with_replies(comments)
+    Array(comments).map do |comment|
+      comment.as_json(except: [:post_id, :user_id]).merge(
+        user: comment.user.as_json(only: [:id, :full_name, :email]),
+        post: comment.post.as_json(only: [:id, :title]),
+        is_upvoted: comment.is_upvoted(@user),
+        is_downvoted: comment.is_downvoted(@user),
+        is_author: comment.user == @user,
+        replies: json_with_replies(comment.replies),
+      )
+    end
+  end
 
   def set_comment
     @comment = Comment.find(params[:id])
