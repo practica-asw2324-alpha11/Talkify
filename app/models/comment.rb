@@ -31,6 +31,14 @@ class Comment < ApplicationRecord
       comment_votes.where(vote_type: 'downvote').count
     end
 
+    def is_upvoted(user)
+      comment_votes.where(vote_type: 'upvote', user_id: user.id).exists?
+    end
+
+    def is_downvoted(user)
+      comment_votes.where(vote_type: 'downvote', user_id: user.id).exists?
+    end
+    
     private
 
     def set_default_values
