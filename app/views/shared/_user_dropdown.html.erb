@@ -1,17 +1,17 @@
 
-  <% if admin_signed_in? %>
+  <% if user_signed_in? %>
     <a href="#" class="dropdown-btn">
-      <i style="font-size: 18px; margin-left: -0.5rem; color: #fff;"></i><%= current_admin.full_name %>
+      <i style="font-size: 18px; margin-left: -0.5rem; color: #fff;"></i><%= current_user.full_name %>
     </a>
   <% else %>
-    <%= link_to "Login", new_admin_session_path, class: "dropdown-btn" %>
+    <%= link_to "Login", new_user_session_path, class: "dropdown-btn" %>
   <% end %>
 
 
 <div class="dropdown-content" style="top: 3.7rem; right: 0.5rem;">
-  <% if admin_signed_in? %>
-    <a href="<%= admin_path(current_admin) %>">Profile</a>
-    <%= link_to "Logout", destroy_admin_session_path, method: :delete %>
-    <a href="<%= edit_admin_path(current_admin) %>">Configuration</a>
+  <% if user_signed_in? %>
+    <a href="<%= user_path(current_user) %>">Profile</a>
+    <%= link_to "Logout", destroy_user_session_path, method: :delete %>
+    <a href="<%= edit_user_path(current_user) %>">Configuration</a>
   <% end %>
 </div>

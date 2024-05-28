@@ -1,4 +1,4 @@
-<div class="sub-navbar"  style ="height: 35px";>
+<div class="sub-navbar" style="height: 35px;">
   <div>
     <span class="navbar-title">ADD NEW</span>
     <a href="/posts/new_link" class="navbar-item">link</a>
@@ -11,9 +11,14 @@
   <div class="post-header">
     <!-- Contenido del post -->
     <div class="post-content" style="color: white;">
-      <%= render 'formpost' %>
+      <% if @post.link? %>
+        <%= render 'form' %> <!-- Renderizar el formulario común -->
+      <% else %>
+        <%= render 'formpost' %> <!-- Renderizar el formulario específico para thread -->
+      <% end %>
       <div class="post-actions" style="text-align: center;">
-      <%= link_to 'Back', posts_path, class: 'btn btn-primary btn-rectangular' %>      </div>
+        <%= link_to 'Back', posts_path, class: 'btn btn-primary btn-rectangular' %>
+      </div>
     </div>
   </div>
 </div>

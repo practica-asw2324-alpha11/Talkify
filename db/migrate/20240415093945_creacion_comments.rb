@@ -9,7 +9,7 @@ class CreacionComments < ActiveRecord::Migration[7.0]
     end
 
     add_reference :comments, :post, null: false, foreign_key: true
-    add_reference :comments, :admin, null: false, foreign_key: true
+    add_reference :comments, :user, null: false, foreign_key: true
 
   end
 end

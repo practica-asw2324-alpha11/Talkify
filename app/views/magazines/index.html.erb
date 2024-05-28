@@ -1,8 +1,8 @@
 <div class="sub-navbar">
   <div>
-    <a href="/magazines?order_by=posts">Most Threads</a>
-    <a href="/magazines?order_by=comments">Most Comments</a>
-    <a href="/magazines?order_by=subscribers">Most Subscribers</a>
+    <%= link_to "Most Threads", magazines_path(sort_by: "threads") %>
+    <%= link_to "Most Comments", magazines_path(sort_by: "comments") %>
+    <%= link_to "Most Subscribers", magazines_path(sort_by: "subscribers") %>
   </div>
 </div>
 
@@ -14,7 +14,11 @@
         <th class="magazine-th">Name</th>
         <th class="magazine-th"># Threads</th>
         <th class="magazine-th"># Comments</th>
-        <th class="magazine-th"># Subscribers</th>
+        <%
+=begin%>
+ <th class="magazine-th"># Subscribers</th>
+<%
+=end%>
         <th class="magazine-th">Subscribe/Unsubscribe</th>
       </tr>
     </thead>
@@ -24,8 +28,27 @@
           <td class="magazine-td"><strong><%= link_to magazine.name, magazine, style: "color: white;" %></strong></td>
           <td class="magazine-td"><%= magazine.posts.count %></td>
           <td class="magazine-td"><%= magazine.comments.count %></td>
-          <td class="magazine-td"><%= magazine.admins.size %></td>
-          <td class="magazine-td">Not yet implemented</td>
+          <%
+=begin%>
+ <td class="magazine-td"><%= magazine.users.size %></td>
+<%
+=end%>
+          <td class="magazine-td" style="display: flex; flex-direction: row; justify-content: center;">
+            <div class="user_actions_mag">
+              <i style="margin: 10px 5px 5px 5px;" class="fas fa-users"></i> &nbsp <%= magazine.users.size %> &nbsp
+            </div>
+            <div class="user_actions_mag">
+              <% if user_signed_in? %>
+                <% if current_user.magazines.include?(magazine) %>
+                  <%= button_to "Unsubscribe", subscribe_magazine_path(magazine.id), method: :delete, class: 'btn btn-primary btn-rectangular-mag' %>
+                <% else %>
+                  <%= button_to "Subscribe", subscribe_magazine_path(magazine.id), method: :post, class: 'btn btn-primary btn-rectangular-mag' %>
+                <% end %>
+              <% else %>
+                <%= button_to "Subscribe", new_user_session_path, method: :get, class: 'btn btn-primary btn-rectangular-mag' %>
+              <% end %>
+            <div>
+          </td>
         </tr>
       <% end %>
     </tbody>

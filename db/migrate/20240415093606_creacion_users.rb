@@ -1,7 +1,7 @@
-class CreacionAdmins < ActiveRecord::Migration[7.0]
+class CreacionUsers < ActiveRecord::Migration[7.0]
 
   def change
-    create_table :admins do |t|
+    create_table :users do |t|
       t.string :email, null: false
       t.string :full_name
       t.string :uid
@@ -12,7 +12,7 @@ class CreacionAdmins < ActiveRecord::Migration[7.0]
       t.timestamps null: false
     end
 
-    add_index :admins, :email, unique: true
+    add_index :users, :email, unique: true
   end
 end
 

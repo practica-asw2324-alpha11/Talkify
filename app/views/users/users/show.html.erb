@@ -1,17 +1,13 @@
-<div class="wotitem">
-  <div id="show_admin" class="post-header">
-    <div class="post-content" style="color: white;">
-      <%= render 'admins/admins/admin' %>
-    </div>
-  </div>
+<div class="wotitem profile-header">
+    <%= render 'users/users/user' %>
 </div>
 
 <div>
   <div class="sub-navbar wotitem">
     <div>
-      <%= link_to "Threads", admin_path(@admin, view: 'threads') %>
-      <%= link_to "Comments", admin_path(@admin, view: 'comments') %>
-      <%= link_to "Boosts", admin_path(@admin, view: 'boost') %>
+      <%= link_to "Threads", user_path(@user, view: 'threads') %>
+      <%= link_to "Comments", user_path(@user, view: 'comments') %>
+      <%= link_to "Boosts", user_path(@user, view: 'boost') %>
     </div>
   </div>
 </div>

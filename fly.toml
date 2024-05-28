@@ -1,10 +1,11 @@
-# fly.toml app configuration file generated for talkifyyyy-patient-bush-8028 on 2024-04-18T22:50:50Z
+
+# fly.toml app configuration file generated for talkify on 2024-05-16T09:44:51Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'talkifyyyy-patient-bush-8028'
-primary_region = 'iad'
+app = 'talkify'
+primary_region = 'mad'
 console_command = '/rails/bin/rails console'
 
 [build]
@@ -22,7 +23,3 @@ console_command = '/rails/bin/rails console'
 
 [[vm]]
   size = 'shared-cpu-1x'
-
-[[statics]]
-  guest_path = '/app/public'
-  url_prefix = '/'

@@ -1,26 +1,31 @@
 class Post < ApplicationRecord
-    belongs_to :magazine
-    belongs_to :admin
-    validates :title, length: { minimum: 0 }
-    has_many :comments, dependent: :destroy
-    has_many :votes, dependent: :destroy
-    has_many :boosts, dependent: :destroy
+  belongs_to :magazine
+  belongs_to :user
+  has_many :comments, dependent: :destroy
+  has_many :votes, dependent: :destroy
+  has_many :boosts, dependent: :destroy
 
-    def comments_count
-    comments.count
-    end
-    validates :url, presence: true, if: -> { is_link? }
-    def is_link?
-    link
+
+
+  validates :title, presence: true, length: { minimum: 4 }
+  validates :url, presence: true, if: -> { link }
+  validates :magazine_id, presence: true
+
+
+  def comments_count
+  comments.count
   end
+
 
 def self.order_by(sort_by)
     case sort_by
     when "top"
-      left_joins(:votes)
-      .select('posts.*, SUM(CASE WHEN votes.vote_type = "upvote" THEN 1 ELSE 0 END) AS upvotes_count, SUM(CASE WHEN votes.vote_type = "downvote" THEN 1 ELSE 0 END) AS downvotes_count')
-      .group('posts.id')
-      .order(Arel.sql('upvotes_count - downvotes_count DESC'))
+      select('posts.*,
+              COALESCE(SUM(CASE WHEN votes.vote_type = \'upvote\' THEN 1 ELSE 0 END), 0) -
+              COALESCE(SUM(CASE WHEN votes.vote_type = \'downvote\' THEN 1 ELSE 0 END), 0) AS score')
+        .left_joins(:votes)
+        .group('posts.id')
+        .order('score DESC')
     when "newest"
       order(created_at: :desc)
     when "commented"
@@ -33,11 +38,23 @@ def self.order_by(sort_by)
     end
   end
 
-      def upvotes_count
+  def upvotes_count
     votes.where(vote_type: 'upvote').count
   end
 
   def downvotes_count
     votes.where(vote_type: 'downvote').count
+  end
+
+  def is_upvoted(user)
+    votes.where(vote_type: 'upvote', user_id: user.id).exists?
+  end
+
+  def is_downvoted(user)
+    votes.where(vote_type: 'downvote', user_id: user.id).exists?
+  end
+
+  def is_boosted(user)
+    boosts.where(user_id: user.id).exists?
   end
 end

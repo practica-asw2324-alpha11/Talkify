@@ -82,8 +82,8 @@
     font-size: 9pt;
 }
 
-.item {;
-    border-left: 2px solid #dfcaca
+.item {
+    border-left: 2px solid #dfcaca;
     margin-left: 115px;
     padding-left: 1.1em;
 }
@@ -497,17 +497,44 @@ a{
   padding-left: 20px;
 }
 
-#show_admin {
+#show_user {
     position: relative; /* Establece la posición relativa para el contenedor */
     padding-top: 300px; /* Ajusta según la altura del banner para evitar que el contenido se superponga */
 }
 
+.profile-header {
+  height: 400px; /* Altura deseada del contenedor */
+  position: relative;
+}
+
+.background-banner-container {
+  width: 100%;
+  padding-top: 50%; /* Relación de aspecto 2:1 */
+  position: relative;
+}
+
 .background-banner {
-    width: 100%;           /* Establece el ancho a todo lo ancho del div */
-    height: 300px;         /* Altura fija del banner */
-    object-fit: cover;     /* Asegura que la imagen cubra el área sin perder proporción */
-    position: absolute;    /* Posicionamiento absoluto para que se base en el contenedor #show_admin */
-    top: 0;
-    left: 0;
-    z-index: -1;           /* Coloca el banner detrás del contenido */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  transform: translateY(-250px);
+
+}
+
+.avatar{
+  border: 3px solid #373737;
+
+}
+
+.user_actions{
+  color: #cecece;
+  background: #2c2c2c;
+  border: 1px dashed #373737;
 }

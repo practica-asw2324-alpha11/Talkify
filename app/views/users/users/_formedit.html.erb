@@ -1,13 +1,13 @@
 <div class="wotitem">
   <div class="post-header">
-    <!-- Contenido del post -->
+
     <div class="post-content" style="color: white;">
-      <%= form_with(model: @admin, method: :patch, local: true, html: { class: "post-form" }) do |form| %>
-        <% if @admin.errors.any? %>
+      <%= form_with(model: @user, method: :patch, local: true, html: { class: "post-form" }) do |form| %>
+        <% if @user.errors.any? %>
           <div id="error_explanation">
-            <h2><%= pluralize(@admin.errors.count, "error") %> han ocurrido al editar el usuario:</h2>
+            <h2><%= pluralize(@user.errors.count, "error") %> han ocurrido al editar el usuario:</h2>
             <ul>
-              <% @admin.errors.full_messages.each do |message| %>
+              <% @user.errors.full_messages.each do |message| %>
                 <li><%= message %></li>
               <% end %>
             </ul>
@@ -37,7 +37,7 @@
         <p> </p>
 
         <div class="form-group text-left">
-          <%= form.submit "Guardar", class: "btn btn-primary btn-google" %>
+          <%= form.submit "Guardar", class: "btn btn-primary btn-rectangular" %>
         </div>
       <% end %>
 
