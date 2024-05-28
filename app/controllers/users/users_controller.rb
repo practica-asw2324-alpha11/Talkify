@@ -20,6 +20,8 @@ class Users::UsersController < ApplicationController
 
     # Only calculate boosts_count if the user is the same as @user
     boosts_count = @user == @user_target ? Boost.where(user: @user_target).count : nil
+    @user = User.find(params[:id])
+
 
     set_votes_hash
     respond_to do |format|

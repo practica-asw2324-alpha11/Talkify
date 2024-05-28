@@ -38,7 +38,7 @@ class Comment < ApplicationRecord
   def is_downvoted(user)
     comment_votes.where(vote_type: 'downvote', user_id: user.id).exists?
   end
-  
+
   private
 
   def set_default_values
