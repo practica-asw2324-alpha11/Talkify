@@ -36,11 +36,23 @@ class Post < ApplicationRecord
       end
     end
 
-        def upvotes_count
+    def upvotes_count
       votes.where(vote_type: 'upvote').count
     end
 
     def downvotes_count
       votes.where(vote_type: 'downvote').count
+    end
+
+    def is_upvoted(user)
+      votes.where(vote_type: 'upvote', user_id: user.id).exists?
+    end
+
+    def is_downvoted(user)
+      votes.where(vote_type: 'downvote', user_id: user.id).exists?
+    end
+
+    def is_boosted(user)
+      boosts.where(user_id: user.id).exists?
     end
 end
