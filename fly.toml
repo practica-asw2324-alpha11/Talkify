@@ -5,8 +5,8 @@
 #
 
 app = 'talkify'
-primary_region = 'mad'
 console_command = '/rails/bin/rails console'
+primary_region = 'mad'
 
 [build]
 
