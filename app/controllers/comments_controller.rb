@@ -129,11 +129,11 @@ def downvote
 
   def update
     @post = Post.find(params[:post_id])
+    @comment = Comment.find(params[:id])
 
-    if @post.user != @user
+    if @comment.user != @user
       render :json => { "status" => "403", "error" => "Only the creator can complete this action." }, status: :forbidden and return
     end
-    @comment = Comment.find(params[:id])
 
     if @comment.update(comment_params)
       respond_to do |format|
