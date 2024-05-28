@@ -45,4 +45,5 @@ class Comment < ApplicationRecord
       self.upvote ||= 0
       self.downvote ||= 0
   end
+
 end

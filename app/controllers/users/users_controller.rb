@@ -20,6 +20,7 @@ class Users::UsersController < ApplicationController
 
     # Only calculate boosts_count if the user is the same as @user
     boosts_count = @user == @user_target ? Boost.where(user: @user_target).count : nil
+
     @user = User.find(params[:id])
 
 
@@ -27,9 +28,12 @@ class Users::UsersController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        user_json = @user.as_json(except: [:uid, :api_key]).merge({
+        user_json = @user_target.as_json(except: [:uid, :api_key]).merge({
           comments_count: comments_count,
-          posts_count: posts_count
+          posts_count: posts_count,
+          avatar: @user_target.avatar.attached? ? url_for(@user_target.avatar) : nil,
+          background: @user_target.background.attached? ? url_for(@user_target.background) : nil
+
         })
 
         user_json[:boosts_count] = boosts_count unless boosts_count.nil?
@@ -149,33 +153,74 @@ end
     params.require(:user).permit(:email, :full_name, :description, :uid)
   end
 
-  def user_posts
-    @user = User.find(params[:id])
+def user_posts
+  @user = User.find(params[:id])
+  @posts = @user.posts.order_by(params[:sort_by])
 
-    @posts = @user.posts.order_by(params[:sort_by])
+  respond_to do |format|
+    format.html { render 'user/show' }
+    format.json do
+      if @posts.present?
+        @posts = @posts.map do |post|
+          post_json = post.as_json(methods: [:upvotes_count, :downvotes_count, :comments_count], except: [:magazine_id, :user_id]).merge(
+            is_upvoted: post.is_upvoted(@user),
+            is_downvoted: post.is_downvoted(@user),
+            is_boosted: post.is_boosted(@user)
+          )
 
-    respond_to do |format|
-      format.html { render 'user/show' }
-      format.json { render json: @posts, status: :ok }
+          if post.magazine.present?
+            post_json[:magazine] = post.magazine.as_json(only: [:id, :title, :description])
+          end
+
+          if post.user.present?
+            post_json[:user] = post.user.as_json(only: [:id, :full_name, :email])
+          end
+
+          post_json
+        end
+        render json: { posts: @posts }
+      else
+        render json: { error: "No posts found" }, status: :not_found
+      end
     end
   end
+end
 
-  def user_boosts
+def user_boosts
+  @user = User.find(params[:id])
+  @user_target = @user
 
-    if @user == @user_target
-      @boosted_posts = Boost.where(user: @user).includes(:post).map(&:post)
-      response = { "boosted_posts" => @boosted_posts }
-      status = :ok
-    else
-      response = { "error" => "You can only see the boosts of your own user." }
-      status = :forbidden
+  if @user == @user_target
+    @boosted_posts = Boost.where(user: @user).includes(:post).map(&:post)
+    @boosted_posts = @boosted_posts.map do |post|
+      post_json = post.as_json(methods: [:upvotes_count, :downvotes_count, :comments_count], except: [:magazine_id, :user_id]).merge(
+        is_upvoted: post.is_upvoted(@user),
+        is_downvoted: post.is_downvoted(@user),
+        is_boosted: post.is_boosted(@user)
+      )
+
+      if post.magazine.present?
+        post_json[:magazine] = post.magazine.as_json(only: [:id, :title, :description])
+      end
+      if post.user.present?
+        post_json[:user] = post.user.as_json(only: [:id, :full_name, :email])
+      end
+
+      post_json
     end
 
-    respond_to do |format|
-      format.html { render 'user/show' }
-      format.json { render json: response, status: status }
-    end
+    response = { "boosted_posts" => @boosted_posts }
+    status = :ok
+  else
+    response = { "error" => "You can only see the boosts of your own user." }
+    status = :forbidden
   end
+
+  respond_to do |format|
+    format.html { render 'user/show' }
+    format.json { render json: response, status: status }
+  end
+end
 
   private
 

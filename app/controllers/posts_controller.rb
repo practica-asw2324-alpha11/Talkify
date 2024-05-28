@@ -149,30 +149,58 @@ class PostsController < ApplicationController
     render :index
   end
 
-  def search
-    @query = params[:query]
-    @posts = Post.where("title LIKE :query OR body LIKE :query", query: "%#{@query}%")
+def search
+  @query = params[:query]
+  @posts = Post.where("title LIKE :query OR body LIKE :query", query: "%#{@query}%")
 
-     respond_to do |format|
-      format.html
-      format.json do
-        if @posts.present?
-          render json: @posts
-        else
-          render json: { error: "There are no posts that match the query" }, status: :not_found
+  respond_to do |format|
+    format.html
+    format.json do
+      if @posts.present?
+        @posts = @posts.map do |post|
+          post_json = post.as_json(methods: [:upvotes_count, :downvotes_count, :comments_count], except: [:magazine_id, :user_id]).merge(
+            is_upvoted: post.is_upvoted(@user),
+            is_downvoted: post.is_downvoted(@user),
+            is_boosted: post.is_boosted(@user)
+          )
+
+          if post.magazine.present?
+            post_json[:magazine] = post.magazine.as_json(only: [:id, :title, :description])
+          end
+
+          if post.user.present?
+            post_json[:user] = post.user.as_json(only: [:id, :full_name, :email])
+          end
+
+          post_json
         end
+        render json: { posts: @posts }
+      else
+        render json: { error: "There are no posts that match the query" }, status: :not_found
       end
     end
   end
+end
 
- def index
+
+def index
+  @posts = Post.all
+
+  # Aplicar filtro si está presente
   case params[:filter]
   when "links"
-    @posts = Post.where(link: true).order_by(params[:sort_by] ? params[:sort_by] : [:created_at, :desc])
+    @posts = @posts.where(link: true)
   when "threads"
-    @posts = Post.where(link: false).order_by(params[:sort_by] ? params[:sort_by] : [:created_at, :desc])
+    @posts = @posts.where(link: false)
   else
-    @posts = Post.order(created_at: :desc)
+    # Si el filtro no es "links" ni "threads", no aplicamos ningún filtro
+  end
+
+  # Aplicar ordenación si está presente
+  if params[:sort_by]
+    @posts = @posts.order_by(params[:sort_by])
+  else
+    @posts = @posts.order_by("newest")
   end
 
   respond_to do |format|
@@ -201,21 +229,41 @@ class PostsController < ApplicationController
 end
 
 
-  def show
-    @post = Post.find(params[:id])
-    if request.headers[:Accept] != "application/json"
-      @comment = @post.comments.build
-    end
-    @comments = @post.comments.includes(:replies)
 
-    respond_to do |format|
-      format.html # Renderizará el HTML por defecto
-      format.json do
-        @post = @post.as_json(methods: [:upvotes_count, :downvotes_count, :comments_count])
-        render json: { post: @post, comments: { include: :replies} } # Renderizará los posts en formato JSON
+def show
+  @post = Post.find(params[:id])
+
+  respond_to do |format|
+    format.html do
+      if request.headers[:Accept] != "application/json"
+        @comment = @post.comments.build
       end
+      @comments = @post.comments.includes(:replies)
+    end
+
+    format.json do
+      post_json = @post.as_json(
+        methods: [:upvotes_count, :downvotes_count, :comments_count],
+        except: [:magazine_id, :user_id]
+      ).merge(
+        is_upvoted: @post.is_upvoted(@user),
+        is_downvoted: @post.is_downvoted(@user),
+        is_boosted: @post.is_boosted(@user)
+      )
+
+      if @post.magazine.present?
+        post_json[:magazine] = @post.magazine.as_json(only: [:id, :title, :description])
+      end
+
+      if @post.user.present?
+        post_json[:user] = @post.user.as_json(only: [:id, :full_name, :email])
+      end
+
+      render json: { post: post_json, comments: { include: :replies } }
     end
   end
+end
+
 
   def new
     @post = Post.new(link: params[:link] == 'true')
@@ -279,7 +327,6 @@ def update
   end
 end
 
-
   def destroy
     if @post.user != @user
       render :json => { "status" => "403", "error" => "Only the creator can complete this action." }, status: :forbidden and return
@@ -290,6 +337,7 @@ end
       format.json { render json: { "status" => "200", "message" => "Post successfully destroyed." }, status: :ok }
     end
   end
+
 
 
   private

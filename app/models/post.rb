@@ -20,10 +20,12 @@ class Post < ApplicationRecord
 def self.order_by(sort_by)
     case sort_by
     when "top"
-      left_joins(:votes)
-      .select('posts.*, SUM(CASE WHEN votes.vote_type = "upvote" THEN 1 ELSE 0 END) AS upvotes_count, SUM(CASE WHEN votes.vote_type = "downvote" THEN 1 ELSE 0 END) AS downvotes_count')
-      .group('posts.id')
-      .order(Arel.sql('upvotes_count - downvotes_count DESC'))
+      select('posts.*,
+              COALESCE(SUM(CASE WHEN votes.vote_type = \'upvote\' THEN 1 ELSE 0 END), 0) -
+              COALESCE(SUM(CASE WHEN votes.vote_type = \'downvote\' THEN 1 ELSE 0 END), 0) AS score')
+        .left_joins(:votes)
+        .group('posts.id')
+        .order('score DESC')
     when "newest"
       order(created_at: :desc)
     when "commented"
@@ -55,4 +57,5 @@ def self.order_by(sort_by)
   def is_boosted(user)
     boosts.where(user_id: user.id).exists?
   end
+
 end
