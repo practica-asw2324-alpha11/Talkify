@@ -181,7 +181,7 @@ def downvote
     respond_to do |format|
       if @comment.save
         format.html { redirect_to post_path(@post) }
-        format.json { render json: @comment, include: :replies, status: :created }
+        format.json { render json: json_with_replies(@comment), include: :replies, status: :created }
       else
         format.html { render 'new' }
         format.json { render json: @comment.errors, status: :unprocessable_entity }
