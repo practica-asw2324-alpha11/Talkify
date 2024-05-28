@@ -264,6 +264,7 @@ def show
   end
 end
 
+
   def new
     @post = Post.new(link: params[:link] == 'true')
     @magazines = Magazine.all.order(:name)
@@ -326,7 +327,6 @@ def update
   end
 end
 
-
   def destroy
     if @post.user != @user
       render :json => { "status" => "403", "error" => "Only the creator can complete this action." }, status: :forbidden and return
@@ -337,6 +337,7 @@ end
       format.json { render json: { "status" => "200", "message" => "Post successfully destroyed." }, status: :ok }
     end
   end
+
 
 
   private

@@ -57,4 +57,5 @@ def self.order_by(sort_by)
   def is_boosted(user)
     boosts.where(user_id: user.id).exists?
   end
+
 end
