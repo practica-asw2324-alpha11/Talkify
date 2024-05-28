@@ -1702,6 +1702,9 @@ components:
           type: integer
           format: int64
           example: 1
+        isSubscribed:
+          type: boolean
+          example: false
       required:
         - name
         - title

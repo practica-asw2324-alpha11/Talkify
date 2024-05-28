@@ -81,7 +81,7 @@ class MagazinesController < ApplicationController
 
       respond_to do |format|
         format.html
-        format.json {render json: @magazine.as_json.merge({threads: @magazine.posts.count, comments: @magazine.posts.left_joins(:comments).count, subscribers: @magazine.users.count})}
+        format.json {render json: @magazine.as_json.merge({threads: @magazine.posts.count, comments: @magazine.posts.left_joins(:comments).count, subscribers: @magazine.users.count, isSubscribed: @user.magazines.include?(@magazine)})}
       end
 
     end
@@ -151,7 +151,7 @@ class MagazinesController < ApplicationController
 
       def magazines_with_info
         @magazines.map do |magazine|
-          magazine.as_json.merge({threads: magazine.posts.count, comments: magazine.posts.left_joins(:comments).count, subscribers: magazine.users.count})
+          magazine.as_json.merge({threads: magazine.posts.count, comments: magazine.posts.left_joins(:comments).count, subscribers: magazine.users.count, isSubscribed: @user.magazines.include?(magazine)})
         end
       end
 
