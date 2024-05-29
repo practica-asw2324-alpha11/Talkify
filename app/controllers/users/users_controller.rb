@@ -145,7 +145,7 @@ end
 
     respond_to do |format|
       format.html { render 'user/show' }
-      format.json { render json: @comments, include: :replies, status: :ok }
+      format.json { render json: json_with_replies(@comments), status: :ok }
     end
   end
 
@@ -223,6 +223,21 @@ def user_boosts
 end
 
   private
+
+  def json_with_replies(comments)
+    result = Array(comments).map do |comment|
+      comment.as_json(except: [:post_id, :user_id]).merge(
+        user: comment.user.as_json(only: [:id, :full_name, :email]),
+        post: comment.post.as_json(only: [:id, :title]),
+        is_upvoted: comment.is_upvoted(@user),
+        is_downvoted: comment.is_downvoted(@user),
+        is_author: comment.user == @user,
+        replies: Array.wrap(json_with_replies(comment.replies)),
+      )
+    end
+
+    result.length == 1 ? result.first : result
+  end
 
   def set_user
     if request.headers[:Accept] == "application/json"
