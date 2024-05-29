@@ -150,11 +150,16 @@ paths:
             enum: [top, newest, commented]
       responses:
         200:
-          description: successful operation
+          description: List of posts
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Magazine'
+                type: object
+                properties:
+                  magazines:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
         400:
           description: 'Error: Bad Request'
           content:
