@@ -87,21 +87,42 @@ class MagazinesController < ApplicationController
     end
 
     def posts
-      @magazine = Magazine.find(params[:id])
-      @posts = @magazine.posts
-      sort_by = params[:sort_by]
-      case sort_by
-      when "top"
-        @posts = @magazine.posts.left_joins(:votes).where(votes: { vote_type: 'upvote' }).group('posts.id').order('COUNT(votes.id) DESC, posts.created_at DESC')
-      when "commented"
-        @posts = @magazine.posts.left_joins(:comments).group('posts.id').order('COUNT(comments.id) DESC, posts.created_at DESC')
-      else
-        @posts = @magazine.posts.order(created_at: :desc)
+  @magazine = Magazine.find(params[:id])
+  sort_by = params[:sort_by]
+
+  @posts = case sort_by
+           when "top"
+             @magazine.posts.left_joins(:votes).where(votes: { vote_type: 'upvote' }).group('posts.id').order('COUNT(votes.id) DESC, posts.created_at DESC')
+           when "commented"
+             @magazine.posts.left_joins(:comments).group('posts.id').order('COUNT(comments.id) DESC, posts.created_at DESC')
+           else
+             @magazine.posts.order(created_at: :desc)
+           end
+
+  respond_to do |format|
+    format.json do
+      @posts = @posts.map do |post|
+        post_json = post.as_json(methods: [:upvotes_count, :downvotes_count, :comments_count], except: [:magazine_id, :user_id]).merge(
+          is_upvoted: post.is_upvoted(@user),
+          is_downvoted: post.is_downvoted(@user),
+          is_boosted: post.is_boosted(@user)
+        )
+
+        if post.magazine.present?
+          post_json[:magazine] = post.magazine.as_json(only: [:id, :title, :description])
+        end
+
+        if post.user.present?
+          post_json[:user] = post.user.as_json(only: [:id, :full_name, :email])
+        end
+
+        post_json
       end
-      respond_to do |format|
-        format.json { render json: @posts }
-      end
+      render json: { posts: @posts }
     end
+  end
+end
+
 
     # GET /magazines/new
     def new
