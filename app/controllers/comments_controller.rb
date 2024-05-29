@@ -207,16 +207,18 @@ def downvote
   private
 
   def json_with_replies(comments)
-    Array(comments).map do |comment|
+    result = Array(comments).map do |comment|
       comment.as_json(except: [:post_id, :user_id]).merge(
         user: comment.user.as_json(only: [:id, :full_name, :email]),
         post: comment.post.as_json(only: [:id, :title]),
         is_upvoted: comment.is_upvoted(@user),
         is_downvoted: comment.is_downvoted(@user),
         is_author: comment.user == @user,
-        replies: json_with_replies(comment.replies),
+        replies: Array.wrap(json_with_replies(comment.replies)),
       )
     end
+
+    result.length == 1 ? result.first : result
   end
 
   def set_comment
