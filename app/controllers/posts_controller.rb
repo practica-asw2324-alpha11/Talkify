@@ -115,6 +115,7 @@ def upvote
       message = "Vote successfully changed to upvote."
     elsif @vote.vote_type == 'upvote' && request.method == "POST"
       status = :conflict
+      @vote.destroy!
       message = "Already upvoted."
     elsif @vote.vote_type == 'upvote' && request.method == "DELETE"
       @vote.destroy!
@@ -169,8 +170,9 @@ end
       @post.votes.create!(user: @user, vote_type: 'downvote')
       status = :ok
       message = "Vote successfully changed to downvote."
-    elsif @vote.vote_type == 'downvote' && request.method == "POST"
+  elsif @vote.vote_type == 'downvote' && request.method == "POST"
       status = :conflict
+      @vote.destroy!
       message = "Already downvoted."
     end
   end
