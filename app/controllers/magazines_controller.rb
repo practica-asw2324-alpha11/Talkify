@@ -70,15 +70,7 @@ class MagazinesController < ApplicationController
 
     # GET /magazines/1 or /magazines/1.json
     def show
-      sort_by = params[:sort_by]
-      case sort_by
-      when "top"
-        @posts = @magazine.posts.left_joins(:votes).where(votes: { vote_type: 'upvote' }).group('posts.id').order('COUNT(votes.id) DESC, posts.created_at DESC')
-      when "commented"
-        @posts = @magazine.posts.left_joins(:comments).group('posts.id').order('COUNT(comments.id) DESC, posts.created_at DESC')
-      else
-        @posts = @magazine.posts.order(created_at: :desc)
-      end
+      @posts = @magazine.posts.order_by(params[:sort_by] ? params[:sort_by] : [:created_at, :desc])
 
       respond_to do |format|
         format.html
@@ -90,16 +82,7 @@ class MagazinesController < ApplicationController
 
     def posts
   @magazine = Magazine.find(params[:id])
-  sort_by = params[:sort_by]
-
-  @posts = case sort_by
-           when "top"
-             @magazine.posts.left_joins(:votes).where(votes: { vote_type: 'upvote' }).group('posts.id').order('COUNT(votes.id) DESC, posts.created_at DESC')
-           when "commented"
-             @magazine.posts.left_joins(:comments).group('posts.id').order('COUNT(comments.id) DESC, posts.created_at DESC')
-           else
-             @magazine.posts.order(created_at: :desc)
-           end
+  @posts = @magazine.posts.order_by(params[:sort_by] ? params[:sort_by] : [:created_at, :desc])
 
   respond_to do |format|
     format.json do
