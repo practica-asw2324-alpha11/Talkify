@@ -20,47 +20,69 @@ class PostsController < ApplicationController
   end
 
 
-  def boost
-    @post = Post.find(params[:id])
-    @boost = Boost.find_or_initialize_by(post: @post, user: @user)
+ def boost
+  @post = Post.find(params[:id])
+  @boost = Boost.find_or_initialize_by(post: @post, user: @user)
 
-    if @boost.new_record?
-      @boost.save!
-      boost_status = "boosted"
-      status = :ok
-      response = { post: @post, boost_status: boost_status }
-    else
-      boost_status = "already boosted"
-      status = :conflict
-      response = { boost_status: boost_status }
-    end
-
-    respond_to do |format|
-      format.html { redirect_back(fallback_location: root_path) }
-      format.json { render json: response, status: status }
-    end
+  if @boost.new_record?
+    @boost.save!
+    boost_status = "boosted"
+    status = :ok
+  else
+    boost_status = "already boosted"
+    status = :conflict
   end
 
-  def unboost
-    @post = Post.find(params[:id])
-    @boost = Boost.find_by(post: @post, user: @user)
+  post_json = @post.as_json(
+    methods: [:upvotes_count, :downvotes_count, :comments_count],
+    except: [:magazine_id, :user_id]
+  ).merge(
+    is_upvoted: @post.is_upvoted(@user),
+    is_downvoted: @post.is_downvoted(@user),
+    is_boosted: @post.is_boosted(@user)
+  )
 
-    if @boost.present?
-      @boost.destroy!
-      boost_status = "unboosted"
-      status = :ok
-      response = { boost_status: boost_status }
-    else
-      boost_status = "not boosted"
-      status = :conflict
-      response = { boost_status: boost_status }
-    end
+  post_json[:magazine] = @post.magazine.as_json(only: [:id, :title, :description]) if @post.magazine.present?
+  post_json[:user] = @post.user.as_json(only: [:id, :full_name, :email]) if @post.user.present?
 
-    respond_to do |format|
-      format.html { redirect_back(fallback_location: root_path) }
-      format.json { render json: response, status: status }
-    end
+  respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { render json: { post: post_json, boost_status: boost_status }, status: status }
   end
+end
+
+
+def unboost
+  @post = Post.find(params[:id])
+  @boost = Boost.find_by(post: @post, user: @user)
+
+  if @boost.present?
+    @boost.destroy!
+    boost_status = "unboosted"
+    status = :ok
+  else
+    boost_status = "not boosted"
+    status = :conflict
+  end
+
+  post_json = @post.as_json(
+    methods: [:upvotes_count, :downvotes_count, :comments_count],
+    except: [:magazine_id, :user_id]
+  ).merge(
+    is_upvoted: @post.is_upvoted(@user),
+    is_downvoted: @post.is_downvoted(@user),
+    is_boosted: @post.is_boosted(@user)
+  )
+
+  post_json[:magazine] = @post.magazine.as_json(only: [:id, :title, :description]) if @post.magazine.present?
+  post_json[:user] = @post.user.as_json(only: [:id, :full_name, :email]) if @post.user.present?
+
+  respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { render json: { post: post_json, boost_status: boost_status }, status: status }
+  end
+end
+
 
   def like
     @post.likes += 1
@@ -72,76 +94,105 @@ class PostsController < ApplicationController
     end
   end
 
-  def upvote
-    message = ''
-    ActiveRecord::Base.transaction do
-      @vote = @post.votes.find_or_initialize_by(user: @user)
+def upvote
+  @post = Post.find(params[:id])
+  message = ''
+  ActiveRecord::Base.transaction do
+    @vote = @post.votes.find_or_initialize_by(user: @user)
 
-      if @vote.new_record? && request.method == "POST"
-        @vote.vote_type = 'upvote'
-        @vote.save!
-        status = :ok
-        message = "Vote successfully added."
-      elsif @vote.new_record? && request.method == "DELETE"
-        status = :conflict
-        message = "No vote found to delete."
-      elsif @vote.vote_type == 'downvote'
-        @vote.destroy!
-        @post.votes.create!(user: @user, vote_type: 'upvote')
-        status = :ok
-        message = "Vote successfully changed to upvote."
-      elsif @vote.vote_type == 'upvote' && request.method == "POST"
-        status = :conflict
-        message = "Already upvoted."
-      elsif @vote.vote_type == 'upvote' && request.method == "DELETE"
-        @vote.destroy!
-        status = :ok
-        message = "Vote successfully removed."
-      end
-    end
-
-    respond_to do |format|
-      format.html { redirect_back(fallback_location: root_path) }
-      format.json { render json: { "status" => status, "message" => message }, status: status }
+    if @vote.new_record? && request.method == "POST"
+      @vote.vote_type = 'upvote'
+      @vote.save!
+      status = :ok
+      message = "Vote successfully added."
+    elsif @vote.new_record? && request.method == "DELETE"
+      status = :conflict
+      message = "No vote found to delete."
+    elsif @vote.vote_type == 'downvote'
+      @vote.destroy!
+      @post.votes.create!(user: @user, vote_type: 'upvote')
+      status = :ok
+      message = "Vote successfully changed to upvote."
+    elsif @vote.vote_type == 'upvote' && request.method == "POST"
+      status = :conflict
+      message = "Already upvoted."
+    elsif @vote.vote_type == 'upvote' && request.method == "DELETE"
+      @vote.destroy!
+      status = :ok
+      message = "Vote successfully removed."
     end
   end
 
-  def downvote
-    message = ''
-    ActiveRecord::Base.transaction do
-      @vote = @post.votes.find_or_initialize_by(user: @user)
+  post_json = @post.as_json(
+    methods: [:upvotes_count, :downvotes_count, :comments_count],
+    except: [:magazine_id, :user_id]
+  ).merge(
+    is_upvoted: @post.is_upvoted(@user),
+    is_downvoted: @post.is_downvoted(@user),
+    is_boosted: @post.is_boosted(@user)
+  )
 
-      if @vote.new_record? && request.method == "POST"
-        @vote.vote_type = 'downvote'
-        @vote.save!
-        status = :ok
-        message = "Vote successfully added."
-      elsif @vote.new_record? && request.method == "DELETE"
-        status = :conflict
-        message = "No vote found to delete."
-      elsif @vote.vote_type == 'downvote' && request.method == "DELETE"
-        @vote.destroy!
-        status = :ok
-        message = "Vote successfully removed."
-      elsif @vote.vote_type == 'upvote' && request.method == "DELETE"
-        status = :conflict
-        message = "No downvote found to delete."
-      elsif @vote.vote_type == 'upvote'
-        @vote.destroy!
-        @post.votes.create!(user: @user, vote_type: 'downvote')
-        status = :ok
-        message = "Vote successfully changed to downvote."
-      elsif @vote.vote_type == 'downvote' && request.method == "POST"
-        status = :conflict
-        message = "Already downvoted."
-      end
-    end
+  post_json[:magazine] = @post.magazine.as_json(only: [:id, :title, :description]) if @post.magazine.present?
+  post_json[:user] = @post.user.as_json(only: [:id, :full_name, :email]) if @post.user.present?
 
-    respond_to do |format|
-      format.html { redirect_back(fallback_location: root_path) }
-      format.json { render json: { "status" => status, "message" => message }, status: status }
+  respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { render json: { post: post_json, status: status, message: message }, status: status }
+  end
+end
+
+
+
+ def downvote
+  @post = Post.find(params[:id])
+  message = ''
+  ActiveRecord::Base.transaction do
+    @vote = @post.votes.find_or_initialize_by(user: @user)
+
+    if @vote.new_record? && request.method == "POST"
+      @vote.vote_type = 'downvote'
+      @vote.save!
+      status = :ok
+      message = "Vote successfully added."
+    elsif @vote.new_record? && request.method == "DELETE"
+      status = :conflict
+      message = "No vote found to delete."
+    elsif @vote.vote_type == 'downvote' && request.method == "DELETE"
+      @vote.destroy!
+      status = :ok
+      message = "Vote successfully removed."
+    elsif @vote.vote_type == 'upvote' && request.method == "DELETE"
+      status = :conflict
+      message = "No downvote found to delete."
+    elsif @vote.vote_type == 'upvote'
+      @vote.destroy!
+      @post.votes.create!(user: @user, vote_type: 'downvote')
+      status = :ok
+      message = "Vote successfully changed to downvote."
+    elsif @vote.vote_type == 'downvote' && request.method == "POST"
+      status = :conflict
+      message = "Already downvoted."
     end
   end
+
+  post_json = @post.as_json(
+    methods: [:upvotes_count, :downvotes_count, :comments_count],
+    except: [:magazine_id, :user_id]
+  ).merge(
+    is_upvoted: @post.is_upvoted(@user),
+    is_downvoted: @post.is_downvoted(@user),
+    is_boosted: @post.is_boosted(@user)
+  )
+
+  post_json[:magazine] = @post.magazine.as_json(only: [:id, :title, :description]) if @post.magazine.present?
+  post_json[:user] = @post.user.as_json(only: [:id, :full_name, :email]) if @post.user.present?
+
+  respond_to do |format|
+    format.html { redirect_back(fallback_location: root_path) }
+    format.json { render json: { post: post_json, status: status, message: message }, status: status }
+  end
+end
+
 
 
   def sort
@@ -157,7 +208,24 @@ class PostsController < ApplicationController
       format.html
       format.json do
         if @posts.present?
-          render json: @posts
+          @posts = @posts.map do |post|
+        post_json = post.as_json(methods: [:upvotes_count, :downvotes_count, :comments_count], except: [:magazine_id, :user_id]).merge(
+          is_upvoted: post.is_upvoted(@user),
+          is_downvoted: post.is_downvoted(@user),
+          is_boosted: post.is_boosted(@user)
+        )
+
+        if post.magazine.present?
+          post_json[:magazine] = post.magazine.as_json(only: [:id, :title, :description])
+        end
+
+        if post.user.present?
+          post_json[:user] = post.user.as_json(only: [:id, :full_name, :email])
+        end
+
+        post_json
+      end
+        render json: { posts: @posts }
         else
           render json: { error: "There are no posts that match the query" }, status: :not_found
         end
@@ -166,14 +234,22 @@ class PostsController < ApplicationController
   end
 
  def index
-  case params[:filter]
-  when "links"
-    @posts = Post.where(link: true).order_by(params[:sort_by] ? params[:sort_by] : [:created_at, :desc])
-  when "threads"
-    @posts = Post.where(link: false).order_by(params[:sort_by] ? params[:sort_by] : [:created_at, :desc])
-  else
-    @posts = Post.order(created_at: :desc)
-  end
+ @posts = Post.all
+
+      # Aplicar filtro si está presente
+      case params[:filter]
+      when "links"
+        @posts = @posts.where(link: true)
+      when "threads"
+        @posts = @posts.where(link: false)
+      end
+
+      # Aplicar ordenación si está presente
+      if params[:sort_by]
+        @posts = @posts.order_by(params[:sort_by])
+      else
+        @posts = @posts.order_by(created_at: :desc)
+      end
 
   respond_to do |format|
     format.html
@@ -201,21 +277,40 @@ class PostsController < ApplicationController
 end
 
 
-  def show
-    @post = Post.find(params[:id])
-    if request.headers[:Accept] != "application/json"
-      @comment = @post.comments.build
-    end
-    @comments = @post.comments.includes(:replies)
+ def show
+  @post = Post.find(params[:id])
 
-    respond_to do |format|
-      format.html # Renderizará el HTML por defecto
-      format.json do
-        @post = @post.as_json(methods: [:upvotes_count, :downvotes_count, :comments_count])
-        render json: { post: @post, comments: { include: :replies} } # Renderizará los posts en formato JSON
+  respond_to do |format|
+    format.html do
+      if request.headers[:Accept] != "application/json"
+        @comment = @post.comments.build
       end
+      @comments = @post.comments.includes(:replies)
+    end
+
+    format.json do
+      post_json = @post.as_json(
+        methods: [:upvotes_count, :downvotes_count, :comments_count],
+        except: [:magazine_id, :user_id]
+      ).merge(
+        is_upvoted: @post.is_upvoted(@user),
+        is_downvoted: @post.is_downvoted(@user),
+        is_boosted: @post.is_boosted(@user)
+      )
+
+      if @post.magazine.present?
+        post_json[:magazine] = @post.magazine.as_json(only: [:id, :title, :description])
+      end
+
+      if @post.user.present?
+        post_json[:user] = @post.user.as_json(only: [:id, :full_name, :email])
+      end
+
+      render json: { post: post_json, comments: { include: :replies } }
     end
   end
+end
+
 
   def new
     @post = Post.new(link: params[:link] == 'true')
